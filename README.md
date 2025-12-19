@@ -1,6 +1,6 @@
 # Spektrum Learn
 
-Spectrum Learn is an adaptive e-learning platform designed to personalize the learning experience based on students’ individual learning styles, particularly the Visual, Auditory, and Kinesthetic (VAK) model.
+Spectrum Learn is an adaptive e-learning platform designed to personalize learning experiences based on students’ individual learning styles, particularly the Visual, Auditory, and Kinesthetic (VAK) model. The platform leverages artificial intelligence to deliver adaptive practice, interactive learning, and expert-guided problem-solving in a scalable web-based system.
 
 ## Tech Stack
 
@@ -17,13 +17,22 @@ Spectrum Learn is an adaptive e-learning platform designed to personalize the le
 ## Project Structure
 
 ```
-fulusin/
+spektrum-learn/
+├── prisma/
+│   ├── schema.prisma      # Prisma database schema
+│   ├── migrations/        # Database migrations
+│
 ├── src/
-│   ├── app/            # Next.js app router pages
-│   ├── components/     # Reusable React components
-│   ├── lib/            # Core utilities and helpers
-│   ├── provider/       # Next Auth and React Query Client provider configurations
-│   ├── schemas/        # Form validation schemas
+│   ├── app/               # Next.js App Router pages
+│   ├── components/        # Reusable UI components
+│   ├── lib/               # Core utilities (db, auth, helpers)
+│   ├── providers/         # NextAuth & React Query providers
+│   ├── schemas/           # Zod validation schemas
+│
+├── docker-compose.yml
+├── .env.example
+├── package.json
+
 ```
 
 ## Key Features
@@ -69,6 +78,12 @@ GOOGLE_CLIENT_SECRET="your-google-client-secret"
 
 # Gemini API Key
 GEMINI_API_KEY="your-gemini-api-key"
+```
+
+5. Prisma Setup:
+```bash
+pnpm prisma generate
+pnpm prisma migrate dev
 ```
 
 
