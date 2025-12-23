@@ -4,11 +4,11 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { NextAuthOptions, getServerSession } from "next-auth";
 import { Adapter } from "next-auth/adapters";
 import { compare } from "bcryptjs";
-import { GetServerSidePropsContext, NextApiRequest, NextApiResponse } from "next";
 import { z } from "zod";
 import prisma from "./prisma";
 import { SigninSchema } from "@/schemas/SigninSchema";
 import GoogleProvider from "next-auth/providers/google";
+import { GetServerSidePropsContext, NextApiResponse, NextApiRequest } from 'next';
 
 
 export const authOptions: NextAuthOptions = {
@@ -48,7 +48,7 @@ export const authOptions: NextAuthOptions = {
 
                 if (!user) throw new Error("Incorrect email");
 
-                if(!user.password) {
+                if (!user.password) {
                     throw new Error("Email is already exist with google authentication")
                 }
 
@@ -162,7 +162,7 @@ export const authOptions: NextAuthOptions = {
             }
 
             if (typeof token.expiresAt === "number" && Date.now() / 1000 > token.expiresAt) {
-                return null;
+                return {} as any;
             }
 
 
@@ -175,8 +175,8 @@ export const authOptions: NextAuthOptions = {
 
         async session({ session, token }) {
 
-            if (!token?.id) {
-                return null;
+            if (!token?.id || Object.keys(token).length === 0) {
+                throw new Error("Session expired");
             }
 
             session.user = {
