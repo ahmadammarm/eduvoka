@@ -157,6 +157,9 @@ export const authOptions: NextAuthOptions = {
                 token.id = user.id;
                 token.name = user.name;
                 token.email = user.email;
+                token.role = (user as any).role || "USER";
+                token.gayaBelajar = (user as any).gayaBelajar || null;
+                token.paketUser = (user as any).paketUser || "BASIC";
 
                 token.expiresAt = Math.floor(Date.now() / 1000) + 24 * 60 * 60;
             }
@@ -183,6 +186,9 @@ export const authOptions: NextAuthOptions = {
                 id: token.id as string,
                 name: token.name as string,
                 email: token.email as string,
+                role: token.role as string,
+                gayaBelajar: token.gayaBelajar as string | null,
+                paketUser: token.paketUser as string,
             };
 
             return session;

@@ -13,14 +13,40 @@ datasource db {
     provider = "mysql"
 }
 
+enum Role {
+    USER
+    ADMIN
+}
+
+enum GayaBelajar {
+    VISUAL
+    AUDITORY
+    KINESTHETIC
+}
+
+enum TipeSoal {
+    TPS
+    LITERASI
+}
+
+enum PaketUser {
+    BASIC
+    LITE
+    ACTIVE
+    EDUVOKA
+}
+
 model User {
-    id           String   @id @default(uuid())
-    email        String   @unique
+    id           String       @id @default(uuid())
+    email        String       @unique
     name         String
     password     String?
     profileImage String?
-    createdAt    DateTime @default(now())
-    updatedAt    DateTime @updatedAt
+    role         Role         @default(USER)
+    gayaBelajar  GayaBelajar?
+    paketUser    PaketUser    @default(BASIC)
+    createdAt    DateTime     @default(now())
+    updatedAt    DateTime     @updatedAt
 
     accounts Account[]
     sessions Session[]
@@ -52,4 +78,21 @@ model Session {
     expires      DateTime
 
     user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model SoalUTBK {
+    id           String   @id @default(uuid())
+    tipe         TipeSoal
+    content      String   @db.Text
+    kunciJawaban String
+
+    pilihanJawaban PilihanJawaban[]
+}
+
+model PilihanJawaban {
+    id         String @id @default(uuid())
+    soalUTBKId String
+    pilihan    String
+
+    soalUTBK SoalUTBK @relation(fields: [soalUTBKId], references: [id], onDelete: Cascade)
 }
