@@ -1,6 +1,6 @@
-# Spektrum Learn
+# Eduvoka
 
-Spectrum Learn is an adaptive e-learning platform designed to personalize learning experiences based on students’ individual learning styles, particularly the Visual, Auditory, and Kinesthetic (VAK) model. The platform leverages artificial intelligence to deliver adaptive practice, interactive learning, and expert-guided problem-solving in a scalable web-based system.
+Eduvoka is an adaptive e-learning platform designed to personalize learning experiences based on students’ individual learning styles, particularly the Visual, Auditory, and Kinesthetic (VAK) model. The platform leverages artificial intelligence to deliver adaptive practice, interactive learning, and expert-guided problem-solving in a scalable web-based system.
 
 ## Tech Stack
 
@@ -45,13 +45,13 @@ spektrum-learn/
 
 1. Clone the repository:
 ```sh
-git clone https://github.com/ahmadammarm/spektrum-learn.git
+git clone https://github.com/ahmadammarm/eduvoka.git
 ```
 
 2. Navigate to the project directory:
 
 ```sh
-cd spektrum-learn
+cd eduvoka
 ```
 
 3. Install dependencies:
@@ -87,7 +87,7 @@ pnpm prisma migrate dev
 ```
 
 
-5. Run development server:
+6. Run development server:
 ```bash
 pnpm dev
 ```
@@ -96,13 +96,13 @@ pnpm dev
 
 1. Clone the repository:
 ```sh
-git clone https://github.com/ahmadammarm/spektrum-learn.git
+git clone https://github.com/ahmadammarm/eduvoka.git
 ```
 
 2. Navigate to the project directory:
 
 ```sh
-cd spektrum-learn
+cd eduvoka
 ```
 
 3. Run the Docker Compose:
@@ -133,3 +133,37 @@ pnpm build
 # Start production server
 pnpm start
 ```
+
+### How to Contribute?
+Please follow the workflow below to keep the codebase clean and consistent.
+
+### Branch Strategy
+
+- main → Production branch
+- develop → Active development branch (staging env)
+- feature/* → New features
+- refactor/* New improvements without remove old functionallity
+
+### Contribution Steps
+
+1. Clone the repository:
+```sh
+git clone https://github.com/ahmadammarm/eduvoka.git
+```
+
+2. Checkout to the develop branch
+```sh
+git checkout development
+```
+
+3. Create a new branch
+```sh
+git checkout -b feature/your-feature-name
+```
+
+4. Make your changes
+5. Commit with a clear and descriptive message
+6. Push your new branch
+7. Open a Pull Request to the develop branch
+
+Do not submit pull requests directly to the main branch!
