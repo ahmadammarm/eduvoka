@@ -5,7 +5,7 @@ import { NextAuthOptions, getServerSession } from "next-auth";
 import { Adapter } from "next-auth/adapters";
 import { compare } from "bcryptjs";
 import { z } from "zod";
-import prisma from "./prisma";
+import { prisma } from "./prisma";
 import { SigninSchema } from "@/schemas/SigninSchema";
 import GoogleProvider from "next-auth/providers/google";
 import { GetServerSidePropsContext, NextApiResponse, NextApiRequest } from 'next';
