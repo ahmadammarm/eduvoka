@@ -1,10 +1,94 @@
 generator client {
-  provider = "prisma-client"
-  output   = "../generated/prisma"
+    provider = "prisma-client"
+    output   = "../generated/prisma"
 }
 
 datasource db {
-  provider = "mysql"
+    provider = "mysql"
+}
+
+enum Role {
+    USER
+    ADMIN
+}
+
+enum GayaBelajar {
+    VISUAL
+    AUDITORY
+    KINESTHETIC
+}
+
+enum TipeSoal {
+    TPS
+    LITERASI
+}
+
+enum PaketUser {
+    BASIC
+    LITE
+    ACTIVE
+    EDUVOKA
+}
+
+model User {
+    id           String       @id @default(uuid())
+    email        String       @unique
+    name         String
+    password     String?
+    profileImage String?
+    role         Role         @default(USER)
+    gayaBelajar  GayaBelajar?
+    paketUser    PaketUser    @default(BASIC)
+    createdAt    DateTime     @default(now())
+    updatedAt    DateTime     @updatedAt
+
+    accounts Account[]
+    sessions Session[]
+}
+
+model Account {
+    id                String  @id @default(uuid())
+    userId            String
+    type              String
+    provider          String
+    providerAccountId String
+    refresh_token     String? @db.Text
+    access_token      String? @db.Text
+    expires_at        Int?
+    token_type        String?
+    scope             String?
+    id_token          String? @db.Text
+    session_state     String?
+
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@unique([provider, providerAccountId])
+}
+
+model Session {
+    id           String   @id @default(uuid())
+    sessionToken String   @unique
+    userId       String
+    expires      DateTime
+
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model SoalUTBK {
+    id           String   @id @default(uuid())
+    tipe         TipeSoal
+    content      String   @db.Text
+    kunciJawaban String
+
+    pilihanJawaban PilihanJawaban[]
+}
+
+model PilihanJawaban {
+    id         String @id @default(uuid())
+    soalUTBKId String
+    pilihan    String
+
+    soalUTBK SoalUTBK @relation(fields: [soalUTBKId], references: [id], onDelete: Cascade)
 }
 
 enum Role {
