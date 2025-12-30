@@ -5,6 +5,6 @@ export const metadata: Metadata = {
 	description: "Buat akun Eduvoka Anda untuk memulai perjalanan pembelajaran Anda.",
 }
 
-export default function SigninLayout({ children }: { children: React.ReactNode }) {
+export default function SignupLayout({ children }: { children: React.ReactNode }) {
 	return <>{children}</>
 }
