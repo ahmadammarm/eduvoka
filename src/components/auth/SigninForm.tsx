@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client"
 
 import { SigninSchema, type SigninSchemaType } from "@/schemas/SigninSchema"
@@ -63,7 +64,7 @@ export default function SigninForm() {
 
     return (
         <div className="min-h-screen flex flex-col lg:flex-row bg-white overflow-hidden">
-            <div className="hidden lg:flex lg:w-1/2 relative items-center justify-center overflow-hidden bg-gradient-to-br from-secondary via-secondary/80 to-tertiary">
+            <div className="hidden lg:flex lg:w-1/2 relative items-center justify-center overflow-hidden bg-linear-to-br from-secondary via-secondary/80 to-tertiary">
                 <Image
                     src="/assets/images/sign-in.jpg"
                     alt="Login Illustration"
@@ -71,7 +72,7 @@ export default function SigninForm() {
                     width={800}
                     height={600}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-secondary/60 to-transparent"></div>
+                <div className="absolute inset-0 bg-linear-to-t from-secondary/60 to-transparent"></div>
 
                 <div className="absolute bottom-16 left-8 right-8 text-white text-4xl font-semibold text-left fade-in z-10">
                     <h2 className="text-balance">
