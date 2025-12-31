@@ -1,34 +1,23 @@
 /*
   Warnings:
 
-  - You are about to drop the `users` table. If the table is not empty, all the data it contains will be lost.
+  - You are about to drop the column `gayaBelajar` on the `user` table. All the data in the column will be lost.
+  - You are about to drop the column `profileImage` on the `user` table. All the data in the column will be lost.
 
 */
--- DropTable
-DROP TABLE `users`;
+-- AlterTable
+ALTER TABLE `user` DROP COLUMN `gayaBelajar`,
+    DROP COLUMN `profileImage`,
+    ADD COLUMN `learningStyle` ENUM('VISUAL', 'AUDITORY', 'KINESTHETIC') NULL,
+    ADD COLUMN `photo` VARCHAR(191) NULL,
+    ADD COLUMN `status` ENUM('ACTIVE', 'INACTIVE') NOT NULL DEFAULT 'ACTIVE';
 
 -- CreateTable
-CREATE TABLE `User` (
-    `id` VARCHAR(191) NOT NULL,
-    `email` VARCHAR(191) NOT NULL,
-    `password` VARCHAR(191) NOT NULL,
-    `photo` VARCHAR(191) NULL,
-    `role` ENUM('USER', 'ADMIN') NOT NULL DEFAULT 'USER',
-    `status` ENUM('ACTIVE', 'INACTIVE', 'PENDING') NOT NULL DEFAULT 'INACTIVE',
-    `minat` ENUM('VISUAL', 'AUDIOTORY', 'KINESTETIK') NULL,
-    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-    `updatedAt` DATETIME(3) NOT NULL,
-
-    UNIQUE INDEX `User_email_key`(`email`),
-    PRIMARY KEY (`id`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- CreateTable
-CREATE TABLE `Payments` (
+CREATE TABLE `Payment` (
     `id` VARCHAR(191) NOT NULL,
     `userId` VARCHAR(191) NOT NULL,
     `amount` DOUBLE NOT NULL,
-    `status` ENUM('ACTIVE', 'INACTIVE', 'PENDING') NOT NULL DEFAULT 'PENDING',
+    `status` ENUM('ACTIVE', 'INACTIVE') NOT NULL DEFAULT 'INACTIVE',
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
 
@@ -52,7 +41,7 @@ CREATE TABLE `Tryout` (
 CREATE TABLE `TryoutSection` (
     `id` VARCHAR(191) NOT NULL,
     `tryoutId` VARCHAR(191) NOT NULL,
-    `section` ENUM('LITERASIBINDO', 'LITERASIBINGG', 'PENALANRANMAT', 'PU', 'PBM', 'PPU', 'PK') NOT NULL,
+    `section` ENUM('PU', 'PBM', 'PPU', 'PK', 'LITERASIBINDO', 'LITERASIBINGG') NOT NULL,
     `duration` INTEGER NOT NULL,
 
     PRIMARY KEY (`id`)
@@ -62,7 +51,7 @@ CREATE TABLE `TryoutSection` (
 CREATE TABLE `Question` (
     `id` VARCHAR(191) NOT NULL,
     `sectionId` VARCHAR(191) NOT NULL,
-    `question` VARCHAR(191) NOT NULL,
+    `question` TEXT NOT NULL,
     `type` ENUM('PG') NOT NULL DEFAULT 'PG',
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
@@ -84,9 +73,11 @@ CREATE TABLE `Option` (
 CREATE TABLE `Explanation` (
     `id` VARCHAR(191) NOT NULL,
     `questionId` VARCHAR(191) NOT NULL,
-    `content` VARCHAR(191) NOT NULL,
+    `learningStyle` ENUM('VISUAL', 'AUDITORY', 'KINESTHETIC') NOT NULL,
+    `content` TEXT NOT NULL,
+    `mediaUrl` VARCHAR(191) NULL,
 
-    UNIQUE INDEX `Explanation_questionId_key`(`questionId`),
+    UNIQUE INDEX `Explanation_questionId_learningStyle_key`(`questionId`, `learningStyle`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -99,6 +90,7 @@ CREATE TABLE `UserTryout` (
     `startedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `finishedAt` DATETIME(3) NULL,
 
+    UNIQUE INDEX `UserTryout_userId_tryoutId_key`(`userId`, `tryoutId`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -115,7 +107,7 @@ CREATE TABLE `UserAnswer` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- AddForeignKey
-ALTER TABLE `Payments` ADD CONSTRAINT `Payments_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `Payment` ADD CONSTRAINT `Payment_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `TryoutSection` ADD CONSTRAINT `TryoutSection_tryoutId_fkey` FOREIGN KEY (`tryoutId`) REFERENCES `Tryout`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;

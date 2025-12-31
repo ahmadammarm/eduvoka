@@ -1,95 +1,14 @@
 generator client {
-    provider = "prisma-client"
-    output   = "../generated/prisma"
+    provider = "prisma-client-js"
 }
 
 datasource db {
     provider = "mysql"
 }
 
-enum Role {
-    USER
-    ADMIN
-}
 
-enum GayaBelajar {
-    VISUAL
-    AUDITORY
-    KINESTHETIC
-}
+// ENUMS
 
-enum TipeSoal {
-    TPS
-    LITERASI
-}
-
-enum PaketUser {
-    BASIC
-    LITE
-    ACTIVE
-    EDUVOKA
-}
-
-model User {
-    id           String       @id @default(uuid())
-    email        String       @unique
-    name         String
-    password     String?
-    profileImage String?
-    role         Role         @default(USER)
-    gayaBelajar  GayaBelajar?
-    paketUser    PaketUser    @default(BASIC)
-    createdAt    DateTime     @default(now())
-    updatedAt    DateTime     @updatedAt
-
-    accounts Account[]
-    sessions Session[]
-}
-
-model Account {
-    id                String  @id @default(uuid())
-    userId            String
-    type              String
-    provider          String
-    providerAccountId String
-    refresh_token     String? @db.Text
-    access_token      String? @db.Text
-    expires_at        Int?
-    token_type        String?
-    scope             String?
-    id_token          String? @db.Text
-    session_state     String?
-
-    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-    @@unique([provider, providerAccountId])
-}
-
-model Session {
-    id           String   @id @default(uuid())
-    sessionToken String   @unique
-    userId       String
-    expires      DateTime
-
-    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
-
-model SoalUTBK {
-    id           String   @id @default(uuid())
-    tipe         TipeSoal
-    content      String   @db.Text
-    kunciJawaban String
-
-    pilihanJawaban PilihanJawaban[]
-}
-
-model PilihanJawaban {
-    id         String @id @default(uuid())
-    soalUTBKId String
-    pilihan    String
-
-    soalUTBK SoalUTBK @relation(fields: [soalUTBKId], references: [id], onDelete: Cascade)
-}
 
 enum Role {
   USER
@@ -99,33 +18,25 @@ enum Role {
 enum Status {
   ACTIVE
   INACTIVE
-  PENDING
 }
 
-enum Minat {
+enum LearningStyle {
   VISUAL
-  AUDIOTORY
-  KINESTETIK
-}
-
-enum TipeCourse {
-  GRATIS
-  PREMIUM
+  AUDITORY
+  KINESTHETIC
 }
 
 enum UTBKSection {
+  PU               // Pengetahuan Umum
+  PBM              // Pemahaman Bacaan & Menulis
+  PPU              // Pengetahuan & Pemahaman Umum
+  PK               // Pengetahuan Kuantitatif
   LITERASIBINDO
   LITERASIBINGG
-  PENALANRANMAT
-  PU // pengetahuan umum
-  PBM // pemahaman bacaan dan menulis
-  PPU // pengetahuan dan pemahaman umum
-  PK // Penegathuan kuantitatif
-
 }
 
 enum QuestionType {
-  PG        // Pilihan ganda
+  PG
 }
 
 enum TryoutStatus {
@@ -135,34 +46,76 @@ enum TryoutStatus {
 }
 
 
-// Users
+// USER & AUTH
+
+
 model User {
-  id        String     @id @default(uuid())
-  email     String     @unique
-  password  String
-  photo     String?
-  role      Role       @default(USER)
-  status    Status  @default(INACTIVE)
-  minat     Minat?
-  payments  Payments[]
-  attempts UserTryout[]
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
+  id            String        @id @default(uuid())
+  name          String
+  email         String        @unique
+  password      String?
+  photo         String?
+  role          Role          @default(USER)
+  status        Status        @default(ACTIVE)
+  learningStyle LearningStyle?
+
+  accounts      Account[]
+  sessions      Session[]
+  attempts      UserTryout[]
+  payments      Payment[]
+
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+}
+
+model Account {
+  id                String  @id @default(uuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(uuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 
-// Payments
-model Payments {
-  id String @id @default(uuid())
-  userId String
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  amount Float
-  status Status @default(PENDING)
+// PAYMENT
+
+
+model Payment {
+  id        String   @id @default(uuid())
+  userId    String
+  amount    Float
+  status    Status  @default(INACTIVE)
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
-// TO
+
+// TRYOUT
+
+
 model Tryout {
   id          String   @id @default(uuid())
   title       String
@@ -173,71 +126,84 @@ model Tryout {
   sections    TryoutSection[]
   attempts    UserTryout[]
 
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 model TryoutSection {
   id        String @id @default(uuid())
   tryoutId  String
-  tryout    Tryout @relation(fields: [tryoutId], references: [id], onDelete: Cascade)
-
   section   UTBKSection
   duration  Int
 
+  tryout    Tryout   @relation(fields: [tryoutId], references: [id], onDelete: Cascade)
   questions Question[]
 }
 
-// question
+
+// QUESTION
+
+
 model Question {
   id        String @id @default(uuid())
   sectionId String
-  section   TryoutSection @relation(fields: [sectionId], references: [id], onDelete: Cascade)
-
-  question  String
+  question  String @db.Text
   type      QuestionType @default(PG)
 
+  section   TryoutSection @relation(fields: [sectionId], references: [id], onDelete: Cascade)
   options   Option[]
-  explanation Explanation?
-  userAnswers UserAnswer[]
+  explanations Explanation[]
+  answers   UserAnswer[]
 
   createdAt DateTime @default(now())
 }
 
 model Option {
-  id         String @id @default(uuid())
+  id         String  @id @default(uuid())
   questionId String
-  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
-
   label      String
   text       String
   isCorrect  Boolean @default(false)
 
-  userAnswers UserAnswer[]
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  answers    UserAnswer[]
 }
+
+
+// PERSONALIZED EXPLANATION (CORE FEATURE)
+
 
 model Explanation {
-  id         String @id @default(uuid())
-  questionId String @unique
-  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  id            String        @id @default(uuid())
+  questionId    String
+  learningStyle LearningStyle
 
-  content    String
+  content       String        @db.Text
+  mediaUrl      String?       // image / audio / video
+
+  question      Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@unique([questionId, learningStyle])
 }
 
-// USER TRYOUT & ANSWER
+
+// USER TRYOUT & ANSWERS
+
+
 model UserTryout {
   id        String @id @default(uuid())
   userId    String
   tryoutId  String
 
-  user      User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  tryout    Tryout @relation(fields: [tryoutId], references: [id], onDelete: Cascade)
-
   score     Float?
   startedAt DateTime @default(now())
   finishedAt DateTime?
 
+  user      User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tryout    Tryout @relation(fields: [tryoutId], references: [id], onDelete: Cascade)
   answers   UserAnswer[]
+
+  @@unique([userId, tryoutId])
 }
 
 model UserAnswer {
@@ -246,11 +212,11 @@ model UserAnswer {
   questionId   String
   optionId     String?
 
+  isCorrect    Boolean
+
   userTryout   UserTryout @relation(fields: [userTryoutId], references: [id], onDelete: Cascade)
   question     Question   @relation(fields: [questionId], references: [id])
   option       Option?    @relation(fields: [optionId], references: [id])
-
-  isCorrect    Boolean
 
   @@unique([userTryoutId, questionId])
 }
