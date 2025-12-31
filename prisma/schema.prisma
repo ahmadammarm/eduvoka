@@ -1,140 +1,212 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
+// =======================
+// GENERATOR
+// =======================
 generator client {
-    provider = "prisma-client"
-    output   = "../generated/prisma"
+  provider = "prisma-client"
+  output   = "../generated/prisma"
 }
 
+// =======================
+// DATASOURCE
+// =======================
 datasource db {
-    provider = "mysql"
+  provider = "mysql"
 }
 
-enum Role {
-    USER
-    ADMIN
+// =======================
+// ENUM
+// =======================
+enum soalutbk_tipe {
+  PU // Pengetahuan Umum
+  PBM // Pemahaman Bacaan & Menulis
+  PPU // Pengetahuan & Pemahaman Umum
+  PK // Pengetahuan Kuantitatif
+  LITERASIBINDO
+  LITERASIBINGG
 }
 
-enum GayaBelajar {
-    VISUAL
-    AUDITORY
-    KINESTHETIC
+enum jawabankuisvak_tipeJawaban {
+  VISUAL
+  AUDITORY
+  KINESTHETIC
 }
 
-enum TipeSoal {
-    TPS
-    LITERASI
+enum user_gayaBelajar {
+  VISUAL
+  AUDITORY
+  KINESTHETIC
 }
 
-enum PaketUser {
-    BASIC
-    LITE
-    ACTIVE
-    EDUVOKA
+enum user_role {
+  USER
+  ADMIN
 }
 
-model User {
-    id           String       @id @default(uuid())
-    email        String       @unique
-    name         String
-    password     String?
-    profileImage String?
-    role         Role         @default(USER)
-    gayaBelajar  GayaBelajar?
-    paketUser    PaketUser    @default(BASIC)
-    createdAt    DateTime     @default(now())
-    updatedAt    DateTime     @updatedAt
-
-    accounts Account[]
-    sessions Session[]
-
-    jawabanUserKuisVAKs JawabanUserKuisVAK[]
+enum user_paketUser {
+  BASIC
+  LITE
+  ACTIVE
+  EDUVOKA
 }
 
-model Account {
-    id                String  @id @default(uuid())
-    userId            String
-    type              String
-    provider          String
-    providerAccountId String
-    refresh_token     String? @db.Text
-    access_token      String? @db.Text
-    expires_at        Int?
-    token_type        String?
-    scope             String?
-    id_token          String? @db.Text
-    session_state     String?
+// =======================
+// MODEL
+// =======================
 
-    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+model user {
+  id                String            @id
+  email             String            @unique(map: "User_email_key")
+  name              String
+  password          String?
+  profileImage      String?
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime
+  gayaBelajar       user_gayaBelajar?
+  role              user_role         @default(USER)
+  paketUser         user_paketUser    @default(BASIC)
+  isSubscribed      Boolean           @default(false)
+  subscriptionEndAt DateTime?
 
-    @@unique([provider, providerAccountId])
+  account            account[]
+  session            session[]
+  jawabanuserkuisvak jawabanuserkuisvak[]
+  utbk_session       utbk_session[]
 }
 
-model Session {
-    id           String   @id @default(uuid())
-    sessionToken String   @unique
-    userId       String
-    expires      DateTime
+model account {
+  id                String  @id
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
 
-    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user user @relation(fields: [userId], references: [id], onDelete: Cascade, map: "Account_userId_fkey")
+
+  @@unique([provider, providerAccountId], map: "Account_provider_providerAccountId_key")
+  @@index([userId], map: "Account_userId_fkey")
 }
 
-model PertanyaanKuisVAK {
-    id         String   @id @default(uuid())
-    pertanyaan String   @db.Text
-    createdAt  DateTime @default(now())
-    updatedAt  DateTime @updatedAt
+model session {
+  id           String   @id
+  sessionToken String   @unique(map: "Session_sessionToken_key")
+  userId       String
+  expires      DateTime
 
-    jawabanKuisVAKs JawabanKuisVAK[]
+  user user @relation(fields: [userId], references: [id], onDelete: Cascade, map: "Session_userId_fkey")
 
-    jawabanUserKuisVAKs JawabanUserKuisVAK[]
+  @@index([userId], map: "Session_userId_fkey")
 }
 
-model JawabanKuisVAK {
-    id String @id @default(uuid())
+model pertanyaankuisvak {
+  id         String   @id
+  pertanyaan String   @db.Text
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime
 
-    kuisVAKId   String
-    jawaban     String
-    tipeJawaban GayaBelajar
-    createdAt   DateTime    @default(now())
-    updatedAt   DateTime    @updatedAt
-
-    kuisVAK             PertanyaanKuisVAK    @relation(fields: [kuisVAKId], references: [id], onDelete: Cascade)
-    jawabanUserKuisVAKs JawabanUserKuisVAK[]
+  jawabankuisvak     jawabankuisvak[]
+  jawabanuserkuisvak jawabanuserkuisvak[]
 }
 
-model JawabanUserKuisVAK {
-    id                  String @id @default(uuid())
-    userId              String
-    pertanyaanKuisVAKId String
-    jawabanKuisVAKId    String
+model jawabankuisvak {
+  id          String                     @id
+  kuisVAKId   String
+  jawaban     String
+  tipeJawaban jawabankuisvak_tipeJawaban
+  createdAt   DateTime                   @default(now())
+  updatedAt   DateTime
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+  pertanyaankuisvak  pertanyaankuisvak    @relation(fields: [kuisVAKId], references: [id], onDelete: Cascade, map: "JawabanKuisVAK_kuisVAKId_fkey")
+  jawabanuserkuisvak jawabanuserkuisvak[]
 
-    user              User              @relation(fields: [userId], references: [id], onDelete: Cascade)
-    pertanyaanKuisVAK PertanyaanKuisVAK @relation(fields: [pertanyaanKuisVAKId], references: [id], onDelete: Cascade)
-    jawabanKuisVAK    JawabanKuisVAK    @relation(fields: [jawabanKuisVAKId], references: [id], onDelete: Cascade)
-
-    @@unique([userId, pertanyaanKuisVAKId])
+  @@index([kuisVAKId], map: "JawabanKuisVAK_kuisVAKId_fkey")
 }
 
-model SoalUTBK {
-    id           String   @id @default(uuid())
-    tipe         TipeSoal
-    content      String   @db.Text
-    kunciJawaban String
+model jawabanuserkuisvak {
+  id                  String   @id
+  userId              String
+  pertanyaanKuisVAKId String
+  jawabanKuisVAKId    String
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime
 
-    pilihanJawaban PilihanJawaban[]
+  user              user              @relation(fields: [userId], references: [id], onDelete: Cascade, map: "JawabanUserKuisVAK_userId_fkey")
+  pertanyaankuisvak pertanyaankuisvak @relation(fields: [pertanyaanKuisVAKId], references: [id], onDelete: Cascade, map: "JawabanUserKuisVAK_pertanyaanKuisVAKId_fkey")
+  jawabankuisvak    jawabankuisvak    @relation(fields: [jawabanKuisVAKId], references: [id], onDelete: Cascade, map: "JawabanUserKuisVAK_jawabanKuisVAKId_fkey")
+
+  @@unique([userId, pertanyaanKuisVAKId], map: "JawabanUserKuisVAK_userId_pertanyaanKuisVAKId_key")
+  @@index([jawabanKuisVAKId], map: "JawabanUserKuisVAK_jawabanKuisVAKId_fkey")
+  @@index([pertanyaanKuisVAKId], map: "JawabanUserKuisVAK_pertanyaanKuisVAKId_fkey")
 }
 
-model PilihanJawaban {
-    id         String @id @default(uuid())
-    soalUTBKId String
-    pilihan    String
+model soalutbk {
+  id           String        @id
+  tipe         soalutbk_tipe
+  content      String        @db.Text
+  kunciJawaban String
 
-    soalUTBK SoalUTBK @relation(fields: [soalUTBKId], references: [id], onDelete: Cascade)
+  pilihanjawaban pilihanjawaban[]
+  pembahasan     pembahasansoalutbk[]
+  jawabanUser    utbk_jawaban_user[]
+}
+
+model pilihanjawaban {
+  id         String @id
+  soalUTBKId String
+  label      String // A, B, C, D, E
+  pilihan    String
+
+  soalutbk    soalutbk            @relation(fields: [soalUTBKId], references: [id], onDelete: Cascade, map: "PilihanJawaban_soalUTBKId_fkey")
+  jawabanUser utbk_jawaban_user[]
+
+  @@index([soalUTBKId], map: "PilihanJawaban_soalUTBKId_fkey")
+}
+
+model pembahasansoalutbk {
+  id          String           @id
+  soalUTBKId  String
+  gayaBelajar user_gayaBelajar
+  konten      String           @db.Text
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime
+
+  soalutbk soalutbk @relation(fields: [soalUTBKId], references: [id], onDelete: Cascade)
+
+  @@unique([soalUTBKId, gayaBelajar])
+  @@index([soalUTBKId])
+}
+
+model utbk_session {
+  id        String    @id
+  userId    String
+  startedAt DateTime  @default(now())
+  endedAt   DateTime?
+  score     Int?
+
+  user    user                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  jawaban utbk_jawaban_user[]
+
+  @@index([userId])
+}
+
+model utbk_jawaban_user {
+  id         String    @id
+  sessionId  String
+  soalUTBKId String
+  pilihanId  String? // null jika tidak dijawab
+  isCorrect  Boolean?
+  answeredAt DateTime?
+
+  session        utbk_session    @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  soalutbk       soalutbk        @relation(fields: [soalUTBKId], references: [id], onDelete: Cascade)
+  pilihanjawaban pilihanjawaban? @relation(fields: [pilihanId], references: [id])
+
+  @@unique([sessionId, soalUTBKId])
+  @@index([soalUTBKId])
 }
