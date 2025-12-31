@@ -17,7 +17,8 @@ Eduvoka is an adaptive e-learning platform designed to personalize learning expe
 ## Project Structure
 
 ```
-spektrum-learn/
+eduvoka/
+├── docs/				   # Detailed documentation files 
 ├── prisma/
 │   ├── schema.prisma      # Prisma database schema
 │   ├── migrations/        # Database migrations
@@ -133,3 +134,49 @@ pnpm build
 # Start production server
 pnpm start
 ```
+
+### How to Contribute?
+Please follow the workflow below to keep the codebase clean and consistent.
+
+### Branch Strategy
+
+- main → Production branch
+- develop → Active development branch (staging env)
+- feature/* → New features
+- refactor/* New improvements without remove old functionallity
+
+### Contribution Steps
+
+1. Clone the repository:
+```sh
+git clone https://github.com/ahmadammarm/eduvoka.git
+```
+
+2. Checkout to the develop branch
+```sh
+git checkout development
+```
+
+3. Create a new branch
+```sh
+git checkout -b feature/your-feature-name
+```
+
+4. Make your changes
+5. Commit with a clear and descriptive message
+6. Push your new branch
+7. Open a Pull Request to the develop branch
+
+Do not submit pull requests directly to the main branch!
+
+## Detailed Documentation
+
+For more detailed information, please refer to the following documents:
+
+| Document | Description |
+|----------|-------------|
+| [**Developer Guidelines**](docs/developer-guidelines.md) | Comprehensive onboarding guide for new developers, including setup instructions, and core concepts. |
+| [**Changelog Guidelines**](docs/changelog-guidelines.md) | Procedures for maintaining and updating the project changelog. |
+| [**Releases Overview**](docs/releases-overview.md) | Guidelines for versioning and the release management. |
+
+Made with enthusiasm by the Eduvoka Development Team.
