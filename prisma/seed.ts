@@ -1,5 +1,5 @@
 import bcrypt from "bcryptjs";
-import { prisma } from '@/lib/prisma';
+import { prisma } from "@/lib/prisma";
 import { GayaBelajar } from "../generated/prisma/enums";
 
 async function CreateUser() {
@@ -10,37 +10,62 @@ async function CreateUser() {
 			email: "admineduvoka@example.com",
 			password: hashedPassword,
 			name: "Admin User",
-		}
+		},
 	});
 }
 
 async function CreatePertanyaanVAK() {
 	const pertanyaanData = [
 		{
-			pertanyaan: "Ketika saya belajar sesuatu yang baru, saya lebih suka:",
+			pertanyaan:
+				"Ketika saya belajar sesuatu yang baru, saya lebih suka:",
 			jawabanKuisVAKs: {
 				create: [
-					{ jawaban: "Melihat diagram atau gambar yang menjelaskan konsep tersebut.", tipeJawaban: GayaBelajar.VISUAL },
-					{ jawaban: "Mendengarkan penjelasan atau ceramah tentang konsep tersebut.", tipeJawaban: GayaBelajar.AUDITORY },
-					{ jawaban: "Melakukan praktik langsung atau eksperimen terkait konsep tersebut.", tipeJawaban: GayaBelajar.KINESTHETIC },
-				]
-			}
+					{
+						jawaban:
+							"Melihat diagram atau gambar yang menjelaskan konsep tersebut.",
+						tipeJawaban: GayaBelajar.VISUAL,
+					},
+					{
+						jawaban:
+							"Mendengarkan penjelasan atau ceramah tentang konsep tersebut.",
+						tipeJawaban: GayaBelajar.AUDITORY,
+					},
+					{
+						jawaban:
+							"Melakukan praktik langsung atau eksperimen terkait konsep tersebut.",
+						tipeJawaban: GayaBelajar.KINESTHETIC,
+					},
+				],
+			},
 		},
 		{
 			pertanyaan: "Dalam situasi sosial, saya cenderung:",
 			jawabanKuisVAKs: {
 				create: [
-					{ jawaban: "Mengamati dan memperhatikan apa yang terjadi di sekitar saya.", tipeJawaban: GayaBelajar.VISUAL },
-					{ jawaban: "Mendengarkan apa yang dikatakan orang lain dan berdiskusi.", tipeJawaban: GayaBelajar.AUDITORY },
-					{ jawaban: "Terlibat langsung dalam aktivitas atau interaksi sosial.", tipeJawaban: GayaBelajar.KINESTHETIC },
-				]
-			}
-		}
+					{
+						jawaban:
+							"Mengamati dan memperhatikan apa yang terjadi di sekitar saya.",
+						tipeJawaban: GayaBelajar.VISUAL,
+					},
+					{
+						jawaban:
+							"Mendengarkan apa yang dikatakan orang lain dan berdiskusi.",
+						tipeJawaban: GayaBelajar.AUDITORY,
+					},
+					{
+						jawaban:
+							"Terlibat langsung dalam aktivitas atau interaksi sosial.",
+						tipeJawaban: GayaBelajar.KINESTHETIC,
+					},
+				],
+			},
+		},
 	];
 
 	for (const pertanyaan of pertanyaanData) {
 		await prisma.pertanyaanKuisVAK.create({
-			data: pertanyaan
+			data: pertanyaan,
 		});
 	}
 }
@@ -50,9 +75,12 @@ async function main() {
 	await CreatePertanyaanVAK();
 }
 
-main().then(() => console.log("User created successfully")).catch((e) => {
-	console.error(e);
-	process.exit(1);
-}).finally(async () => {
-	await prisma.$disconnect();
-});
+main()
+	.then(() => console.log("User created successfully"))
+	.catch((e) => {
+		console.error(e);
+		process.exit(1);
+	})
+	.finally(async () => {
+		await prisma.$disconnect();
+	});
