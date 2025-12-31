@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
 import ReactQueryProvider from "@/providers/ReactQueryProvider";
+import { SpeedInsights } from "@vercel/speed-insights/next"
 import { authOptions } from "@/lib/auth";
 import NextAuthProvider from "@/providers/NextAuthProvider";
 import { Toaster } from "@/components/ui/sonner";
@@ -33,7 +34,8 @@ export default async function RootLayout({
                     <Toaster richColors position="bottom-right" />
                     <ReactQueryProvider>
                         {children}
-                    </ReactQueryProvider>
+                        <SpeedInsights />
+                </ReactQueryProvider>
                 </NextAuthProvider>
             </body>
         </html>

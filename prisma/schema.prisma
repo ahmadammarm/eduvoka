@@ -66,6 +66,8 @@ model User {
 
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
+
+    jawabanUserKuisVAKs JawabanUserKuisVAK[]
 }
 
 model Account {
@@ -96,77 +98,53 @@ model Session {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
+model PertanyaanKuisVAK {
+    id         String   @id @default(uuid())
+    pertanyaan String   @db.Text
+    createdAt  DateTime @default(now())
+    updatedAt  DateTime @updatedAt
 
-// PAYMENT
+    jawabanKuisVAKs JawabanKuisVAK[]
 
-
-model Payment {
-  id        String   @id @default(uuid())
-  userId    String
-  amount    Float
-  status    Status  @default(INACTIVE)
-
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+    jawabanUserKuisVAKs JawabanUserKuisVAK[]
 }
 
+model JawabanKuisVAK {
+    id String @id @default(uuid())
 
-// TRYOUT
+    kuisVAKId   String
+    jawaban     String
+    tipeJawaban GayaBelajar
+    createdAt   DateTime    @default(now())
+    updatedAt   DateTime    @updatedAt
 
-
-model Tryout {
-  id          String   @id @default(uuid())
-  title       String
-  description String?
-  duration    Int
-  status      TryoutStatus @default(DRAFT)
-
-  sections    TryoutSection[]
-  attempts    UserTryout[]
-
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+    kuisVAK             PertanyaanKuisVAK    @relation(fields: [kuisVAKId], references: [id], onDelete: Cascade)
+    jawabanUserKuisVAKs JawabanUserKuisVAK[]
 }
 
-model TryoutSection {
-  id        String @id @default(uuid())
-  tryoutId  String
-  section   UTBKSection
-  duration  Int
+model JawabanUserKuisVAK {
+    id                  String @id @default(uuid())
+    userId              String
+    pertanyaanKuisVAKId String
+    jawabanKuisVAKId    String
 
-  tryout    Tryout   @relation(fields: [tryoutId], references: [id], onDelete: Cascade)
-  questions Question[]
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    user              User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+    pertanyaanKuisVAK PertanyaanKuisVAK @relation(fields: [pertanyaanKuisVAKId], references: [id], onDelete: Cascade)
+    jawabanKuisVAK    JawabanKuisVAK    @relation(fields: [jawabanKuisVAKId], references: [id], onDelete: Cascade)
+
+    @@unique([userId, pertanyaanKuisVAKId])
 }
 
+model SoalUTBK {
+    id           String   @id @default(uuid())
+    tipe         TipeSoal
+    content      String   @db.Text
+    kunciJawaban String
 
-// QUESTION
-
-
-model Question {
-  id        String @id @default(uuid())
-  sectionId String
-  question  String @db.Text
-  type      QuestionType @default(PG)
-
-  section   TryoutSection @relation(fields: [sectionId], references: [id], onDelete: Cascade)
-  options   Option[]
-  explanations Explanation[]
-  answers   UserAnswer[]
-
-  createdAt DateTime @default(now())
-}
-
-model Option {
-  id         String  @id @default(uuid())
-  questionId String
-  label      String
-  text       String
-  isCorrect  Boolean @default(false)
-
-  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
-  answers    UserAnswer[]
+    pilihanJawaban PilihanJawaban[]
 }
 
 
