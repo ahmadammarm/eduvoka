@@ -76,11 +76,14 @@ async function main() {
 }
 
 main()
-	.then(() => console.log("User created successfully"))
+	.then(() => {
+		console.log("Seeding selesai!");
+	})
 	.catch((e) => {
 		console.error(e);
 		process.exit(1);
 	})
 	.finally(async () => {
 		await prisma.$disconnect();
+		process.exit(0);
 	});
