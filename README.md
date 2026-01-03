@@ -1,4 +1,4 @@
-# Eduvoka
+# Eduvoka Platform
 
 Eduvoka is an adaptive e-learning platform designed to personalize learning experiences based on students’ individual learning styles, particularly the Visual, Auditory, and Kinesthetic (VAK) model. The platform leverages artificial intelligence to deliver adaptive practice, interactive learning, and expert-guided problem-solving in a scalable web-based system.
 
