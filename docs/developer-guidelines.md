@@ -189,11 +189,13 @@ git commit -m "docs: update developer onboarding guide"
 Adhere to the following guidelines when submitting pull requests:
 
 1. **Pull Request Format Requirements**:
-   - Title must be lowercase and begin with: `feat:`, `bugfix:`, `refactor:`, `docs:`, or `chore:`
-   - Description field is mandatory and must provide clear context
-   - Link related issues using #issue-number syntax
+   - Use the Pull Request template: [.github/PULL_REQUEST_TEMPLATE.md](.github/PULL_REQUEST_TEMPLATE.md)
+   - Set the PR title in lowercase and start with one of: `feat:`, `bugfix:`, `refactor:`, `docs:`, `chore:`
+   - Write a clear Description that explains context, changes, and impact
+   - Complete every item in the checklist before submitting
+   - Link related issues using `#issue-number` (e.g., `#123`)
 
-2. **Automated CI Validation** (forthcoming):
+2. **Automated CI Validation**:
    - Branch naming convention verification
    - Pull request title format validation (lowercase with approved prefix)
    - Build success verification
