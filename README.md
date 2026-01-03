@@ -135,7 +135,7 @@ pnpm build
 pnpm start
 ```
 
-### How to Contribute?
+## How to Contribute?
 Please follow the workflow below to keep the codebase clean and consistent.
 
 ### Branch Strategy
