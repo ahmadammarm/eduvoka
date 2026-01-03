@@ -1,4 +1,4 @@
-## [Unreleased (Beta Version)]
+## [Unreleased]
 
 ### Added
 - Added more documentations for better code maintainability.

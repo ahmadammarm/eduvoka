@@ -35,7 +35,7 @@ jobs:
         run: |
           test -f CHANGELOG.md || exit 1
           git diff origin/${{ github.base_ref }} --name-only | grep CHANGELOG.md || exit 1
-          grep -Eq "^## \\[[0-9]+\\.[0-9]+\\.[0-9]+(-beta\\.[0-9]+|-rc\\.[0-9]+)?\\]" CHANGELOG.md || exit 1
+          grep -Eq "^## \\[(Unreleased|[0-9]+\\.[0-9]+\\.[0-9]+(-beta\\.[0-9]+|-rc\\.[0-9]+)?)\\]" CHANGELOG.md || exit 1
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4
