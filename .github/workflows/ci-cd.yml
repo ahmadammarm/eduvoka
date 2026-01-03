@@ -11,7 +11,6 @@ on:
 env:
   NODE_VERSION: "25"
 
-
 jobs:
   pr-check:
     if: github.event_name == 'pull_request'
@@ -27,15 +26,28 @@ jobs:
         run: |
           BRANCH_NAME="${{ github.head_ref }}"
           if [[ ! "$BRANCH_NAME" =~ ^(feat|fix|hotfix|release|docs|chore|refactor)/[a-z0-9._-]+$ ]]; then
-            echo "Invalid branch name"
+            echo "❌ Invalid branch name"
             exit 1
           fi
 
       - name: Validate CHANGELOG
         run: |
-          test -f CHANGELOG.md || exit 1
-          git diff origin/${{ github.base_ref }} --name-only | grep CHANGELOG.md || exit 1
-          grep -Eq "^## \\[(Unreleased|[0-9]+\\.[0-9]+\\.[0-9]+(-beta\\.[0-9]+|-rc\\.[0-9]+)?)\\]" CHANGELOG.md || exit 1
+          if [ ! -f CHANGELOG.md ]; then
+            echo "CHANGELOG.md not found"
+            exit 1
+          fi
+
+          git fetch origin ${{ github.base_ref }}
+
+          if ! git diff origin/${{ github.base_ref }} --name-only | grep -q CHANGELOG.md; then
+            echo "CHANGELOG.md must be updated in this PR"
+            exit 1
+          fi
+
+          if ! grep -Eq "^## \\[(Unreleased|[0-9]+\\.[0-9]+\\.[0-9]+(-beta\\.[0-9]+|-rc\\.[0-9]+)?)\\]" CHANGELOG.md; then
+            echo "Invalid CHANGELOG version format"
+            exit 1
+          fi
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4
@@ -56,7 +68,6 @@ jobs:
 
       - name: Build
         run: pnpm build
-
 
   deploy-staging:
     if: github.event_name == 'push' && github.ref == 'refs/heads/development'
@@ -95,4 +106,3 @@ jobs:
           pnpm dlx vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
           pnpm dlx vercel build --token=${{ secrets.VERCEL_TOKEN }}
           pnpm dlx vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }}
-
