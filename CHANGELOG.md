@@ -1,6 +1,7 @@
 ## [Unreleased]
 
 ### Added
+- Added dependabot configuration for automated dependency updates for npm and GitHub Actions.
 - Added Pull Request template to standardize contributions.
 - Updated CI/CD workflow to enhance branch name validation and streamline staging deployment processes. 
 - Added more documentations for better code maintainability.
