@@ -22,7 +22,7 @@ const poolConfig: mariadb.PoolConfig = {
     password: url.password,
     database: url.pathname.slice(1),
     connectionLimit: 10,
-    connectTimeout: 10000,
+    connectTimeout: 30000,
     ssl: {
         rejectUnauthorized: true,
     },

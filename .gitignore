@@ -44,3 +44,4 @@ generated
 /generated/prisma
 
 /generated/prisma
+.env*.local
