@@ -110,10 +110,12 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: pnpm
 
+      - name: Create .env file
+        run: |
+          echo "DATABASE_URL=${{ secrets.DATABASE_URL_STAGING }}" > .env
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL_STAGING }}
 
       - name: Build application
         run: pnpm build
@@ -139,10 +141,12 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: pnpm
 
+      - name: Create .env file
+        run: |
+          echo "DATABASE_URL=${{ secrets.DATABASE_URL_STAGING }}" > .env
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL_STAGING }}
 
       - name: Prisma migrate (staging)
         run: pnpm prisma migrate deploy
