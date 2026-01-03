@@ -40,14 +40,32 @@ jobs:
           git fetch origin ${{ github.base_ref }}
 
           if ! git diff origin/${{ github.base_ref }} --name-only | grep -q CHANGELOG.md; then
-            echo "CHANGELOG.md must be updated in this PR"
+            echo "CHANGELOG.md must be updated"
             exit 1
           fi
 
-          if ! grep -Eq "^## \\[(Unreleased|[0-9]+\\.[0-9]+\\.[0-9]+(-beta\\.[0-9]+|-rc\\.[0-9]+)?)\\]" CHANGELOG.md; then
-            echo "Invalid CHANGELOG version format"
+          if ! grep -Eq '^## \[(Unreleased|[0-9]+\.[0-9]+\.[0-9]+(-beta\.[0-9]+|-rc\.[0-9]+)?)\]' CHANGELOG.md; then
+            echo "Invalid CHANGELOG format"
             exit 1
           fi
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: latest
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build (PR check only)
+        run: pnpm build
+
 
   deploy-staging:
     if: github.event_name == 'push' && github.ref == 'refs/heads/development'
