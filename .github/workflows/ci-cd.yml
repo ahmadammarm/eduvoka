@@ -40,14 +40,15 @@ jobs:
           git fetch origin ${{ github.base_ref }}
 
           if ! git diff origin/${{ github.base_ref }} --name-only | grep -q CHANGELOG.md; then
-            echo "CHANGELOG.md must be updated in this PR"
+            echo "CHANGELOG.md must be updated"
             exit 1
           fi
 
-          if ! grep -Eq "^## \\[(Unreleased|[0-9]+\\.[0-9]+\\.[0-9]+(-beta\\.[0-9]+|-rc\\.[0-9]+)?)\\]" CHANGELOG.md; then
-            echo "Invalid CHANGELOG version format"
+          if ! grep -Eq '^## \[(Unreleased|[0-9]+\.[0-9]+\.[0-9]+(-beta\.[0-9]+|-rc\.[0-9]+)?)\]' CHANGELOG.md; then
+            echo "Invalid CHANGELOG format"
             exit 1
           fi
+
 
   deploy-staging:
     if: github.event_name == 'push' && github.ref == 'refs/heads/development'
