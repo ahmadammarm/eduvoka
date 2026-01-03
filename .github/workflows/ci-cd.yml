@@ -26,7 +26,7 @@ jobs:
       - name: Validate branch name
         run: |
           BRANCH_NAME="${{ github.head_ref }}"
-          if [[ ! "$BRANCH_NAME" =~ ^(feature|fix|hotfix|release|beta|docs)/[a-z0-9._-]+$ ]]; then
+          if [[ ! "$BRANCH_NAME" =~ ^(feat|fix|hotfix|release|docs|chore|refactor)/[a-z0-9._-]+$ ]]; then
             echo "Invalid branch name"
             exit 1
           fi
