@@ -5,11 +5,11 @@ on:
     types: [opened, synchronize, reopened]
   push:
     branches:
-      - main
       - development
+      - main
 
 env:
-  NODE_VERSION: "25"
+  NODE_VERSION: "20"
 
 jobs:
   pr-check:
@@ -26,7 +26,7 @@ jobs:
         run: |
           BRANCH_NAME="${{ github.head_ref }}"
           if [[ ! "$BRANCH_NAME" =~ ^(feat|fix|hotfix|release|docs|chore|refactor)/[a-z0-9._-]+$ ]]; then
-            echo "❌ Invalid branch name"
+            echo "Invalid branch name: $BRANCH_NAME"
             exit 1
           fi
 
@@ -49,6 +49,19 @@ jobs:
             exit 1
           fi
 
+  deploy-staging:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/development'
+    runs-on: ubuntu-latest
+
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL_STAGING }}
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Install pnpm
         uses: pnpm/action-setup@v4
         with:
@@ -66,39 +79,10 @@ jobs:
       - name: Prisma generate
         run: pnpm prisma generate
 
-      - name: Build
-        run: pnpm build
-
-  deploy-staging:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/development'
-    runs-on: ubuntu-latest
-
-    env:
-      DATABASE_URL: ${{ secrets.DATABASE_URL_STAGING }}
-      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: latest
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: pnpm
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
       - name: Prisma migrate (staging)
         run: pnpm prisma migrate deploy
 
-      - name: Build
+      - name: Build application
         run: pnpm build
 
       - name: Deploy to Vercel (Staging)
