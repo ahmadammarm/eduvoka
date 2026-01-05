@@ -1,6 +1,7 @@
 ## [Unreleased]
 
 ### Added
+- Added dashboard layouting page with responsive design.
 - Added dependabot configuration for automated dependency updates for npm and GitHub Actions.
 - Added Pull Request template to standardize contributions.
 - Updated CI/CD workflow to enhance branch name validation and streamline staging deployment processes. 
