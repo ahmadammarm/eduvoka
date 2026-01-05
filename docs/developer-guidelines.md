@@ -32,6 +32,7 @@ The following software must be installed prior to beginning the setup process:
 - Tailwind CSS IntelliSense
 - Prisma
 - TypeScript and JavaScript Language Features
+- EditorConfig for VS Code
 
 ## Environment Setup
 
@@ -112,6 +113,38 @@ Generate the Prisma client:
 ```bash
 pnpm prisma generate
 ```
+
+## Code Style and Formatting
+
+### EditorConfig Setup
+
+The project uses `.editorconfig` to maintain consistent coding styles across different editors and IDEs. The configuration is as follows:
+
+```editorconfig
+root = true
+
+[*]
+indent_style = tab
+indent_size = 4
+
+[*.{jsx,tsx}]
+indent_size = 2
+```
+
+**Important Indentation Rules**:
+- **Default files**: Use **tabs** with a display width of **4 spaces**
+- **JSX/TSX files**: Use **tabs** with a display width of **2 spaces**
+- This ensures consistent formatting across all development environments
+
+**VS Code Setup**:
+1. Install the "EditorConfig for VS Code" extension
+2. The editor will automatically apply the indentation rules from `.editorconfig`
+3. Verify that your editor respects the `.editorconfig` file by checking the bottom-right corner of VS Code (should show "Tab Size: 4" or "Tab Size: 2" for JSX/TSX files)
+
+**Manual Configuration** (if not using EditorConfig extension):
+- Open VS Code settings (`Ctrl+,` or `Cmd+,`)
+- Set "Editor: Insert Spaces" to `false` (to use tabs)
+- Set "Editor: Tab Size" to `4` for general files, or let file-specific settings override for JSX/TSX
 
 ## Application Execution
 
@@ -237,16 +270,16 @@ import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 
 export async function GET() {
-    const session = await auth();
-    const user = session?.user;
+	const session = await auth();
+	const user = session?.user;
 
-    if (!user) {
-        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+	if (!user) {
+		return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+	}
 
-    const result = // ... implementation
+	const result = // ... implementation
 
-    return NextResponse.json({ data: result });
+	return NextResponse.json({ data: result });
 }
 ```
 
@@ -259,16 +292,16 @@ Create a page file in the appropriate directory:
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-    title: 'Page Title',
-    description: 'Page description',
+  title: 'Page Title',
+  description: 'Page description',
 };
 
 export default function YourPage() {
-    return (
-        <div>
-            <h1>Your Page Content</h1>
-        </div>
-    );
+  return (
+    <div>
+      <h1>Your Page Content</h1>
+    </div>
+  );
 }
 ```
 
@@ -288,16 +321,16 @@ Create reusable components in the `components/` directory:
 ```tsx
 // components/ui/mode-toggle.tsx
 interface ModeToggleProps {
-    label: string;
-    onClick: () => void;
+  label: string;
+  onClick: () => void;
 }
 
 export function ModeToggle({ label, onClick }: ModeToggleProps) {
-    return (
-        <button onClick={onClick} className="btn">
-            {label}
-        </button>
-    );
+  return (
+    <button onClick={onClick} className="btn">
+      {label}
+    </button>
+  );
 }
 ```
 
@@ -338,6 +371,13 @@ Error: Cannot find module '@/...'
 2. Confirm that `NEXTAUTH_URL` matches your domain
 3. Clear browser cookies and retry
 
+#### Indentation Issues
+**Resolution**:
+1. Ensure the "EditorConfig for VS Code" extension is installed and enabled
+2. Verify that `.editorconfig` file exists in the project root
+3. Reload VS Code window (`Ctrl+Shift+P` → "Developer: Reload Window")
+4. Check that no conflicting Prettier or ESLint indentation rules override EditorConfig
+
 ### Support Resources
 
 1. Consult existing documentation in `/docs`
@@ -350,9 +390,10 @@ Error: Cannot find module '@/...'
 ### Code Quality Standards
 1. Utilize TypeScript types consistently
 2. Adhere to ESLint configuration
-3. Compose descriptive commit messages
-4. Maintain focused, single-purpose components
-5. Extract reusable logic into custom hooks
+3. Follow the `.editorconfig` indentation rules (tabs for all files, 2-space display for JSX/TSX, 4-space for others)
+4. Compose descriptive commit messages
+5. Maintain focused, single-purpose components
+6. Extract reusable logic into custom hooks
 
 ### Performance Optimization
 1. Default to Server Components
@@ -367,13 +408,6 @@ Error: Cannot find module '@/...'
 3. Utilize parameterized database queries
 4. Implement proper authentication verification
 5. Maintain current dependency versions
-
-### Testing Guidelines
-1. Develop tests for critical functionality
-2. Include edge case scenarios
-3. Use descriptive test case names
-4. Ensure test isolation and independence
-5. Mock external dependencies appropriately
 
 ## Next Steps
 
