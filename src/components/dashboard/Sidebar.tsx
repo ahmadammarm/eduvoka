@@ -38,8 +38,8 @@ const data = {
 				},
 				{
 					icon: Book,
-					title: "Materi",
-					url: "#",
+					title: "Try Out UTBK",
+					url: "/try-out-utbk",
 					isActive: false,
 				},
 				{
