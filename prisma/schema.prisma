@@ -13,6 +13,11 @@ datasource db {
     provider = "mysql"
 }
 
+enum UTBKSessionType {
+    TPS
+    LITERASI
+}
+
 enum SoalUTBKType {
     PU // Pengetahuan Umum
     PBM // Pemahaman Bacaan & Menulis
@@ -33,11 +38,6 @@ enum GayaBelajar {
     KINESTHETIC
 }
 
-enum TipeSoal {
-    TPS
-    LITERASI
-}
-
 enum PaketUser {
     BASIC
     LITE
@@ -46,13 +46,13 @@ enum PaketUser {
 }
 
 model User {
-    id                String       @id @default(uuid())
+    id                String       @id @default(cuid())
     email             String       @unique
     name              String
     password          String?
     profileImage      String?
     createdAt         DateTime     @default(now())
-    updatedAt         DateTime	   @updatedAt
+    updatedAt         DateTime     @updatedAt
     gayaBelajar       GayaBelajar?
     role              Role         @default(USER)
     paketUser         PaketUser    @default(BASIC)
@@ -67,7 +67,7 @@ model User {
 }
 
 model Account {
-    id                String  @id @default(uuid())
+    id                String  @id @default(cuid())
     userId            String
     type              String
     provider          String
@@ -86,7 +86,7 @@ model Account {
 }
 
 model Session {
-    id           String   @id @default(uuid())
+    id           String   @id @default(cuid())
     sessionToken String   @unique
     userId       String
     expires      DateTime
@@ -95,7 +95,7 @@ model Session {
 }
 
 model PertanyaanKuisVAK {
-    id         String   @id @default(uuid())
+    id         String   @id @default(cuid())
     pertanyaan String   @db.Text
     createdAt  DateTime @default(now())
     updatedAt  DateTime @updatedAt
@@ -106,7 +106,7 @@ model PertanyaanKuisVAK {
 }
 
 model JawabanKuisVAK {
-    id String @id @default(uuid())
+    id String @id @default(cuid())
 
     kuisVAKId   String
     jawaban     String
@@ -119,7 +119,7 @@ model JawabanKuisVAK {
 }
 
 model JawabanUserKuisVAK {
-    id                  String @id @default(uuid())
+    id                  String @id @default(cuid())
     userId              String
     pertanyaanKuisVAKId String
     jawabanKuisVAKId    String
@@ -135,9 +135,10 @@ model JawabanUserKuisVAK {
 }
 
 model SoalUTBK {
-    id           String       @id
+    id           String          @id @default(cuid())
     tipe         SoalUTBKType
-    content      String       @db.Text
+    tipeSesi     UTBKSessionType
+    content      String          @db.Text
     kunciJawaban String
 
     pilihanJawaban PilihanJawaban[]
@@ -146,7 +147,7 @@ model SoalUTBK {
 }
 
 model PilihanJawaban {
-    id         String @id
+    id         String @id @default(cuid())
     soalUTBKId String
     label      String // A, B, C, D, E
     pilihan    String
@@ -158,7 +159,7 @@ model PilihanJawaban {
 }
 
 model PembahasanSoalUTBK {
-    id          String      @id
+    id          String      @id @default(cuid())
     soalUTBKId  String
     gayaBelajar GayaBelajar
     konten      String      @db.Text
@@ -172,9 +173,10 @@ model PembahasanSoalUTBK {
 }
 
 model UtbkSession {
-    id        String    @id
+    id        String          @id @default(cuid())
     userId    String
-    startedAt DateTime  @default(now())
+    type      UTBKSessionType
+    startedAt DateTime        @default(now())
     endedAt   DateTime?
     score     Int?
 
@@ -185,7 +187,7 @@ model UtbkSession {
 }
 
 model UtbkJawabanUser {
-    id         String    @id
+    id         String    @id @default(cuid())
     sessionId  String
     soalUTBKId String
     pilihanId  String? // null jika tidak dijawab
