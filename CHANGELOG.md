@@ -11,7 +11,5 @@
 - Database schema and migration setup using Prisma ORM.
 - Landing page development with responsive design.
 - Authentication module with credentials and OAuth support.
-
-### Added 
 - Pomodoro Layout
 - Integreted with Spotify 
