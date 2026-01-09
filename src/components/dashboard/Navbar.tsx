@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { Search } from "lucide-react";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -13,18 +14,25 @@ import LanguageSettings from "./LanguageSettings";
 import Notifications from "./Notifications";
 
 export default function DashboardNavbar() {
+	const [mounted, setMounted] = useState(false);
+	const isMobile = useIsMobile();
+
+	useEffect(() => {
+		const id = requestAnimationFrame(() => setMounted(true));
+		return () => cancelAnimationFrame(id);
+	}, []);
+
+	if (!mounted) return null;
+
 	return (
 		<header className="sticky top-6 z-10 flex items-center justify-between gap-4 px-2 bg-white dark:bg-stone-900 h-12 rounded-xl mb-4 mx-4 shadow-md border border-gray-100 dark:border-stone-800">
 			<div className="flex items-center gap-2">
 				<SidebarTrigger className="bg-white dark:bg-stone-900 rounded-md hover:bg-white dark:hover:bg-stone-900 hover:text-black dark:hover:text-white cursor-pointer" />
-				<Separator
-					orientation="vertical"
-					className="mr-2 data-[orientation=vertical]:h-4"
-				/>
+				<Separator orientation="vertical" className="mr-2 h-4" />
 				<div className="font-semibold md:text-lg text-sm">Hallo, User</div>
 			</div>
 
-			{!useIsMobile() && (
+			{!isMobile && (
 				<div className="flex flex-1 justify-center">
 					<Dialog>
 						<DialogTrigger asChild>
@@ -39,7 +47,7 @@ export default function DashboardNavbar() {
 			)}
 
 			<div className="flex items-center gap-1">
-				{useIsMobile() && (
+				{isMobile && (
 					<Dialog>
 						<DialogTrigger asChild>
 							<Button
@@ -55,7 +63,6 @@ export default function DashboardNavbar() {
 				)}
 
 				<LanguageSettings />
-
 				<AnimatedThemeToggler
 					className={buttonVariants({
 						variant: "ghost",
@@ -63,9 +70,7 @@ export default function DashboardNavbar() {
 						className: "rounded-lg hover:bg-black/80 dark:hover:bg-white/80",
 					})}
 				/>
-
 				<Notifications />
-
 				<UserNav />
 			</div>
 		</header>

@@ -10,18 +10,13 @@ export default withAuth(
 			return NextResponse.next();
 		}
 
-		console.log("Middleware - Path:", pathname);
-		console.log("Middleware - gayaBelajar:", token.gayaBelajar);
-
 
 		if (token.gayaBelajar && pathname.startsWith("/vak-quiz")) {
-			console.log("Redirecting to dashboard - user has gayaBelajar");
 			return NextResponse.redirect(new URL("/dashboard", req.url));
 		}
 
 
 		if (!token.gayaBelajar && pathname.startsWith("/dashboard")) {
-			console.log("Redirecting to vak-quiz - user needs to complete quiz");
 			return NextResponse.redirect(new URL("/vak-quiz", req.url));
 		}
 

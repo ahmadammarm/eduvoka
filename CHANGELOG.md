@@ -1,6 +1,7 @@
 ## [Unreleased]
 
 ### Added
+- UTBK Tryout simulation with specific timer per section.
 - Added dashboard layouting page with responsive design.
 - Added dependabot configuration for automated dependency updates for npm and GitHub Actions.
 - Added Pull Request template to standardize contributions.

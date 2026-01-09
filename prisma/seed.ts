@@ -1,13 +1,17 @@
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
-import { GayaBelajar } from "../generated/prisma/enums";
+import { GayaBelajar, SoalUTBKType } from "../generated/prisma/enums";
+import { MapTypeToSesi } from "@/lib/map-type-to-session";
 
 async function CreateUser() {
-	const hashedPassword = await bcrypt.hash("admineduvoka123", 10);
+	const email = "admineduvoka@example.com";
+	const existing = await prisma.user.findUnique({ where: { email } });
+	if (existing) return;
 
+	const hashedPassword = await bcrypt.hash("admineduvoka123", 10);
 	await prisma.user.create({
 		data: {
-			email: "admineduvoka@example.com",
+			email,
 			password: hashedPassword,
 			name: "Admin User",
 		},
@@ -159,13 +163,151 @@ async function CreatePertanyaanVAK() {
 	];
 
 	for (const pertanyaan of pertanyaanData) {
+		const exists = await prisma.pertanyaanKuisVAK.findFirst({
+			where: { pertanyaan: pertanyaan.pertanyaan },
+		});
+		if (exists) continue;
+
 		await prisma.pertanyaanKuisVAK.create({ data: pertanyaan });
 	}
 }
 
+export async function CreateSoalUTBK() {
+	const soalData = [
+		{
+			id: "soal-pu-1",
+			tipe: SoalUTBKType.PU,
+			content:
+				"Proklamasi kemerdekaan Indonesia dibacakan pada tanggal 17 Agustus 1945. Siapakah yang mengetik naskah proklamasi tersebut?",
+			kunciJawaban: "B",
+			pilihan: [
+				["A", "Soekarno"],
+				["B", "Sayuti Melik"],
+				["C", "Mohammad Hatta"],
+				["D", "Sutan Sjahrir"],
+				["E", "Ahmad Soebardjo"],
+			],
+		},
+		{
+			id: "soal-pbm-1",
+			tipe: SoalUTBKType.PBM,
+			content:
+				"Ide pokok paragraf adalah gagasan utama yang menjadi dasar pengembangan paragraf. Letak ide pokok biasanya terdapat pada...",
+			kunciJawaban: "A",
+			pilihan: [
+				["A", "Kalimat utama"],
+				["B", "Kalimat penjelas"],
+				["C", "Kalimat penutup"],
+				["D", "Kalimat transisi"],
+				["E", "Kalimat contoh"],
+			],
+		},
+		{
+			id: "soal-ppu-1",
+			tipe: SoalUTBKType.PPU,
+			content: "Tujuan utama pembentukan Undang-Undang Dasar 1945 adalah...",
+			kunciJawaban: "C",
+			pilihan: [
+				["A", "Mengatur pajak negara"],
+				["B", "Mengatur sistem perdagangan"],
+				["C", "Menjadi dasar hukum negara"],
+				["D", "Mengatur sistem pendidikan"],
+				["E", "Mengatur hubungan internasional"],
+			],
+		},
+		{
+			id: "soal-pk-1",
+			tipe: SoalUTBKType.PK,
+			content: "Jika 2x + 6 = 14, maka nilai x adalah...",
+			kunciJawaban: "B",
+			pilihan: [
+				["A", "2"],
+				["B", "4"],
+				["C", "6"],
+				["D", "8"],
+				["E", "10"],
+			],
+		},
+		{
+			id: "soal-litindo-1",
+			tipe: SoalUTBKType.LITERASIBINDO,
+			content:
+				"Makna kata \"akurat\" dalam kalimat 'Data yang disajikan harus akurat' adalah...",
+			kunciJawaban: "D",
+			pilihan: [
+				["A", "Cepat"],
+				["B", "Menarik"],
+				["C", "Lengkap"],
+				["D", "Tepat dan benar"],
+				["E", "Ringkas"],
+			],
+		},
+		{
+			id: "soal-litbing-1",
+			tipe: SoalUTBKType.LITERASIBINGG,
+			content: "Choose the correct meaning of the word \"reliable\".",
+			kunciJawaban: "A",
+			pilihan: [
+				["A", "Can be trusted"],
+				["B", "Very fast"],
+				["C", "Expensive"],
+				["D", "Beautiful"],
+				["E", "Complicated"],
+			],
+		},
+	];
+
+	for (const soal of soalData) {
+		await prisma.soalUTBK.upsert({
+			where: { id: soal.id },
+			update: {},
+			create: {
+				id: soal.id,
+				tipe: soal.tipe,
+				tipeSesi: MapTypeToSesi(soal.tipe),
+				content: soal.content,
+				kunciJawaban: soal.kunciJawaban,
+
+				pilihanJawaban: {
+					createMany: {
+						data: soal.pilihan.map(([label, text]) => ({
+							id: `${soal.id}-${label}`,
+							label,
+							pilihan: text,
+						})),
+						skipDuplicates: true,
+					},
+				},
+
+				pembahasan: {
+					createMany: {
+						data: [
+							{
+								id: `${soal.id}-visual`,
+								gayaBelajar: GayaBelajar.VISUAL,
+								konten: "Penjelasan disajikan dalam bentuk visual dan ringkas.",
+								updatedAt: new Date(),
+							},
+							{
+								id: `${soal.id}-auditori`,
+								gayaBelajar: GayaBelajar.AUDITORY,
+								konten: "Penjelasan disampaikan melalui narasi bertahap.",
+								updatedAt: new Date(),
+							},
+						],
+						skipDuplicates: true,
+					},
+				},
+			},
+		});
+	}
+}
+
+
 async function main() {
 	await CreateUser();
 	await CreatePertanyaanVAK();
+	await CreateSoalUTBK();
 }
 
 main()
