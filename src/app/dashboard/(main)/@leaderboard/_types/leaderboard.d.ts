@@ -1,11 +1,16 @@
+export interface LeaderboardUser {
+	userId: string;
+	rank: number;
+	score: number;
+	user: {
+		name: string;
+		profileImage: string | null;
+	};
+}
+
 export interface LeaderboardProps {
-	users: any[];
+	users: LeaderboardUser[];
 	page: number;
 	totalPages: number;
-	currentUser?: {
-		rank: number;
-		userId: string;
-		score: number;
-		user: any;
-	} | null;
+	currentUser?: LeaderboardUser | null;
 }

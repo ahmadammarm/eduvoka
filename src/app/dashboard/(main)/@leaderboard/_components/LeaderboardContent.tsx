@@ -7,6 +7,7 @@ import {
 } from "../_lib/data";
 import LeaderboardTable from "./LeaderboardTable";
 import { auth } from "@/lib/auth";
+import { LeaderboardUser } from "../_types/leaderboard";
 
 export default async function LeaderboardContent({
 	currentPage,
@@ -47,18 +48,18 @@ export default async function LeaderboardContent({
 					</TabsList>
 					<TabsContent value="today" className="mt-14">
 						<LeaderboardTable
-							users={todayData}
+							users={todayData as LeaderboardUser[]}
 							page={1}
 							totalPages={1}
-							currentUser={currentUserRankToday}
+							currentUser={currentUserRankToday as LeaderboardUser | null}
 						/>
 					</TabsContent>
 					<TabsContent value="all-time" className="mt-14">
 						<LeaderboardTable
-							users={allTimeData.leaderboard}
+							users={allTimeData.leaderboard as LeaderboardUser[]}
 							page={currentPage}
 							totalPages={allTimeData.totalPages}
-							currentUser={currentUserRank}
+							currentUser={currentUserRank as LeaderboardUser | null}
 						/>
 					</TabsContent>
 				</Tabs>
