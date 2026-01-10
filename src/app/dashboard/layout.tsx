@@ -1,7 +1,7 @@
-import DashboardFooter from "@/components/dashboard/Footer";
-import DashboardNavbar from "@/components/dashboard/Navbar";
-import { DashboardSidebar } from "@/components/dashboard/Sidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import DashboardFooter from "./_components/Footer";
+import DashboardNavbar from "./_components/Navbar";
+import { DashboardSidebar } from "./_components/Sidebar";
 
 export default function DashboardLayout({
 	children,

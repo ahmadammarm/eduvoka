@@ -6,7 +6,7 @@ export default function DashboardFooter() {
 		<footer className="mt-auto pt-8 pb-4 px-6">
 			<div className="flex items-center justify-between text-sm text-black/60 dark:text-white/60">
 				<div className="flex items-center gap-2">
-					<span>&copy; {new Date().getFullYear()} Eduvoka.</span>
+					<span>&copy; 2026 Eduvoka.</span>
 					<span className="hidden sm:inline">All rights reserved.</span>
 				</div>
 				<div className="flex items-center gap-4">

@@ -12,10 +12,18 @@ import UserNav from "./UserNav";
 import SearchDialogContent from "./SearchDialogContent";
 import LanguageSettings from "./LanguageSettings";
 import Notifications from "./Notifications";
+import { useSession } from "next-auth/react";
+import { Spinner } from "@/components/ui/spinner";
+import { UserNavProps } from "../_types/user";
 
 export default function DashboardNavbar() {
 	const [mounted, setMounted] = useState(false);
 	const isMobile = useIsMobile();
+
+	const { data: session, status } = useSession();
+	if (status === "loading") {
+		return <Spinner />;
+	}
 
 	useEffect(() => {
 		const id = requestAnimationFrame(() => setMounted(true));
@@ -29,7 +37,9 @@ export default function DashboardNavbar() {
 			<div className="flex items-center gap-2">
 				<SidebarTrigger className="bg-white dark:bg-stone-900 rounded-md hover:bg-white dark:hover:bg-stone-900 hover:text-black dark:hover:text-white cursor-pointer" />
 				<Separator orientation="vertical" className="mr-2 h-4" />
-				<div className="font-semibold md:text-lg text-sm">Hallo, User</div>
+				<div className="font-semibold md:text-lg text-sm">
+					Hallo, {session?.user?.name}
+				</div>
 			</div>
 
 			{!isMobile && (
@@ -71,7 +81,7 @@ export default function DashboardNavbar() {
 					})}
 				/>
 				<Notifications />
-				<UserNav />
+				<UserNav session={session as UserNavProps["session"]} />
 			</div>
 		</header>
 	);

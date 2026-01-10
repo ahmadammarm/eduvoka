@@ -1,6 +1,6 @@
 import { Book, CreditCard, Search, Settings } from "lucide-react";
 import { DialogContent, DialogTitle } from "@/components/ui/dialog";
-import { Button } from "../ui/button";
+import { Button } from "@/components/ui/button";
 
 export default function SearchDialogContent() {
 	return (

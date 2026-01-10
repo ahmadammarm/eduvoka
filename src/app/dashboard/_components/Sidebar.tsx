@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import {
 	Book,
@@ -24,7 +24,7 @@ import {
 	SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
 import Image from "next/image";
-import { Button } from "../ui/button";
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -78,7 +78,6 @@ const data = {
 	],
 };
 
-
 export function DashboardSidebar(props: React.ComponentProps<typeof Sidebar>) {
 	const pathname = usePathname();
 
@@ -114,19 +113,27 @@ export function DashboardSidebar(props: React.ComponentProps<typeof Sidebar>) {
 										const isDashboardRoot = item.url === "/dashboard";
 										const isActive = isDashboardRoot
 											? pathname === "/dashboard"
-											: pathname === item.url || pathname.startsWith(item.url + "/");
+											: pathname === item.url ||
+											  pathname.startsWith(item.url + "/");
 
 										return (
 											<SidebarMenuSubItem key={item.title}>
 												<SidebarMenuSubButton
 													asChild
-													className={`py-5 rounded-lg transition-colors ${isActive
-														? "bg-primary text-white hover:bg-primary"
-														: "border border-primary/10 bg-stone-100 dark:bg-stone-900 hover:bg-primary/10 hover:text-black dark:hover:text-white"
-														}`}
+													className={`py-5 rounded-lg transition-colors ${
+														isActive
+															? "bg-primary text-white hover:text-white hover:bg-primary dark:hover:text-white"
+															: "border border-primary/10 bg-stone-100 dark:bg-stone-900 hover:bg-primary/10 hover:text-black dark:hover:text-white"
+													}`}
 												>
 													<Link href={item.url}>
-														<item.icon className="size-4 mr-2" />
+														<item.icon
+															className={`size-4 mr-2 ${
+																isActive
+																	? "stroke-white"
+																	: "stroke-black dark:stroke-white"
+															}`}
+														/>
 														{item.title}
 													</Link>
 												</SidebarMenuSubButton>
