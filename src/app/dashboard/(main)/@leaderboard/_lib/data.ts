@@ -33,35 +33,53 @@ export async function getLeaderboardData(page: number = 1) {
 
 			const paginatedScores = bestScores.slice(skip, skip + pageSize);
 
-			const leaderboard = await Promise.all(
-				paginatedScores.map(async (score, index) => {
-					const user = await prisma.user.findUnique({
-						where: { id: score.userId },
-					});
+			const userIds = paginatedScores.map((score) => score.userId);
+			const users = await prisma.user.findMany({
+				where: { id: { in: userIds } },
+			});
 
-					const session = await prisma.utbkSession.findFirst({
-						where: {
-							userId: score.userId,
-							score: score._max.score,
-							endedAt: {
-								not: null,
-							},
-						},
-						orderBy: {
-							endedAt: "desc",
-						},
-					});
-
-					return {
-						rank: skip + index + 1,
+			const usersById = new Map<string, (typeof users)[number]>();
+			for (const user of users) {
+				usersById.set(user.id, user);
+			}
+			const sessions = await prisma.utbkSession.findMany({
+				where: {
+					OR: paginatedScores.map((score) => ({
 						userId: score.userId,
-						score: score._max.score || 0,
-						user: user,
-						startedAt: session?.startedAt,
-						endedAt: session?.endedAt,
-					};
-				})
-			);
+						score: score._max.score,
+						endedAt: {
+							not: null,
+						},
+					})),
+				},
+				orderBy: {
+					endedAt: "desc",
+				},
+			});
+
+			const sessionsByUserId = new Map<
+				string,
+				(typeof sessions)[number]
+			>();
+			for (const session of sessions) {
+				if (!sessionsByUserId.has(session.userId)) {
+					sessionsByUserId.set(session.userId, session);
+				}
+			}
+
+			const leaderboard = paginatedScores.map((score, index) => {
+				const user = usersById.get(score.userId) || null;
+				const session = sessionsByUserId.get(score.userId);
+
+				return {
+					rank: skip + index + 1,
+					userId: score.userId,
+					score: score._max.score || 0,
+					user: user || null,
+					startedAt: session?.startedAt || null,
+					endedAt: session?.endedAt || null,
+				};
+			});
 
 			return {
 				leaderboard,
@@ -101,38 +119,43 @@ export async function getLeaderboardToday() {
 				take: 10,
 			});
 
-			const leaderboard = await Promise.all(
-				bestScores.map(async (score, index) => {
-					const user = await prisma.user.findUnique({
-						where: { id: score.userId },
-					});
+			const userIds = bestScores.map((score) => score.userId);
+			const users = await prisma.user.findMany({
+				where: { id: { in: userIds } },
+			});
+			const userMap = new Map(users.map((user) => [user.id, user]));
 
-					const session = await prisma.utbkSession.findFirst({
-						where: {
-							userId: score.userId,
-							score: score._max.score,
-							startedAt: {
-								gte: today,
-							},
-							endedAt: {
-								not: null,
-							},
-						},
-						orderBy: {
-							endedAt: "desc",
-						},
-					});
+			const sessions = await prisma.utbkSession.findMany({
+				where: {
+					userId: { in: userIds },
+					startedAt: { gte: today },
+					endedAt: { not: null },
+				},
+				orderBy: {
+					endedAt: "desc",
+				},
+			});
 
-					return {
-						rank: index + 1,
-						userId: score.userId,
-						score: score._max.score || 0,
-						user: user,
-						startedAt: session?.startedAt,
-						endedAt: session?.endedAt,
-					};
-				})
-			);
+			const sessionMap = new Map<string, (typeof sessions)[0]>();
+			for (const session of sessions) {
+				if (!sessionMap.has(session.userId)) {
+					sessionMap.set(session.userId, session);
+				}
+			}
+
+			const leaderboard = bestScores.map((score, index) => {
+				const user = userMap.get(score.userId);
+				const session = sessionMap.get(score.userId);
+
+				return {
+					rank: index + 1,
+					userId: score.userId,
+					score: score._max.score || 0,
+					user: user || null,
+					startedAt: session?.startedAt || null,
+					endedAt: session?.endedAt || null,
+				};
+			});
 
 			return leaderboard;
 		},
@@ -144,7 +167,7 @@ export async function getLeaderboardToday() {
 export async function getCurrentUserRank(userId: string) {
 	return unstable_cache(
 		async (userId: string) => {
-			const allBestScores = await prisma.utbkSession.groupBy({
+			const userBestScore = await prisma.utbkSession.groupBy({
 				by: ["userId"],
 				where: {
 					endedAt: {
@@ -154,43 +177,49 @@ export async function getCurrentUserRank(userId: string) {
 				_max: {
 					score: true,
 				},
-				orderBy: {
-					_max: {
-						score: "desc",
-					},
-				},
 			});
 
-			const userIndex = allBestScores.findIndex(
-				(s) => s.userId === userId
-			);
-
-			if (userIndex === -1) {
+			if (!userBestScore.length || !userBestScore[0]._max.score) {
 				return null;
 			}
 
-			const userScore = allBestScores[userIndex];
-			const user = await prisma.user.findUnique({
-				where: { id: userId },
-			});
+			const userScore = userBestScore[0]._max.score;
 
-			const session = await prisma.utbkSession.findFirst({
-				where: {
-					userId: userId,
-					score: userScore._max.score,
-					endedAt: {
-						not: null,
+			const rankResult = await prisma.$queryRaw<[{ rank: bigint }]>`
+					SELECT CAST(COUNT(*) + 1 AS UNSIGNED) as \`rank\`
+					FROM (
+							SELECT userId, MAX(CAST(score AS DECIMAL(10,2))) as maxScore
+							FROM UtbkSession
+							WHERE endedAt IS NOT NULL
+							GROUP BY userId
+					) as bestScores
+					WHERE bestScores.maxScore > CAST(${userScore} AS DECIMAL(10,2))
+			`;
+
+			const rank = Number(rankResult[0].rank);
+
+			const [user, session] = await Promise.all([
+				prisma.user.findUnique({
+					where: { id: userId },
+				}),
+				prisma.utbkSession.findFirst({
+					where: {
+						userId: userId,
+						score: userScore,
+						endedAt: {
+							not: null,
+						},
 					},
-				},
-				orderBy: {
-					endedAt: "desc",
-				},
-			});
+					orderBy: {
+						endedAt: "desc",
+					},
+				}),
+			]);
 
 			return {
-				rank: userIndex + 1,
+				rank,
 				userId: userId,
-				score: userScore._max.score || 0,
+				score: userScore,
 				user: user,
 				startedAt: session?.startedAt,
 				endedAt: session?.endedAt,
@@ -207,9 +236,10 @@ export async function getCurrentUserRankToday(userId: string) {
 			const today = new Date();
 			today.setHours(0, 0, 0, 0);
 
-			const allBestScores = await prisma.utbkSession.groupBy({
+			const userBestScore = await prisma.utbkSession.groupBy({
 				by: ["userId"],
 				where: {
+					userId: userId,
 					startedAt: {
 						gte: today,
 					},
@@ -220,46 +250,53 @@ export async function getCurrentUserRankToday(userId: string) {
 				_max: {
 					score: true,
 				},
-				orderBy: {
-					_max: {
-						score: "desc",
-					},
-				},
 			});
 
-			const userIndex = allBestScores.findIndex(
-				(s) => s.userId === userId
-			);
-
-			if (userIndex === -1) {
+			if (!userBestScore.length || !userBestScore[0]._max.score) {
 				return null;
 			}
 
-			const userScore = allBestScores[userIndex];
-			const user = await prisma.user.findUnique({
-				where: { id: userId },
-			});
+			const userScore = userBestScore[0]._max.score;
 
-			const session = await prisma.utbkSession.findFirst({
-				where: {
-					userId: userId,
-					score: userScore._max.score,
-					startedAt: {
-						gte: today,
+			const rankResult = await prisma.$queryRaw<[{ rank: bigint }]>`
+					SELECT CAST(COUNT(*) + 1 AS UNSIGNED) as \`rank\`
+					FROM (
+							SELECT userId, MAX(CAST(score AS DECIMAL(10,2))) as maxScore
+							FROM UtbkSession
+							WHERE startedAt >= ${today}
+							AND endedAt IS NOT NULL
+							GROUP BY userId
+					) as bestScores
+					WHERE bestScores.maxScore > CAST(${userScore} AS DECIMAL(10,2))
+			`;
+
+			const rank = Number(rankResult[0].rank);
+
+			const [user, session] = await Promise.all([
+				prisma.user.findUnique({
+					where: { id: userId },
+				}),
+				prisma.utbkSession.findFirst({
+					where: {
+						userId: userId,
+						score: userScore,
+						startedAt: {
+							gte: today,
+						},
+						endedAt: {
+							not: null,
+						},
 					},
-					endedAt: {
-						not: null,
+					orderBy: {
+						endedAt: "desc",
 					},
-				},
-				orderBy: {
-					endedAt: "desc",
-				},
-			});
+				}),
+			]);
 
 			return {
-				rank: userIndex + 1,
+				rank,
 				userId: userId,
-				score: userScore._max.score || 0,
+				score: userScore,
 				user: user,
 				startedAt: session?.startedAt,
 				endedAt: session?.endedAt,
