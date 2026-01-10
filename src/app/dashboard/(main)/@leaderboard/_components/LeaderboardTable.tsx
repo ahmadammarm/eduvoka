@@ -11,7 +11,7 @@ import {
 	PaginationNext,
 	PaginationPrevious,
 } from "@/components/ui/pagination";
-import { LeaderboardProps } from "../_types/leaderboard";
+import { LeaderboardProps, LeaderboardUser } from "../_types/leaderboard";
 
 export default function LeaderboardTable({
 	users,
@@ -34,12 +34,12 @@ export default function LeaderboardTable({
 	return (
 		<div className="space-y-4">
 			{/* Top 3 Podium */}
-			{topThree.length >= 0 && (
+			{topThree.length >= 3 && (
 				<div className="relative flex items-end justify-center gap-4 mb-8">
 					{/* Rank 2 */}
 					<div className="flex flex-col items-center">
 						<Avatar className="w-16 h-16 mb-2 border-4 border-slate-400">
-							<AvatarImage src={topThree[1]?.user?.image || ""} />
+							<AvatarImage src={topThree[1]?.user?.profileImage || ""} />
 							<AvatarFallback className="bg-gray-200 text-gray-600">
 								{topThree[1]?.user?.name?.substring(0, 2).toUpperCase() || "?"}
 							</AvatarFallback>
@@ -57,7 +57,7 @@ export default function LeaderboardTable({
 					<div className="flex flex-col items-center -mt-8">
 						<div className="relative">
 							<Avatar className="w-20 h-20 mb-2 border-4 border-yellow-400">
-								<AvatarImage src={topThree[0]?.user?.image || ""} />
+								<AvatarImage src={topThree[0]?.user?.profileImage || ""} />
 								<AvatarFallback className="bg-gray-200 text-gray-600">
 									{topThree[0]?.user?.name?.substring(0, 2).toUpperCase() ||
 										"?"}
@@ -77,7 +77,7 @@ export default function LeaderboardTable({
 					{/* Rank 3 */}
 					<div className="flex flex-col items-center">
 						<Avatar className="w-16 h-16 mb-2 border-4 border-yellow-800">
-							<AvatarImage src={topThree[2]?.user?.image || ""} />
+							<AvatarImage src={topThree[2]?.user?.profileImage || ""} />
 							<AvatarFallback className="bg-gray-200 text-gray-600">
 								{topThree[2]?.user?.name?.substring(0, 2).toUpperCase() || "?"}
 							</AvatarFallback>
@@ -107,7 +107,7 @@ export default function LeaderboardTable({
 				{/* List Users */}
 				<div className="divide-y divide-gray-200 dark:divide-stone-700">
 					{remainingUsers.length > 0 ? (
-						remainingUsers.map((user: any) => (
+						remainingUsers.map((user: LeaderboardUser) => (
 							<div
 								key={user.userId}
 								className="px-6 py-4 flex items-center justify-between gap-4"
@@ -117,7 +117,7 @@ export default function LeaderboardTable({
 								</span>
 								<div className="flex items-center gap-3 flex-1">
 									<Avatar className="w-10 h-10">
-										<AvatarImage src={user.user?.image || ""} />
+										<AvatarImage src={user.user?.profileImage || ""} />
 										<AvatarFallback className="bg-gray-200 text-gray-600">
 											{user.user?.name?.substring(0, 2).toUpperCase() || "U"}
 										</AvatarFallback>
@@ -145,7 +145,7 @@ export default function LeaderboardTable({
 						<div className="flex items-center gap-3 flex-1">
 							<Avatar className="w-10 h-10">
 								<AvatarImage
-									src={currentUser.user?.image || ""}
+									src={currentUser.user?.profileImage || ""}
 									alt={currentUser.user?.name || "User"}
 								/>
 								<AvatarFallback className="bg-white text-primary font-semibold">
