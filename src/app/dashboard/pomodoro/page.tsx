@@ -2,7 +2,6 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { signOut } from "next-auth/react";
 import { useState, useEffect } from "react";
 import Swal from "sweetalert2";
 
