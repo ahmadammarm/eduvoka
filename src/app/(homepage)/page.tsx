@@ -1,11 +1,11 @@
-import Navbar from "@/components/homepage/Navbar";
-import Hero from "@/components/homepage/Hero";
-import Features from "@/components/homepage/Features";
-import { TestimonialsSection } from "@/components/homepage/Testimonials";
-import { NewReleasePromo } from "@/components/homepage/NewRelease";
-import { FAQSection } from "@/components/homepage/Faq";
-import { PricingSection } from "@/components/homepage/Pricing";
-import { StickyFooter } from "@/components/homepage/Footer";
+import { FAQSection } from "./_components/Faq";
+import Features from "./_components/Features";
+import { StickyFooter } from "./_components/Footer";
+import Hero from "./_components/Hero";
+import Navbar from "./_components/Navbar";
+import { NewReleasePromo } from "./_components/NewRelease";
+import { PricingSection } from "./_components/Pricing";
+import { TestimonialsSection } from "./_components/Testimonials";
 
 export default function Home() {
 	return (

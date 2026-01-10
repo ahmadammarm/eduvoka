@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
-import { BookOpen, Sparkles } from "lucide-react";
+import { BookOpen } from "lucide-react";
 
 export default function Hero() {
 	const [mounted, setMounted] = useState(false);
@@ -28,7 +28,10 @@ export default function Hero() {
 							transition={{ duration: 0.5 }}
 							className="mb-8"
 						>
-							<Badge variant="secondary" className="inline-flex items-center gap-2 px-4 py-2 text-sm">
+							<Badge
+								variant="secondary"
+								className="inline-flex items-center gap-2 px-4 py-2 text-sm"
+							>
 								<BookOpen size={12} />
 								Easy Learning
 							</Badge>
@@ -41,7 +44,10 @@ export default function Hero() {
 							transition={{ duration: 0.5, delay: 0.1 }}
 							className="mb-8"
 						>
-							<h1 id="main-title" className="text-4xl font-bold tracking-tight text-foreground sm:text-6xl lg:text-7xl">
+							<h1
+								id="main-title"
+								className="text-4xl font-bold tracking-tight text-foreground sm:text-6xl lg:text-7xl"
+							>
 								Platform E-Learning <br />
 								<em className="italic">Adaptif</em>,
 								<br />
@@ -56,9 +62,10 @@ export default function Hero() {
 							transition={{ duration: 0.5, delay: 0.2 }}
 							className="mx-auto mb-12 max-w-2xl text-lg text-muted-foreground"
 						>
-							EDUVOKA adalah platform e-learning adaptif yang memanfaatkan model VAK (Visual, Auditory, Kinesthetic) dan
-							AI (Artificial Intelligence) untuk memberikan pengalaman belajar yang personal dan efektif bagi setiap
-							individu.
+							EDUVOKA adalah platform e-learning adaptif yang memanfaatkan model
+							VAK (Visual, Auditory, Kinesthetic) dan AI (Artificial
+							Intelligence) untuk memberikan pengalaman belajar yang personal
+							dan efektif bagi setiap individu.
 						</motion.p>
 
 						<motion.div
