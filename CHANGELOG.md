@@ -1,6 +1,7 @@
 ## [Unreleased]
 
 ### Added
+- Leaderboard feature to track utbk tryout scores among users.
 - Pomodoro Layout
 - Integreted with Spotify 
 - UTBK Tryout simulation with specific timer per section.
