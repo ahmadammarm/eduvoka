@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ChartColumnBig, Check, DollarSign, Sparkles } from "lucide-react";
+import { ChartColumnBig, Check } from "lucide-react";
 import { useState } from "react";
 
 const pricingPlans = [
@@ -9,7 +9,12 @@ const pricingPlans = [
 		name: "Starter",
 		price: "Free",
 		description: "Perfect for getting started with v0",
-		features: ["5 components per month", "Basic templates", "Community support", "Standard components"],
+		features: [
+			"5 components per month",
+			"Basic templates",
+			"Community support",
+			"Standard components",
+		],
 		popular: false,
 		cta: "Get Started",
 	},
@@ -69,7 +74,9 @@ export function PricingSection() {
 						className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm mb-6"
 					>
 						<ChartColumnBig className="w-4 h-4 text-[#e78a53]" />
-						<span className="text-sm font-medium text-black dark:text-white/80">Pricing</span>
+						<span className="text-sm font-medium text-black dark:text-white/80">
+							Pricing
+						</span>
 					</motion.div>
 
 					<h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-black via-black to-black/60 dark:from-white dark:via-white dark:to-white/60 bg-clip-text text-transparent mb-4">
@@ -77,7 +84,8 @@ export function PricingSection() {
 					</h2>
 
 					<p className="text-lg text-black/60 dark:text-white/60 max-w-2xl mx-auto mb-8">
-						Pilih paket yang sesuai dengan kebutuhan belajarmu dan nikmati fitur-fitur terbaik dari EDUVOKA.
+						Pilih paket yang sesuai dengan kebutuhan belajarmu dan nikmati
+						fitur-fitur terbaik dari EDUVOKA.
 					</p>
 
 					{/* Monthly/Annual Toggle */}
@@ -141,10 +149,14 @@ export function PricingSection() {
 							<div className="flex flex-col h-full">
 								<div className="grow">
 									<div className="text-center mb-8">
-										<h3 className="text-xl font-bold text-black dark:text-white mb-2">{plan.name}</h3>
+										<h3 className="text-xl font-bold text-black dark:text-white mb-2">
+											{plan.name}
+										</h3>
 										<div className="flex items-baseline justify-center gap-1 mb-2">
 											{plan.price ? (
-												<span className="text-4xl font-bold text-black dark:text-white">{plan.price}</span>
+												<span className="text-4xl font-bold text-black dark:text-white">
+													{plan.price}
+												</span>
 											) : (
 												<>
 													<span className="text-4xl font-bold text-black dark:text-white">
@@ -156,14 +168,21 @@ export function PricingSection() {
 												</>
 											)}
 										</div>
-										<p className="text-black/60 dark:text-white/60 text-sm">{plan.description}</p>
+										<p className="text-black/60 dark:text-white/60 text-sm">
+											{plan.description}
+										</p>
 									</div>
 
 									<ul className="space-y-4 mb-8">
 										{plan.features.map((feature, featureIndex) => (
-											<li key={featureIndex} className="flex items-center gap-3">
+											<li
+												key={featureIndex}
+												className="flex items-center gap-3"
+											>
 												<Check className="w-5 h-5 text-[#e78a53] shrink-0" />
-												<span className="text-black dark:text-white/80 text-sm">{feature}</span>
+												<span className="text-black dark:text-white/80 text-sm">
+													{feature}
+												</span>
 											</li>
 										))}
 									</ul>
@@ -193,7 +212,9 @@ export function PricingSection() {
 					transition={{ duration: 0.6, delay: 0.4 }}
 					className="text-center mt-16"
 				>
-					<p className="text-black/60 dark:text-white/60 mb-4">Butuh paket khusus untukmu?</p>
+					<p className="text-black/60 dark:text-white/60 mb-4">
+						Butuh paket khusus untukmu?
+					</p>
 					<motion.button
 						whileHover={{ scale: 1.05 }}
 						whileTap={{ scale: 0.95 }}

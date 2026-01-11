@@ -1,12 +1,12 @@
 "use client";
 
-import { FollowerPointerCard } from "../ui/following-pointer";
 import { motion, useInView } from "framer-motion";
 import { useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
-import { Marquee } from "../magicui/marquee";
-import { AnimatedBeam } from "../ui/animated-beam";
+import { Marquee } from "@/components/magicui/marquee";
+import { AnimatedBeam } from "@/components/ui/animated-beam";
+import { FollowerPointerCard } from "@/components/ui/following-pointer";
 
 export default function Features() {
 	const ref = useRef(null);

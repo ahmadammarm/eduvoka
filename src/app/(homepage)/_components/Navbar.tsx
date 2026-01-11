@@ -2,14 +2,21 @@
 
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import { Button, buttonVariants } from "../ui/button";
 import Image from "next/image";
-import { AnimatedThemeToggler } from "../ui/animated-theme-toggler";
+import { AnimatedThemeToggler } from "@/components/ui/animated-theme-toggler";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { useSession } from "next-auth/react";
+import { Spinner } from "@/components/ui/spinner";
 
 export default function Navbar() {
 	const [isScrolled, setIsScrolled] = useState(false);
 	const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 	const [activeSection, setActiveSection] = useState("hero");
+
+	const { data: session, status } = useSession();
+	if (status === "loading") {
+		return <Spinner />;
+	}
 
 	useEffect(() => {
 		const handleScroll = () => {
@@ -207,21 +214,33 @@ export default function Navbar() {
 				</div>
 
 				<div className="flex items-center">
-					<Button
-						variant="link"
-						className="relative z-50 font-medium cursor-pointer transition-colors hover:text-primary hover:no-underline text-muted-foreground text-sm"
-						asChild
-					>
-						<Link href="/auth/sign-in">Sign in</Link>
-					</Button>
+					{!session ? (
+						<>
+							<Button
+								variant="link"
+								className="relative z-50 font-medium cursor-pointer transition-colors hover:text-primary hover:no-underline text-muted-foreground text-sm"
+								asChild
+							>
+								<Link href="/auth/sign-in">Sign in</Link>
+							</Button>
 
-					<Button
-						variant="default"
-						className="relative z-50 font-bold cursor-pointer rounded-full hover:-translate-y-0.5 transition duration-200"
-						asChild
-					>
-						<Link href="/auth/sign-up">Sign up</Link>
-					</Button>
+							<Button
+								variant="default"
+								className="relative z-50 font-bold cursor-pointer rounded-full hover:-translate-y-0.5 transition duration-200"
+								asChild
+							>
+								<Link href="/auth/sign-up">Sign up</Link>
+							</Button>
+						</>
+					) : (
+						<Button
+							variant="default"
+							className="relative z-50 font-bold cursor-pointer rounded-full hover:-translate-y-0.5 transition duration-200"
+							asChild
+						>
+							<Link href="/dashboard">Dashboard</Link>
+						</Button>
+					)}
 
 					{/* theme changer */}
 					<AnimatedThemeToggler

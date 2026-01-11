@@ -8,10 +8,11 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Button } from "../ui/button";
+import { Button } from "@/components/ui/button";
 import { signOut } from "next-auth/react";
+import { UserNavProps } from "../_types/user";
 
-export default function UserNav() {
+export default function UserNav({ session }: UserNavProps) {
 	const handleSignout = () => {
 		signOut({ callbackUrl: "/auth/sign-in" });
 	};
@@ -26,11 +27,11 @@ export default function UserNav() {
 				>
 					<Avatar className="w-full h-full rounded-lg">
 						<AvatarImage
-							src="https://avatars.githubusercontent.com/ahmadammarm"
-							alt="@eduvokaUser"
+							src={session?.user?.image || ""}
+							alt={session?.user?.name || "User Avatar"}
 						/>
 						<AvatarFallback className="rounded-lg bg-black/80 text-white">
-							EU
+							{session?.user?.name?.slice(0, 2)}
 						</AvatarFallback>
 					</Avatar>
 				</Button>
@@ -39,15 +40,15 @@ export default function UserNav() {
 				<DropdownMenuLabel className="flex gap-2">
 					<Avatar className="w-10 h-10 mt-1 rounded-full">
 						<AvatarImage
-							src="https://avatars.githubusercontent.com/ahmadammarm"
-							alt="@eduvokaUser"
+							src={session?.user?.image || ""}
+							alt={session?.user?.name || "User Avatar"}
 						/>
-						<AvatarFallback>EU</AvatarFallback>
+						<AvatarFallback>{session?.user?.name?.slice(0, 2)}</AvatarFallback>
 					</Avatar>
 					<div className="wrap-anywhere">
-						<div className="text-base font-semibold">Eduvoka User</div>
+						<div className="text-base font-semibold">{session?.user?.name}</div>
 						<div className="text-sm font-light text-muted-foreground">
-							ahmadammar@eduvoka.com
+							{session?.user?.email}
 						</div>
 					</div>
 				</DropdownMenuLabel>

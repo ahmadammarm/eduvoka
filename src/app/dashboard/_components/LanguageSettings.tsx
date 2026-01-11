@@ -8,8 +8,8 @@ import {
 	DropdownMenuRadioItem,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Button } from "../ui/button";
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
 
 export default function LanguageSettings() {
 	const [lang, setLang] = useState("indonesia");
