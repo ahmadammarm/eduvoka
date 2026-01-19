@@ -45,3 +45,6 @@ generated
 
 /generated/prisma
 .env*.local
+
+# agent
+.agent
