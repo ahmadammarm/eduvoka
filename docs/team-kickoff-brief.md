@@ -264,186 +264,260 @@
 
 ---
 
-## 4. Modular Responsibility: The 4 Pillars
+## 4. Modular Responsibility: The 5 Pillars
 
-### Tim Kita = 4 Orang, 4 Pilar Mandiri
+### Tim Kita = 5 Orang, 1 Misi
+
+> *"Kesuksesan kita bergantung pada sinkronisasi sempurna antara logika matematika/pedagogi dan implementasi kode."*
 
 ```
 ╔══════════════════════════════════════════════════════════════════════════╗
 ║                        TEAM RESPONSIBILITY MAP                            ║
 ╠══════════════════════════════════════════════════════════════════════════╣
 ║                                                                          ║
-║   ┌──────────────┐        ┌──────────────┐                              ║
-║   │   PERSON A   │───────▶│   PERSON C   │                              ║
-║   │   Metric     │ scores │   Dashboard  │                              ║
-║   │   Engineer   │        │   Visualizer │                              ║
-║   └──────────────┘        └──────────────┘                              ║
-║          │                       ▲                                       ║
-║          │ raw events            │ clusters                              ║
-║          ▼                       │                                       ║
-║   ┌──────────────┐        ┌──────────────┐                              ║
-║   │   PERSON B   │───────▶│   PERSON D   │                              ║
-║   │   Gemini     │clusters│   Socratic   │                              ║
-║   │   Analyst    │        │   UI/Chat    │                              ║
-║   └──────────────┘        └──────────────┘                              ║
+║                         ┌──────────────────┐                             ║
+║                         │   🎯 TECH LEAD   │                             ║
+║                         │   Backend &      │                             ║
+║                         │   Integration    │                             ║
+║                         └────────┬─────────┘                             ║
+║                                  │                                       ║
+║              ┌───────────────────┼───────────────────┐                   ║
+║              │                   │                   │                   ║
+║              ▼                   ▼                   ▼                   ║
+║    ┌──────────────┐    ┌──────────────┐    ┌──────────────┐             ║
+║    │  PERSON D    │    │  PERSON B    │    │  PERSON C    │             ║
+║    │  Data &      │───▶│  AI & Prompt │───▶│  Frontend &  │             ║
+║    │  Metrics     │    │  Specialist  │    │  UX          │             ║
+║    └──────────────┘    └──────────────┘    └──────────────┘             ║
+║           │                   │                   │                      ║
+║           │                   │                   │                      ║
+║           └───────────────────┼───────────────────┘                      ║
+║                               ▼                                          ║
+║                    ┌──────────────────┐                                  ║
+║                    │   PERSON E       │                                  ║
+║                    │   📐 Math &      │                                  ║
+║                    │   Education      │                                  ║
+║                    │   Expert         │                                  ║
+║                    └──────────────────┘                                  ║
 ║                                                                          ║
 ╚══════════════════════════════════════════════════════════════════════════╝
 ```
 
+**Kunci Kolaborasi:**
+- Person E (Pedagogi) **memvalidasi** formula Person D (Metric) sebelum coding
+- Person E **merancang** alur dialog PAPE yang diimplementasi Person B & C
+- Tech Lead **mengintegrasikan** semua output menjadi sistem yang utuh
+
 ---
 
-### 👤 PERSON A: Metric Engineer
+### 🎯 TECH LEAD: Backend & Integration Hub
 
 **Mission:**  
-*"Ubah setiap klik dan detik menjadi insight yang bisa diukur."*
+*"Menjadi jembatan yang menyatukan setiap komponen menjadi sistem yang seamless."*
 
 **Responsibilities:**
-- Implementasi data capture (waktu per soal, perubahan jawaban, skip events)
-- Kalkulasi Learning Velocity score
-- Deteksi Burnout Signal
-- Extend Prisma schema untuk `SessionMetrics`
+- Arsitektur API dan database schema design
+- Integrasi antar modul (metrics → AI → frontend)
+- Code review dan quality assurance
+- Handle bottleneck dan edge cases
+- Final integration testing
 
 **Interface Contract:**
 
-| Menerima Dari | Data | 
+| Menerima Dari | Data |
 |---------------|------|
-| Frontend | Raw events: `{soalId, timestamp, action, pilihanId}` |
+| Person D | Schema proposals, metric endpoints |
+| Person B | Gemini integration modules |
+| Person C | Frontend components yang butuh API |
+| Person E | Validasi akademis untuk diimplementasi |
 
 | Memberikan Ke | Data |
 |---------------|------|
-| Person B | `sessionData` dengan temporal patterns |
-| Person C | `velocityScore`, `burnoutLevel`, `burnoutIndicators` |
+| Semua Person | Unified API contracts, resolved conflicts |
+| Production | Fully integrated system |
 
-**Deliverable Week 1:**  
-Schema `SessionMetrics` + API endpoint `/api/metrics/calculate`
+**Focus Area Week 1:**  
+Database schema finalization + API route scaffolding + CI/CD setup
 
 ---
 
-### 👤 PERSON B: Gemini Analyst
+### 👤 PERSON B: AI & Prompt Specialist
 
 **Mission:**  
-*"Jadikan Gemini sebagai otak analitis yang memahami pola kelemahan siswa."*
+*"Jadikan Gemini sebagai otak yang memahami siswa dan bicara seperti mentor."*
 
 **Responsibilities:**
 - Setup Gemini SDK (`@google/generative-ai`)
-- Buat prompt template untuk Weakness Clustering
-- Parse dan validasi JSON response dari Gemini
-- Store clusters ke database
+- Prompt engineering untuk Weakness Clustering
+- Prompt engineering untuk Socratic dialogue (berdasarkan alur dari Person E)
+- JSON parsing dan response validation
 
 **Interface Contract:**
 
 | Menerima Dari | Data |
 |---------------|------|
-| Person A | `wrongAnswers[]` dengan konteks soal |
+| Person D | `wrongAnswers[]` dengan temporal context |
+| Person E | Alur dialog PAPE yang sudah divalidasi akademis |
+| Tech Lead | API contracts dan error handling patterns |
 
 | Memberikan Ke | Data |
 |---------------|------|
-| Person C | `clusters[]` untuk visualisasi |
-| Person D | `clusters[]` + `errorPatterns` untuk dialog AI |
+| Person C | `clusters[]`, Socratic responses untuk UI |
+| Tech Lead | `src/lib/gemini.ts` module |
 
-**Deliverable Week 1:**  
-File `src/lib/gemini.ts` + API `/api/analysis/weakness-cluster`
+**🎬 Action Sekarang:**
+1. Install `@google/generative-ai` 
+2. Buat file `src/lib/gemini.ts` dengan basic setup
+3. Tunggu draft alur PAPE dari Person E sebelum buat prompt Socratic
 
 ---
 
-### 👤 PERSON C: Dashboard Visualizer
+### 👤 PERSON C: Frontend & UX Specialist
 
 **Mission:**  
-*"Tampilkan data kompleks menjadi visual yang siswa dan guru bisa pahami dalam 3 detik."*
+*"Buat pengalaman yang siswa cintai — data kompleks dalam tampilan yang 'klik' dalam 3 detik."*
 
 **Responsibilities:**
-- Komponen chart untuk Velocity trend
-- Burnout indicator (color-coded badge)
-- Weakness cluster visualization (topic heatmap)
-- Progress timeline
+- Dashboard metrics visualization (Velocity chart, Burnout badge)
+- Weakness cluster heatmap
+- Socratic chat interface
+- Responsive design & micro-interactions
 
 **Interface Contract:**
 
 | Menerima Dari | Data |
 |---------------|------|
-| Person A | `velocityScore`, `burnoutLevel` |
-| Person B | `clusters[]` dengan severity |
+| Person D | `velocityScore`, `burnoutLevel`, mock data untuk development |
+| Person B | `clusters[]`, `socraticResponse` |
+| Person E | Guidance UX yang sesuai prinsip pedagogi |
 
 | Memberikan Ke | Data |
 |---------------|------|
-| Person D | Selected cluster ID ketika user klik untuk deep-dive |
+| Tech Lead | React components yang production-ready |
+| User Events | `{soalId, timestamp, action}` ke Person D |
 
-**Deliverable Week 1:**  
-Komponen `<VelocityChart>` + `<BurnoutBadge>` + `<ClusterMap>`
+**🎬 Action Sekarang:**
+1. Setup komponen skeleton: `<VelocityChart>`, `<BurnoutBadge>`, `<ClusterMap>`
+2. Buat mock data untuk development paralel
+3. Koordinasi dengan Person E untuk chat UI yang "tidak menghakimi"
 
 ---
 
-### 👤 PERSON D: Socratic UI/Chat
+### 👤 PERSON D: Data & Metric Engineer
 
 **Mission:**  
-*"Buat percakapan AI yang terasa seperti mentor, bukan robot."*
+*"Ubah setiap klik dan detik menjadi insight yang terukur dan bermakna."*
 
 **Responsibilities:**
-- Chat interface untuk Deep Inquiry
-- Implementasi PAPE flow dalam UI
-- System prompt untuk Socratic dialogue
-- Conversation history management
+- Extend Prisma schema (`SessionMetrics`, `AnswerEvent`)
+- Data capture implementation di frontend hooks
+- Kalkulasi Learning Velocity & Burnout Signal
+- API endpoints untuk metrics
 
 **Interface Contract:**
 
 | Menerima Dari | Data |
 |---------------|------|
-| Person B | `clusters[]`, `errorPatterns` |
-| Person C | `selectedClusterId` untuk fokus dialogue |
+| Person C | Raw events: `{soalId, timestamp, action, pilihanId}` |
+| Person E | **Formula yang sudah divalidasi secara akademis** |
+| Tech Lead | Database schema approval |
 
 | Memberikan Ke | Data |
 |---------------|------|
-| Database | `conversationHistory[]` |
-| Person A | `masteredTopics[]` setelah evaluasi berhasil |
+| Person B | `sessionData`, `wrongAnswers[]` dengan temporal patterns |
+| Person C | `velocityScore`, `burnoutLevel`, `burnoutIndicators` |
+| Tech Lead | `/api/metrics/calculate` endpoint |
 
-**Deliverable Week 1:**  
-Komponen `<SocraticChat>` + API `/api/learning/deep-inquiry`
+**🎬 Action Sekarang:**
+1. Draft Prisma schema extension
+2. **TUNGGU validasi formula dari Person E** sebelum implementasi kalkulasi
+3. Siapkan data capture hooks (struktur event logging)
+
+---
+
+### 📐 PERSON E: Math & Education Expert
+
+**Mission:**  
+*"Pastikan setiap angka dan setiap kata AI kita punya landasan akademis yang kuat."*
+
+> ⚠️ **Critical Role:** Kamu adalah gatekeeper antara "terlihat bagus" dan "benar secara pedagogis".
+
+**Responsibilities:**
+- **Validasi formula** Learning Velocity & Burnout Signal (review draft Person D)
+- **Rancang alur dialog PAPE** yang detail (untuk Person B implementasi ke prompt)
+- **Review prompt Socratic** — pastikan AI tidak menggurui, tapi membimbing
+- Konsultasi teori Kolb untuk adaptive learning flow
+
+**Interface Contract:**
+
+| Menerima Dari | Data |
+|---------------|------|
+| Person D | Draft formula (untuk validasi matematis) |
+| Person B | Draft prompt (untuk validasi pedagogis) |
+| Tech Lead | Requirements dan constraints teknis |
+
+| Memberikan Ke | Data |
+|---------------|------|
+| Person D | ✅ Approved formula dengan penjelasan akademis |
+| Person B | Alur PAPE detail: kapan Probe, kapan Persist, contoh kalimat |
+| Person C | Guidelines UX: tone, wording, apa yang harus dihindari |
+
+**🎬 Action Sekarang:**
+1. **Review formula Velocity & Burnout** di `docs/learning-analytics-architecture.md`
+2. **Tulis alur dialog PAPE** dalam format yang bisa jadi blueprint untuk Person B
+3. Buat list "Do's and Don'ts" untuk AI responses
 
 ---
 
 ## 5. Implementation Checklist
 
-### 🔴 P0 - Critical (Week 1)
-*Tanpa ini, sistem tidak berjalan.*
+### 🔥 SEBELUM ZOOM MEETING — Kerjakan Ini Dulu
 
-| # | Task | Owner | Duration |
-|---|------|-------|----------|
-| 1 | Extend Prisma schema: `SessionMetrics`, `WeaknessCluster` | Person A | 2 days |
-| 2 | Setup Gemini SDK + API key handling | Person B | 1 day |
-| 3 | Implement data capture hooks di `UTBKTryout.tsx` | Person A | 2 days |
-| 4 | Basic Gemini prompt + JSON parsing | Person B | 2 days |
-| 5 | Skeleton UI untuk dashboard metrics | Person C | 2 days |
+| Person | Task Immediate | Output yang Diharapkan |
+|--------|----------------|------------------------|
+| **Tech Lead** | Review semua docs, setup project structure | Folder structure + base API routes |
+| **Person B** | Install Gemini SDK, test basic call | Pastikan API key works |
+| **Person C** | Create skeleton components dengan mock data | Dashboard bisa di-preview |
+| **Person D** | Draft Prisma schema untuk `SessionMetrics` | PR ready untuk review |
+| **Person E** | Review formula Velocity & Burnout | Written feedback / approval |
 
-### 🟡 P1 - High Priority (Week 2)
-*Core functionality yang membedakan kita.*
+---
 
-| # | Task | Owner | Duration |
-|---|------|-------|----------|
-| 6 | Learning Velocity calculation complete | Person A | 2 days |
-| 7 | Burnout detection algorithm | Person A | 2 days |
-| 8 | Weakness Clustering full implementation | Person B | 3 days |
-| 9 | Velocity & Burnout charts | Person C | 2 days |
-| 10 | Cluster heatmap visualization | Person C | 2 days |
-| 11 | Socratic chat UI scaffolding | Person D | 2 days |
-| 12 | PAPE system prompt implementation | Person D | 2 days |
+### 📅 Week 1: Foundation (P0 - Critical)
 
-### 🟢 P2 - Enhancement (Week 3+)
-*Polish dan competitive advantage.*
+| Task | Owner | Depends On |
+|------|-------|------------|
+| Finalize Prisma schema | Tech Lead + Person D | Person E validates structure |
+| Gemini SDK setup + test | Person B | API key configured |
+| Data capture hooks | Person D | Schema approved |
+| Dashboard skeleton | Person C | Mock data ready |
+| Formula validation | Person E | Draft from architecture doc |
+| PAPE dialogue blueprint | Person E | Own expertise |
 
-| # | Task | Owner | Duration |
-|---|------|-------|----------|
-| 13 | i18n database schema | TBD | 3 days |
-| 14 | Multi-language Gemini prompts | Person B | 2 days |
-| 15 | Conversation history persistence | Person D | 2 days |
-| 16 | Progress timeline component | Person C | 2 days |
-| 17 | Mastered topics tracking | Person D | 2 days |
-| 18 | UI translations (id/en) | Person C | 3 days |
+### 📅 Week 2: Core Features (P1 - High)
+
+| Task | Owner | Depends On |
+|------|-------|------------|
+| Velocity calculation | Person D | Formula approved by E |
+| Burnout detection | Person D | Formula approved by E |
+| Weakness Clustering prompt | Person B | PAPE blueprint from E |
+| Velocity & Burnout charts | Person C | Person D provides real data |
+| Socratic chat UI | Person C | Person B provides responses |
+| Integration testing | Tech Lead | All modules connected |
+
+### 📅 Week 3: Polish (P2 - Enhancement)
+
+| Task | Owner |
+|------|-------|
+| i18n schema + translations | Tech Lead + Person C |
+| Multi-language prompts | Person B |
+| Progress timeline | Person C |
+| Edge case handling | All |
+| Final demo preparation | All |
 
 ---
 
 ## ⚡ Quick Reference: Data Types
-
-Untuk menghindari miscommunication, ini adalah contract types yang kita sepakati:
 
 ```
 VelocityScore     : number (0-100)
@@ -454,22 +528,28 @@ PAPEPhase         : "PROBE" | "ANALYZE" | "PERSIST" | "EVALUATE"
 
 ---
 
-## 🎯 Closing Message
+## 🤝 Closing: Kita Satu Tim
 
-Tim, kita punya 3 minggu untuk membuktikan bahwa Learning Analytics bukan hanya buzzword. 
+Teman-teman, kekuatan kita ada di keberagaman skill:
+- **Person E** memastikan kita tidak hanya "keren" tapi **secara akademis benar**
+- **Person D** mengubah teori E menjadi **angka yang bisa diukur**
+- **Person B** mengubah angka menjadi **AI yang bicara seperti manusia**
+- **Person C** mengemas semuanya menjadi **pengalaman yang siswa cintai**
+- **Tech Lead** memastikan semua **bekerja bersama tanpa konflik**
 
-Setiap baris kode yang kalian tulis akan:
-- Membantu siswa memahami diri mereka sendiri
-- Mencegah burnout yang tidak perlu
-- Memberikan feedback yang membangun, bukan menghakimi
+> **Prinsip kita:**
+> - Pedagogi dulu, baru kode
+> - Validasi dulu, baru implementasi
+> - Komunikasi terus, jangan asumsi
 
 **VAK bilang: "Kamu tipe Visual."**  
 **Kita bilang: "Kamu sedang berkembang, dan ini caranya."**
 
-Let's build something that matters. 🚀
+Mari kita buktikan bersama. 🚀
 
 ---
 
-> **Document Version:** 1.0  
+> **Document Version:** 2.0  
 > **Prepared for:** Team Kickoff Meeting  
+> **Team Size:** 5 People  
 > **Date:** January 2026
