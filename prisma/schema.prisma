@@ -1,3 +1,6 @@
+// Enhanced Prisma Schema for EDUVOKA MVP
+// Supports comprehensive learning analytics and AI-driven insights
+
 generator client {
     provider = "prisma-client-js"
 }
@@ -6,9 +9,22 @@ datasource db {
     provider = "mysql"
 }
 
+// ==================== ENUMS ====================
 
-// ENUMS
+enum SessionType {
+    TPS
+    LITERASI
+    TRYOUT
+}
 
+enum LatihanSoalType {
+    PU
+    PBM
+    PPU
+    PK
+    LITERASIBINDO
+    LITERASIBINGG
+}
 
 enum Role {
   USER
@@ -26,15 +42,6 @@ enum LearningStyle {
   KINESTHETIC
 }
 
-enum UTBKSection {
-  PU               // Pengetahuan Umum
-  PBM              // Pemahaman Bacaan & Menulis
-  PPU              // Pengetahuan & Pemahaman Umum
-  PK               // Pengetahuan Kuantitatif
-  LITERASIBINDO
-  LITERASIBINGG
-}
-
 enum QuestionType {
   PG
 }
@@ -45,73 +52,108 @@ enum TryoutStatus {
   CLOSED
 }
 
+enum TryoutStatus {
+    SCHEDULED
+    ONGOING
+    COMPLETED
+    CANCELLED
+}
 
-// USER & AUTH
+enum InsightType {
+    WEAKNESS_CLUSTERING
+    LEARNING_VELOCITY
+    BURNOUT_SIGNAL
+    EXAM_READINESS
+    IMPROVEMENT_RATE
+    CONSISTENCY_PATTERN
+}
 
+enum TaskStatus {
+    PENDING
+    COMPLETED
+    SKIPPED
+}
+
+// ==================== USER & AUTH ====================
 
 model User {
-  id            String        @id @default(uuid())
-  name          String
-  email         String        @unique
-  password      String?
-  photo         String?
-  role          Role          @default(USER)
-  status        Status        @default(ACTIVE)
-  learningStyle LearningStyle?
+    id                String       @id @default(cuid())
+    email             String       @unique
+    name              String
+    password          String?
+    profileImage      String?
+    createdAt         DateTime     @default(now())
+    updatedAt         DateTime     @updatedAt
+    gayaBelajar       GayaBelajar?
+    role              Role         @default(USER)
+    paketUser         PaketUser    @default(BASIC)
+    isSubscribed      Boolean      @default(false)
+    subscriptionEndAt DateTime?
 
-  accounts      Account[]
-  sessions      Session[]
-  attempts      UserTryout[]
-  payments      Payment[]
-
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
-
+    accounts            Account[]
+    sessions            Session[]
     jawabanUserKuisVAKs JawabanUserKuisVAK[]
+    latihanSessions     LatihanSession[]
+    tryoutParticipants  TryoutParticipant[]
+    dailyTasks          DailyTask[]
+    userInsights        UserInsight[]
+    learningMetrics     LearningMetrics[]
+    weaknessAreas       WeaknessArea[]
+
+    @@index([email])
+    @@index([paketUser])
+    @@index([isSubscribed])
+    @@index([role])
 }
 
 model Account {
-  id                String  @id @default(uuid())
-  userId            String
-  type              String
-  provider          String
-  providerAccountId String
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
-  expires_at        Int?
-  token_type        String?
-  scope             String?
-  id_token          String? @db.Text
-  session_state     String?
+    id                String  @id @default(cuid())
+    userId            String
+    type              String
+    provider          String
+    providerAccountId String
+    refresh_token     String? @db.Text
+    access_token      String? @db.Text
+    expires_at        Int?
+    token_type        String?
+    scope             String?
+    id_token          String? @db.Text
+    session_state     String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([provider, providerAccountId])
+    @@unique([provider, providerAccountId])
+    @@index([userId])
 }
 
 model Session {
-  id           String   @id @default(uuid())
-  sessionToken String   @unique
-  userId       String
-  expires      DateTime
+    id           String   @id @default(cuid())
+    sessionToken String   @unique
+    userId       String
+    expires      DateTime
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@index([userId])
+    @@index([expires])
 }
 
+// ==================== KUIS VAK ====================
+
 model PertanyaanKuisVAK {
-    id         String   @id @default(uuid())
+    id         String   @id @default(cuid())
     pertanyaan String   @db.Text
     createdAt  DateTime @default(now())
     updatedAt  DateTime @updatedAt
 
-    jawabanKuisVAKs JawabanKuisVAK[]
-
+    jawabanKuisVAKs     JawabanKuisVAK[]
     jawabanUserKuisVAKs JawabanUserKuisVAK[]
+
+    @@index([createdAt])
 }
 
 model JawabanKuisVAK {
-    id String @id @default(uuid())
-
+    id          String      @id @default(cuid())
     kuisVAKId   String
     jawaban     String
     tipeJawaban GayaBelajar
@@ -120,81 +162,336 @@ model JawabanKuisVAK {
 
     kuisVAK             PertanyaanKuisVAK    @relation(fields: [kuisVAKId], references: [id], onDelete: Cascade)
     jawabanUserKuisVAKs JawabanUserKuisVAK[]
+
+    @@index([kuisVAKId])
+    @@index([tipeJawaban])
 }
 
 model JawabanUserKuisVAK {
-    id                  String @id @default(uuid())
+    id                  String   @id @default(cuid())
     userId              String
     pertanyaanKuisVAKId String
     jawabanKuisVAKId    String
-
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+    createdAt           DateTime @default(now())
+    updatedAt           DateTime @updatedAt
 
     user              User              @relation(fields: [userId], references: [id], onDelete: Cascade)
     pertanyaanKuisVAK PertanyaanKuisVAK @relation(fields: [pertanyaanKuisVAKId], references: [id], onDelete: Cascade)
     jawabanKuisVAK    JawabanKuisVAK    @relation(fields: [jawabanKuisVAKId], references: [id], onDelete: Cascade)
 
     @@unique([userId, pertanyaanKuisVAKId])
+    @@index([userId])
+    @@index([pertanyaanKuisVAKId])
+    @@index([jawabanKuisVAKId])
+    @@index([createdAt])
 }
 
-model SoalUTBK {
-    id           String   @id @default(uuid())
-    tipe         TipeSoal
-    content      String   @db.Text
-    kunciJawaban String
+// ==================== SOAL & MATERI ====================
 
+model Materi {
+    id        String          @id @default(cuid())
+    nama      String
+    kategori  LatihanSoalType
+    deskripsi String?         @db.Text
+    urutan    Int             @default(0)
+    createdAt DateTime        @default(now())
+    updatedAt DateTime        @updatedAt
+
+    soalLatihan   SoalLatihanSoal[]
+    weaknessAreas WeaknessArea[]
+
+    @@index([kategori])
+    @@index([urutan])
+    @@index([nama])
+}
+
+model SoalLatihanSoal {
+    id               String          @id @default(cuid())
+    tipe             LatihanSoalType
+    tipeSesi         SessionType
+    materiId         String?
+    content          String          @db.Text
+    kunciJawaban     String
+    tingkatKesulitan Int             @default(1) // 1-5
+    createdAt        DateTime        @default(now())
+    updatedAt        DateTime        @updatedAt
+
+    materi         Materi?                 @relation(fields: [materiId], references: [id])
     pilihanJawaban PilihanJawaban[]
+    pembahasan     PembahasanSoalLatihan[]
+    jawabanUser    LatihanJawabanUser[]
+
+    @@index([materiId])
+    @@index([tipe])
+    @@index([tipeSesi])
+    @@index([tingkatKesulitan])
+    @@index([tipe, tipeSesi])
+    @@index([materiId, tipe])
 }
 
+model PilihanJawaban {
+    id            String @id @default(cuid())
+    soalUTBKId    String
+    label         String // A, B, C, D, E
+    pilihan       String
+    soalLatihanId String
 
-// PERSONALIZED EXPLANATION (CORE FEATURE)
+    soalLatihan SoalLatihanSoal      @relation(fields: [soalLatihanId], references: [id], onDelete: Cascade)
+    jawabanUser LatihanJawabanUser[]
 
-
-model Explanation {
-  id            String        @id @default(uuid())
-  questionId    String
-  learningStyle LearningStyle
-
-  content       String        @db.Text
-  mediaUrl      String?       // image / audio / video
-
-  question      Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
-
-  @@unique([questionId, learningStyle])
+    @@index([soalLatihanId])
 }
 
+model PembahasanSoalLatihan {
+    id            String      @id @default(cuid())
+    soalLatihanId String
+    gayaBelajar   GayaBelajar
+    konten        String      @db.Text
+    createdAt     DateTime    @default(now())
+    updatedAt     DateTime    @updatedAt
 
-// USER TRYOUT & ANSWERS
+    soalLatihan SoalLatihanSoal @relation(fields: [soalLatihanId], references: [id], onDelete: Cascade)
 
-
-model UserTryout {
-  id        String @id @default(uuid())
-  userId    String
-  tryoutId  String
-
-  score     Float?
-  startedAt DateTime @default(now())
-  finishedAt DateTime?
-
-  user      User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  tryout    Tryout @relation(fields: [tryoutId], references: [id], onDelete: Cascade)
-  answers   UserAnswer[]
-
-  @@unique([userId, tryoutId])
+    @@unique([soalLatihanId, gayaBelajar])
+    @@index([soalLatihanId])
+    @@index([gayaBelajar])
 }
 
-model UserAnswer {
-  id           String @id @default(uuid())
-  userTryoutId String
-  questionId   String
-  optionId     String?
+// ==================== LATIHAN SESSION ====================
 
-  isCorrect    Boolean
+model LatihanSession {
+    id        String      @id @default(cuid())
+    userId    String
+    type      SessionType
+    startedAt DateTime    @default(now())
+    endedAt   DateTime?
+    score     Int?
 
-  userTryout   UserTryout @relation(fields: [userTryoutId], references: [id], onDelete: Cascade)
-  question     Question   @relation(fields: [questionId], references: [id])
-  option       Option?    @relation(fields: [optionId], references: [id])
+    // Analytics fields
+    totalDuration   Int? // in seconds
+    averageTimePerQ Float? // in seconds
+    accuracyRate    Float? // percentage
+    completionRate  Float? // percentage
 
-  @@unique([userTryoutId, questionId])
+    user    User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+    jawaban LatihanJawabanUser[]
+
+    @@index([userId])
+    @@index([startedAt])
+    @@index([type])
+    @@index([userId, type])
+    @@index([userId, startedAt])
+    @@index([endedAt])
+    @@index([score])
+}
+
+model LatihanJawabanUser {
+    id            String    @id @default(cuid())
+    sessionId     String
+    soalLatihanId String
+    pilihanId     String?
+    isCorrect     Boolean?
+    answeredAt    DateTime?
+
+    // Analytics fields
+    timeSpent  Int? // in seconds
+    isSkipped  Boolean @default(false)
+    confidence Int? // 1-5 scale (optional)
+
+    session        LatihanSession  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+    soalLatihan    SoalLatihanSoal @relation(fields: [soalLatihanId], references: [id], onDelete: Cascade)
+    pilihanJawaban PilihanJawaban? @relation(fields: [pilihanId], references: [id])
+
+    @@unique([sessionId, soalLatihanId])
+    @@index([soalLatihanId])
+    @@index([isCorrect])
+    @@index([sessionId])
+    @@index([answeredAt])
+    @@index([isSkipped])
+    @@index([sessionId, isCorrect])
+}
+
+// ==================== TRYOUT SYSTEM ====================
+
+model TryoutSchedule {
+    id              String       @id @default(cuid())
+    nama            String
+    deskripsi       String?      @db.Text
+    scheduledAt     DateTime
+    duration        Int // in minutes
+    status          TryoutStatus @default(SCHEDULED)
+    maxParticipants Int?
+    createdAt       DateTime     @default(now())
+    updatedAt       DateTime     @updatedAt
+
+    participants TryoutParticipant[]
+
+    @@index([scheduledAt])
+    @@index([status])
+    @@index([scheduledAt, status])
+    @@index([createdAt])
+}
+
+model TryoutParticipant {
+    id         String    @id @default(cuid())
+    tryoutId   String
+    userId     String
+    startedAt  DateTime?
+    finishedAt DateTime?
+    score      Int?
+    rank       Int? // peringkat dalam tryout
+
+    // Analytics
+    totalCorrect   Int?
+    totalIncorrect Int?
+    totalSkipped   Int?
+    timeUsed       Int? // in seconds
+
+    createdAt DateTime @default(now())
+
+    tryout TryoutSchedule @relation(fields: [tryoutId], references: [id], onDelete: Cascade)
+    user   User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@unique([tryoutId, userId])
+    @@index([userId])
+    @@index([tryoutId])
+    @@index([score])
+    @@index([rank])
+    @@index([tryoutId, score])
+    @@index([tryoutId, rank])
+    @@index([finishedAt])
+}
+
+// ==================== DAILY TASKS ====================
+
+model DailyTask {
+    id           String     @id @default(cuid())
+    userId       String
+    taskDate     DateTime   @db.Date
+    description  String
+    status       TaskStatus @default(PENDING)
+    targetCount  Int        @default(1) // e.g., solve 10 questions
+    currentCount Int        @default(0)
+    completedAt  DateTime?
+    createdAt    DateTime   @default(now())
+    updatedAt    DateTime   @updatedAt
+
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@unique([userId, taskDate, description])
+    @@index([userId, taskDate])
+    @@index([userId, status])
+    @@index([taskDate])
+    @@index([status])
+    @@index([completedAt])
+}
+
+// ==================== LEARNING METRICS ====================
+
+model LearningMetrics {
+    id     String   @id @default(cuid())
+    userId String
+    date   DateTime @db.Date
+
+    // Daily metrics
+    totalStudyTime     Int    @default(0) // in seconds
+    totalQuestions     Int    @default(0)
+    correctAnswers     Int    @default(0)
+    avgTimePerQuestion Float? // in seconds
+    accuracyRate       Float? // percentage
+    sessionsCount      Int    @default(0)
+
+    // Streak
+    isActiveDay   Boolean @default(false)
+    currentStreak Int     @default(0)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@unique([userId, date])
+    @@index([userId, date])
+    @@index([date])
+    @@index([userId, isActiveDay])
+    @@index([currentStreak])
+    @@index([accuracyRate])
+}
+
+// ==================== WEAKNESS CLUSTERING ====================
+
+model WeaknessArea {
+    id       String          @id @default(cuid())
+    userId   String
+    materiId String
+    kategori LatihanSoalType
+
+    // Metrics
+    totalAttempts  Int    @default(0)
+    totalCorrect   Int    @default(0)
+    totalIncorrect Int    @default(0)
+    errorRate      Float // percentage
+    avgTimeSpent   Float? // in seconds
+
+    // Status
+    isWeak        Boolean   @default(false) // error rate > threshold
+    lastAttemptAt DateTime?
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+    materi Materi @relation(fields: [materiId], references: [id], onDelete: Cascade)
+
+    @@unique([userId, materiId])
+    @@index([userId, isWeak])
+    @@index([materiId])
+    @@index([userId, kategori])
+    @@index([errorRate])
+    @@index([lastAttemptAt])
+    @@index([userId, errorRate])
+}
+
+// ==================== AI INSIGHTS ====================
+
+model UserInsight {
+    id          String      @id @default(cuid())
+    userId      String
+    insightType InsightType
+    title       String
+    description String      @db.Text
+    metadata    String?     @db.Text // JSON data for additional context
+    priority    Int         @default(1) // 1-5
+    isRead      Boolean     @default(false)
+    isArchived  Boolean     @default(false)
+    validUntil  DateTime? // insight expiration
+    createdAt   DateTime    @default(now())
+    updatedAt   DateTime    @updatedAt
+
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@index([userId, isRead])
+    @@index([userId, insightType])
+    @@index([createdAt])
+    @@index([userId, isArchived])
+    @@index([priority])
+    @@index([validUntil])
+    @@index([userId, isRead, isArchived])
+    @@index([userId, insightType, isRead])
+}
+
+// ==================== AI PEMBAHASAN ====================
+
+model AIPembahasan {
+    id              String   @id @default(cuid())
+    sessionId       String   @unique
+    analisis        String   @db.Text // Overall analysis
+    strengths       String?  @db.Text // JSON array of strength areas
+    weaknesses      String?  @db.Text // JSON array of weakness areas
+    recommendations String?  @db.Text // JSON array of recommendations
+    createdAt       DateTime @default(now())
+    updatedAt       DateTime @updatedAt
+
+    @@index([sessionId])
+    @@index([createdAt])
 }
