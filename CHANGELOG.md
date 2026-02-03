@@ -1,6 +1,7 @@
 ## [Unreleased]
 
 ### Added
+- Added API for claculation burn out
 - Leaderboard feature to track utbk tryout scores among users.
 - Pomodoro Layout
 - Integreted with Spotify 
