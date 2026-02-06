@@ -1,6 +1,7 @@
 ## [Unreleased]
 
 ### Added
+- Materi completion tracking per user per day implementation.
 - Implement frontend data capture hooks
 - Add latest version of latihan soal implementation.
 - Leaderboard feature to track utbk tryout scores among users.
