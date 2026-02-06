@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
-import { useSoalByMateri, useLatihanSession } from '@/hooks/use-latihan-soal';
+import { useSoalByMateri, useLatihanSession } from '@/hooks/use-latihan-soal'
+import { useLatihanCapture } from '@/hooks/capture/use-latihan-capture';
 import { SessionType, JawabanUser } from '@/types/latihan-soal';
 import {
 	ChevronLeft,
@@ -35,6 +36,16 @@ export default function PracticePage() {
 		goToQuestion,
 		completeSession
 	} = useLatihanSession();
+
+	// Data capture layer
+	const {
+			initCapture,
+			captureQuestionView,
+			captureAnswerChange,
+			captureAnswerSubmit,
+			captureAnswerSkip,
+			captureSessionComplete,
+	} = useLatihanCapture();
 
 	const [selectedPilihan, setSelectedPilihan] = useState<string | null>(null);
 	const [isSubmitting, setIsSubmitting] = useState(false);
@@ -102,6 +113,29 @@ export default function PracticePage() {
 		}
 	}, [currentIndex, currentProgress]);
 
+	// Init capture when session is created
+	useEffect(() => {
+			if (sessionId && materiId) {
+					initCapture(sessionId, materiId);
+			}
+	}, [sessionId, materiId, initCapture]);
+
+	// Capture question view on index change
+	useEffect(() => {
+			if (currentSoal && sessionId) {
+					captureQuestionView(currentSoal.id, currentIndex, soalList.length);
+			}
+	}, [currentIndex, currentSoal?.id, sessionId, soalList.length, captureQuestionView]);
+
+
+	// Wrap setSelectedPilihan to capture answer changes
+	const handleSelectPilihan = (pilihanId: string) => {
+			setSelectedPilihan(pilihanId);
+			if (currentSoal) {
+					captureAnswerChange(currentSoal.id, pilihanId);
+			}
+	};
+
 	const handleSubmitAnswer = async () => {
 		if (!currentSoal || !sessionId) {
 			console.error('Cannot submit: missing soal or session', {
@@ -129,6 +163,13 @@ export default function PracticePage() {
 			if (result) {
 				setCurrentResult(result);
 				setShowResult(true);
+
+				// Capture answer submit
+				captureAnswerSubmit(
+						currentSoal.id,
+						selectedPilihan,
+						result.isCorrect ?? false,
+				);
 			}
 		} catch (err) {
 			console.error('Error submitting answer:', err);
@@ -144,6 +185,10 @@ export default function PracticePage() {
 		setIsSubmitting(true);
 		try {
 			await submitAnswer(materiId, currentSoal.id, null, true);
+
+			// Capture the skip
+			captureAnswerSkip(currentSoal.id);
+
 			handleNext();
 		} catch (err) {
 			alert('Gagal skip soal');
@@ -172,6 +217,18 @@ export default function PracticePage() {
 		try {
 			const result = await completeSession();
 			if (result) {
+				const correctCount = Array.from(progress.values()).filter(
+					(p) => p.answered && p.isCorrect
+				).length;
+				
+				// Capture session complete
+				captureSessionComplete({
+						score: result.score ?? 0,
+						totalQuestions: soalList.length,
+						correctCount,
+						totalDurationSeconds: result.totalDuration ?? 0,
+				});
+
 				router.push(`/dashboard/latihan-soal/${materiId}/result?sessionId=${sessionId}`);
 			}
 		} catch (err) {

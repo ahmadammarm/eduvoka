@@ -77,14 +77,16 @@ model User {
     isSubscribed      Boolean   @default(false)
     subscriptionEndAt DateTime?
 
-    accounts           Account[]
-    sessions           Session[]
-    latihanSessions    LatihanSession[]
-    tryoutParticipants TryoutParticipant[]
-    dailyTasks         DailyTask[]
-    userInsights       UserInsight[]
-    learningMetrics    LearningMetrics[]
-    weaknessAreas      WeaknessArea[]
+    accounts            Account[]
+    sessions            Session[]
+    latihanSessions     LatihanSession[]
+    tryoutParticipants  TryoutParticipant[]
+    dailyTasks          DailyTask[]
+    userInsights        UserInsight[]
+    learningMetrics     LearningMetrics[]
+    weaknessAreas       WeaknessArea[]
+    studySession        StudySession[]
+    rawEventLogs        RawEventLog[]
 
     @@index([email])
     @@index([paketUser])
@@ -135,9 +137,9 @@ model Materi {
     createdAt DateTime        @default(now())
     updatedAt DateTime        @updatedAt
 
-    soalLatihan     SoalLatihanSoal[]
-    learningMetrics LearningMetrics[]
-    weaknessAreas   WeaknessArea[]
+    soalLatihan   SoalLatihanSoal[]
+    weaknessAreas WeaknessArea[]
+    studySession StudySession[]
 
     @@index([kategori])
     @@index([urutan])
@@ -436,4 +438,64 @@ model AIPembahasan {
 
     @@index([sessionId])
     @@index([createdAt])
+}
+
+// ==================== RAW EVENT LOG ====================
+
+model RawEventLog {
+    id        String   @id @default(cuid())
+    userId    String
+    eventType String                    // e.g., "ANSWER_SUBMIT", "SOAL_VIEW", "STUDY_START", "STUDY_HEARTBEAT", etc.
+    payload   String   @db.Text         // JSON stringified event data
+    timestamp DateTime @default(now())
+    sessionRef String?                  // reference to LatihanSession.id or StudySession.id
+    synced    Boolean  @default(true)   // always true when reaching DB
+
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@index([userId, eventType])
+    @@index([userId, timestamp])
+    @@index([sessionRef])
+    @@index([eventType, timestamp])
+    @@index([timestamp])
+}
+
+// ================= STUDY SESSION (MATERIAL) =================
+
+model StudySession {
+    id        String   @id @default(cuid())
+    userId    String
+    materiId  String
+
+    startedAt     DateTime  @default(now())
+    endedAt       DateTime?
+    totalDuration Int       @default(0)     // active seconds only (excludes idle)
+    idleDuration  Int       @default(0)     // idle seconds detected
+
+    // Reading progress
+    scrollDepthMax  Float    @default(0)    // 0-100 percentage
+    scrollDepthAvg  Float    @default(0)    // average scroll position
+    totalScrollEvents Int    @default(0)
+
+    // Visibility
+    totalVisibleTime  Int    @default(0)    // seconds tab was active
+    totalHiddenTime   Int    @default(0)    // seconds tab was hidden
+    visibilityChanges Int    @default(0)    // how many times tab toggled
+
+    // Status
+    isCompleted Boolean @default(false)     // user reached bottom or spent enough time
+    isAbandoned Boolean @default(false)     // user left without meaningful engagement
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    materi Materi @relation(fields: [materiId], references: [id], onDelete: Cascade)
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@index([userId, materiId])
+    @@index([userId, startedAt])
+    @@index([materiId])
+    @@index([startedAt])
+    @@index([isCompleted])
+    @@index([userId, isCompleted])
 }
