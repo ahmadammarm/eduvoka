@@ -46,16 +46,40 @@ interface ReviewClientProps {
 export default function ReviewClient({ reviewData }: ReviewClientProps) {
     const router = useRouter();
     const [reviewStarted, setReviewStarted] = useState(false);
-    const [reviewAllQuestions, setReviewAllQuestions] = useState(false);
     const [currentReviewIndex, setCurrentReviewIndex] = useState(0);
     const [understoodQuestions, setUnderstoodQuestions] = useState<Set<string>>(new Set());
     const [currentPhase, setCurrentPhase] = useState<'PROBE' | 'ANALYZE' | 'PERSIST' | 'EVALUATE'>('PROBE');
-    const [showSkipTooltip, setShowSkipTooltip] = useState(true);
+    const [countdown, setCountdown] = useState(5);
+    const [hasChatted, setHasChatted] = useState<Set<string>>(new Set()); // Track if user has chatted for each question
 
-    // Filter questions based on toggle
-    const questionsToReview = reviewAllQuestions
-        ? reviewData.questions
-        : reviewData.questions.filter(q => !q.isCorrect);
+    // Auto-start countdown timer
+    useEffect(() => {
+        if (reviewStarted || countdown === 0) return;
+
+        const timer = setInterval(() => {
+            setCountdown(prev => {
+                if (prev <= 1) {
+                    clearInterval(timer);
+                    setReviewStarted(true);
+                    return 0;
+                }
+                return prev - 1;
+            });
+        }, 1000);
+
+        return () => clearInterval(timer);
+    }, [reviewStarted, countdown]);
+
+    // Always filter to ONLY wrong answers - no option to review all
+    const questionsToReview = reviewData.questions.filter(q => !q.isCorrect);
+
+    // If no wrong answers (perfect score), skip review entirely
+    useEffect(() => {
+        if (questionsToReview.length === 0) {
+            // Perfect score - skip review and go directly to results
+            router.push(`/dashboard/latihan-soal/${reviewData.materiId}/result?sessionId=${reviewData.sessionId}`);
+        }
+    }, [questionsToReview.length, reviewData.materiId, reviewData.sessionId, router]);
 
     const currentQuestion = questionsToReview[currentReviewIndex];
     const isLastReviewQuestion = currentReviewIndex === questionsToReview.length - 1;
@@ -113,10 +137,10 @@ export default function ReviewClient({ reviewData }: ReviewClientProps) {
                             <MessageSquare className="w-10 h-10 text-white" />
                         </div>
                         <h1 className="text-4xl font-bold text-gray-900 mb-2">
-                            Review & Insights
+                            Pembahasan Soal
                         </h1>
                         <p className="text-gray-600 text-lg">
-                            Let's discuss your answers with AI guidance
+                            Mari bahas jawaban kamu secara mendalam
                         </p>
                     </div>
 
@@ -137,57 +161,25 @@ export default function ReviewClient({ reviewData }: ReviewClientProps) {
                             </div>
                         </div>
 
-                        {/* Toggle */}
+                        {/* Info: Only reviewing wrong answers */}
                         <div className="border-t pt-6">
-                            <label className="flex items-center justify-center gap-3 cursor-pointer group">
-                                <input
-                                    type="checkbox"
-                                    checked={reviewAllQuestions}
-                                    onChange={(e) => setReviewAllQuestions(e.target.checked)}
-                                    className="w-5 h-5 text-indigo-600 rounded focus:ring-2 focus:ring-indigo-500"
-                                />
-                                <span className="text-gray-700 font-medium group-hover:text-indigo-600 transition-colors">
-                                    Review All Questions (including correct ones)
-                                </span>
-                            </label>
-                            <p className="text-center text-sm text-gray-500 mt-2">
-                                {reviewAllQuestions
-                                    ? `You'll review all ${reviewData.totalQuestions} questions`
-                                    : `Focus on ${reviewData.wrongAnswers} wrong answers to optimize study time`}
+                            <p className="text-center text-gray-600">
+                                Kamu akan membahas <span className="font-bold text-indigo-600">{reviewData.wrongAnswers} soal</span> yang dijawab salah
+                            </p>
+                            <p className="text-xs text-center text-gray-500 mt-2">
+                                Pembahasan mendalam untuk memaksimalkan pembelajaran
                             </p>
                         </div>
                     </div>
 
-                    {/* Action Buttons */}
+                    {/* Action: Auto-start countdown */}
                     <div className="space-y-3">
-                        <button
-                            onClick={handleStartReview}
-                            className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold py-4 px-6 rounded-xl shadow-lg transition-all flex items-center justify-center gap-3 text-lg"
-                        >
-                            <Play className="w-6 h-6" />
-                            Start Socratic Review
-                        </button>
-
-                        <button
-                            onClick={handleSkipToResults}
-                            onMouseEnter={() => setShowSkipTooltip(true)}
-                            onMouseLeave={() => setShowSkipTooltip(false)}
-                            className="w-full bg-white hover:bg-gray-50 text-gray-700 font-semibold py-4 px-6 rounded-xl border-2 border-gray-300 transition-all flex items-center justify-center gap-3 relative"
-                        >
-                            <SkipForward className="w-5 h-5" />
-                            Skip to Results
-
-                            {/* Tooltip */}
-                            {showSkipTooltip && (
-                                <div className="absolute -top-20 left-1/2 transform -translate-x-1/2 bg-yellow-500 text-white px-4 py-3 rounded-lg shadow-lg text-sm font-medium whitespace-nowrap">
-                                    <div className="flex items-center gap-2">
-                                        <TrendingUp className="w-4 h-4" />
-                                        Discussing mistakes can increase Learning Velocity by 40%!
-                                    </div>
-                                    <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2 rotate-45 w-3 h-3 bg-yellow-500"></div>
-                                </div>
-                            )}
-                        </button>
+                        {/* Countdown Display */}
+                        <div className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold py-8 px-6 rounded-xl shadow-lg text-center">
+                            <div className="text-sm mb-2">Pembahasan dimulai dalam...</div>
+                            <div className="text-7xl font-bold mb-2">{countdown}</div>
+                            <div className="text-sm text-purple-100">Bersiap membahas kesalahan secara mendalam!</div>
+                        </div>
                     </div>
 
                     {/* Benefits */}
@@ -195,16 +187,26 @@ export default function ReviewClient({ reviewData }: ReviewClientProps) {
                         <div className="flex items-start gap-3">
                             <Lightbulb className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
                             <div>
-                                <p className="text-sm text-blue-900 font-medium">Why review with AI?</p>
+                                <p className="text-sm text-blue-900 font-medium">Kenapa perlu pembahasan mendalam?</p>
                                 <ul className="text-sm text-blue-800 mt-2 space-y-1">
-                                    <li>• Understand WHY you got it wrong, not just the correct answer</li>
-                                    <li>• Build conceptual thinking (MBA approach)</li>
-                                    <li>• Boost your Learning Velocity score</li>
+                                    <li>• Pahami MENGAPA kamu salah, bukan hanya jawaban benar</li>
+                                    <li>• Bangun pemikiran konseptual (strategi UTBK terbaik)</li>
+                                    <li>• Tingkatkan Learning Velocity hingga 40%</li>
                                 </ul>
                             </div>
                         </div>
                     </div>
                 </div>
+            </div>
+        );
+    }
+
+    // Safety check: If review started but no questions to review (race condition for perfect scores)
+    if (reviewStarted && questionsToReview.length === 0) {
+        return (
+            <div className="flex flex-col items-center justify-center min-h-screen gap-4">
+                <div className="w-16 h-16 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
+                <p className="text-gray-600">Preparing your review...</p>
             </div>
         );
     }
@@ -216,22 +218,13 @@ export default function ReviewClient({ reviewData }: ReviewClientProps) {
                 {/* Header with Progress */}
                 <div className="mb-6">
                     <div className="bg-white rounded-lg shadow-md p-4">
-                        <div className="flex items-center justify-between mb-3">
-                            <div>
-                                <h2 className="text-xl font-bold text-gray-900">
-                                    Question {currentReviewIndex + 1} of {questionsToReview.length}
-                                </h2>
-                                <p className="text-sm text-gray-600">
-                                    {understoodQuestions.size} marked as understood
-                                </p>
-                            </div>
-                            <button
-                                onClick={handleSkipToResults}
-                                className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg font-medium transition-colors flex items-center gap-2"
-                            >
-                                <SkipForward className="w-4 h-4" />
-                                Skip to Results
-                            </button>
+                        <div className="mb-3">
+                            <h2 className="text-xl font-bold text-gray-900">
+                                Soal {currentReviewIndex + 1} dari {questionsToReview.length}
+                            </h2>
+                            <p className="text-sm text-gray-600">
+                                {understoodQuestions.size} soal dipahami
+                            </p>
                         </div>
 
                         {/* Progress Bar */}
@@ -261,27 +254,33 @@ export default function ReviewClient({ reviewData }: ReviewClientProps) {
                             questionId={currentQuestion.soalId}
                             questionContent={currentQuestion.content}
                             selectedOption={currentQuestion.userAnswerLabel || undefined}
-                            onPhaseChange={setCurrentPhase}
+                            onPhaseChange={(phase) => {
+                                setCurrentPhase(phase);
+                                // Mark as chatted when user sends first message (phase changes from PROBE)
+                                if (phase !== 'PROBE') {
+                                    setHasChatted(prev => new Set(prev).add(currentQuestion.soalId));
+                                }
+                            }}
                         />
 
                         {/* PAPE Phase Indicator */}
                         <div className="mt-4 p-3 bg-white rounded-lg shadow-md">
                             <div className="flex items-center justify-between">
-                                <span className="text-sm font-medium text-gray-700">AI Phase:</span>
+                                <span className="text-sm font-medium text-gray-700">Tahap Pembahasan:</span>
                                 <div className="flex items-center gap-2">
                                     <div className={`w-2 h-2 rounded-full ${currentPhase === 'PROBE' ? 'bg-blue-500 animate-pulse' :
-                                            currentPhase === 'ANALYZE' ? 'bg-green-500 animate-pulse' :
-                                                currentPhase === 'PERSIST' ? 'bg-yellow-500 animate-pulse' :
-                                                    'bg-purple-500 animate-pulse'
+                                        currentPhase === 'ANALYZE' ? 'bg-green-500 animate-pulse' :
+                                            currentPhase === 'PERSIST' ? 'bg-yellow-500 animate-pulse' :
+                                                'bg-purple-500 animate-pulse'
                                         }`} />
                                     <span className="text-sm font-bold text-gray-900">{currentPhase}</span>
                                 </div>
                             </div>
                             <p className="text-xs text-gray-600 mt-1">
-                                {currentPhase === 'PROBE' && 'AI is probing your reasoning...'}
-                                {currentPhase === 'ANALYZE' && 'AI is analyzing your understanding...'}
-                                {currentPhase === 'PERSIST' && 'AI is providing guidance...'}
-                                {currentPhase === 'EVALUATE' && '✅ Deep learning achieved! MBA boost applied.'}
+                                {currentPhase === 'PROBE' && 'Eksplorasi pemahaman kamu...'}
+                                {currentPhase === 'ANALYZE' && 'Menganalisis pola kesalahan...'}
+                                {currentPhase === 'PERSIST' && 'Memberikan panduan mendalam...'}
+                                {currentPhase === 'EVALUATE' && '✅ Pemahaman mendalam tercapai!'}
                             </p>
                         </div>
                     </div>
@@ -301,17 +300,22 @@ export default function ReviewClient({ reviewData }: ReviewClientProps) {
 
                         <button
                             onClick={handleMarkAsUnderstood}
-                            className="flex-1 px-6 py-3 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold rounded-lg transition-all flex items-center justify-center gap-2 shadow-lg"
+                            disabled={!hasChatted.has(currentQuestion.soalId)}
+                            className={`flex-1 px-6 py-3 font-bold rounded-lg transition-all flex items-center justify-center gap-2 shadow-lg ${hasChatted.has(currentQuestion.soalId)
+                                    ? 'bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white cursor-pointer'
+                                    : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                                }`}
+                            title={!hasChatted.has(currentQuestion.soalId) ? 'Diskusikan dulu dengan sistem pembahasan' : ''}
                         >
                             {understoodQuestions.has(currentQuestion.soalId) ? (
                                 <>
                                     <CheckCircle2 className="w-5 h-5" />
-                                    Understood ✓
+                                    Sudah Paham ✓
                                 </>
                             ) : (
                                 <>
                                     <Award className="w-5 h-5" />
-                                    Mark as Understood
+                                    {hasChatted.has(currentQuestion.soalId) ? 'Tandai Sudah Paham' : 'Chat Dulu untuk Lanjut'}
                                 </>
                             )}
                         </button>
@@ -320,7 +324,7 @@ export default function ReviewClient({ reviewData }: ReviewClientProps) {
                             onClick={handleNext}
                             className="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg transition-colors flex items-center gap-2"
                         >
-                            {isLastReviewQuestion ? 'Finish Review' : 'Next'}
+                            {isLastReviewQuestion ? 'Selesai' : 'Selanjutnya'}
                             <ChevronRight className="w-5 h-5" />
                         </button>
                     </div>

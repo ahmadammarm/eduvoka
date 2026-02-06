@@ -75,52 +75,40 @@ export default function QuestionReviewCard({
                 </p>
             </div>
 
-            {/* Answer Choices */}
+            {/* Answer Choices - Only show user's answer without revealing correct */}
             <div className="space-y-3">
-                <h4 className="text-sm font-semibold text-gray-700 mb-3">Answer Choices:</h4>
+                <h4 className="text-sm font-semibold text-gray-700 mb-3">Pilihan Jawaban:</h4>
                 {question.choices.map((choice) => {
                     const isUserAnswer = choice.label === question.userAnswerLabel;
-                    const isCorrectAnswer = choice.label === question.correctAnswer;
-                    const isWrong = isUserAnswer && !isCorrectAnswer;
 
                     return (
                         <div
                             key={choice.label}
-                            className={`p-4 rounded-lg border-2 transition-all ${isCorrectAnswer
-                                    ? 'border-green-500 bg-green-50'
-                                    : isWrong
-                                        ? 'border-red-500 bg-red-50'
-                                        : 'border-gray-200 bg-gray-50'
+                            className={`p-4 rounded-lg border-2 transition-all ${isUserAnswer
+                                    ? 'border-red-500 bg-red-50'
+                                    : 'border-gray-200 bg-gray-50'
                                 }`}
                         >
                             <div className="flex items-start gap-3">
                                 <span
-                                    className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${isCorrectAnswer
-                                            ? 'bg-green-600 text-white'
-                                            : isWrong
-                                                ? 'bg-red-600 text-white'
-                                                : 'bg-gray-300 text-gray-700'
+                                    className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${isUserAnswer
+                                            ? 'bg-red-600 text-white'
+                                            : 'bg-gray-300 text-gray-700'
                                         }`}
                                 >
                                     {choice.label}
                                 </span>
                                 <div className="flex-1">
                                     <p className="text-gray-800">{choice.pilihan}</p>
-                                    <div className="flex items-center gap-3 mt-2">
-                                        {isUserAnswer && (
-                                            <span className="text-xs font-medium text-blue-700 bg-blue-100 px-2 py-1 rounded">
-                                                Your Answer
+                                    {isUserAnswer && (
+                                        <div className="flex items-center gap-3 mt-2">
+                                            <span className="text-xs font-medium text-red-700 bg-red-100 px-2 py-1 rounded">
+                                                Jawaban Kamu
                                             </span>
-                                        )}
-                                        {isCorrectAnswer && (
-                                            <span className="text-xs font-medium text-green-700 bg-green-100 px-2 py-1 rounded">
-                                                ✓ Correct Answer
-                                            </span>
-                                        )}
-                                    </div>
+                                        </div>
+                                    )}
                                 </div>
-                                {isCorrectAnswer && <CheckCircle2 className="w-5 h-5 text-green-600 flex-shrink-0" />}
-                                {isWrong && <XCircle className="w-5 h-5 text-red-600 flex-shrink-0" />}
+                                {isUserAnswer && <XCircle className="w-5 h-5 text-red-600 flex-shrink-0" />}
                             </div>
                         </div>
                     );
@@ -128,16 +116,10 @@ export default function QuestionReviewCard({
             </div>
 
             {/* Status Message */}
-            {!question.isSkipped && (
-                <div className={`mt-6 p-4 rounded-lg ${question.isCorrect
-                        ? 'bg-green-50 border border-green-200'
-                        : 'bg-red-50 border border-red-200'
-                    }`}>
-                    <p className={`text-sm ${question.isCorrect ? 'text-green-800' : 'text-red-800'
-                        }`}>
-                        {question.isCorrect
-                            ? '✅ You got this right! Use the chat to verify your understanding.'
-                            : '❌ Let\'s discuss why this answer was incorrect using the Socratic method.'}
+            {!question.isSkipped && !question.isCorrect && (
+                <div className="mt-6 p-4 rounded-lg bg-blue-50 border border-blue-200">
+                    <p className="text-sm text-blue-900">
+                        💬 Diskusikan jawaban ini untuk menemukan mengapa salah dan bagaimana cara berpikir yang benar
                     </p>
                 </div>
             )}

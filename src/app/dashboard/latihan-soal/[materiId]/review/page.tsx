@@ -2,18 +2,21 @@ import { prisma } from '@/lib/prisma';
 import { notFound, redirect } from 'next/navigation';
 import ReviewClient from './ReviewClient';
 
+
 interface ReviewPageProps {
-    params: {
+    params: Promise<{
         materiId: string;
-    };
-    searchParams: {
+    }>;
+    searchParams: Promise<{
         sessionId?: string;
-    };
+    }>;
 }
 
+
 export default async function ReviewPage({ params, searchParams }: ReviewPageProps) {
-    const { materiId } = params;
-    const { sessionId } = searchParams;
+    // Next.js 15: params and searchParams are Promises
+    const { materiId } = await params;
+    const { sessionId } = await searchParams;
 
     if (!sessionId) {
         redirect(`/dashboard/latihan-soal/${materiId}`);
@@ -23,7 +26,7 @@ export default async function ReviewPage({ params, searchParams }: ReviewPagePro
     const session = await prisma.latihanSession.findUnique({
         where: { id: sessionId },
         include: {
-            jawabanUser: {
+            jawaban: {
                 include: {
                     soalLatihan: {
                         include: {
@@ -32,7 +35,7 @@ export default async function ReviewPage({ params, searchParams }: ReviewPagePro
                             }
                         }
                     },
-                    pilihan: true
+                    pilihanJawaban: true // Correct relation name
                 }
             }
         }
@@ -43,9 +46,9 @@ export default async function ReviewPage({ params, searchParams }: ReviewPagePro
     }
 
     // Calculate stats
-    const totalQuestions = session.jawabanUser.length;
-    const correctAnswers = session.jawabanUser.filter(j => j.isCorrect === true).length;
-    const wrongAnswers = session.jawabanUser.filter(j => j.isCorrect === false).length;
+    const totalQuestions = session.jawaban.length;
+    const correctAnswers = session.jawaban.filter((j: any) => j.isCorrect === true).length;
+    const wrongAnswers = session.jawaban.filter((j: any) => j.isCorrect === false).length;
     const score = totalQuestions > 0 ? Math.round((correctAnswers / totalQuestions) * 100) : 0;
 
     // Prepare review data
@@ -56,15 +59,15 @@ export default async function ReviewPage({ params, searchParams }: ReviewPagePro
         totalQuestions,
         correctAnswers,
         wrongAnswers,
-        questions: session.jawabanUser.map(jawaban => ({
+        questions: session.jawaban.map((jawaban: any) => ({
             soalId: jawaban.soalLatihanId,
             content: jawaban.soalLatihan.content,
-            choices: jawaban.soalLatihan.pilihanJawaban.map(p => ({
+            choices: jawaban.soalLatihan.pilihanJawaban.map((p: any) => ({
                 label: p.label,
                 pilihan: p.pilihan
             })),
             userAnswer: jawaban.pilihanId,
-            userAnswerLabel: jawaban.pilihan?.label || null,
+            userAnswerLabel: jawaban.pilihanJawaban?.label || null,
             correctAnswer: jawaban.soalLatihan.kunciJawaban,
             isCorrect: jawaban.isCorrect,
             isSkipped: jawaban.isSkipped,
