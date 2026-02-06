@@ -1,0 +1,18 @@
+{
+  "userId": "cmlahrz2w0000h09aeigaxeuj",
+  "sessionId": "cmlai4zbi0008zo9a26slzuak",
+  "questionId": "latihan-litindo-001",
+  "sessionData": {
+    "id": "cmlai4zbi0008zo9a26slzuak",
+    "userId": "cmlahrz2w0000h09aeigaxeuj",
+    "type": "LATIHAN",
+    "materiId": "materi-litindo-001",
+    "startedAt": "2026-02-06T06:26:06.409Z",
+    "endedAt": "2026-02-06T06:26:24.933Z",
+    "score": 67,
+    "totalDuration": 15,
+    "averageTimePerQ": 5,
+    "accuracyRate": 67,
+    "completionRate": 100
+  }
+}
