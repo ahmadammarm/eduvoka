@@ -138,6 +138,7 @@ model Materi {
     updatedAt DateTime        @updatedAt
 
     soalLatihan   SoalLatihanSoal[]
+	learningMetrics LearningMetrics[]
     weaknessAreas WeaknessArea[]
     studySession StudySession[]
 
