@@ -233,6 +233,7 @@ CREATE TABLE `DailyTask` (
 CREATE TABLE `LearningMetrics` (
     `id` VARCHAR(191) NOT NULL,
     `userId` VARCHAR(191) NOT NULL,
+    `materiId` VARCHAR(191) NULL,
     `date` DATE NOT NULL,
     `totalStudyTime` INTEGER NOT NULL DEFAULT 0,
     `totalQuestions` INTEGER NOT NULL DEFAULT 0,
@@ -246,11 +247,12 @@ CREATE TABLE `LearningMetrics` (
     `updatedAt` DATETIME(3) NOT NULL,
 
     INDEX `LearningMetrics_userId_date_idx`(`userId`, `date`),
+    INDEX `LearningMetrics_materiId_idx`(`materiId`),
     INDEX `LearningMetrics_date_idx`(`date`),
     INDEX `LearningMetrics_userId_isActiveDay_idx`(`userId`, `isActiveDay`),
     INDEX `LearningMetrics_currentStreak_idx`(`currentStreak`),
     INDEX `LearningMetrics_accuracyRate_idx`(`accuracyRate`),
-    UNIQUE INDEX `LearningMetrics_userId_date_key`(`userId`, `date`),
+    UNIQUE INDEX `LearningMetrics_userId_materiId_date_key`(`userId`, `materiId`, `date`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -361,6 +363,9 @@ ALTER TABLE `DailyTask` ADD CONSTRAINT `DailyTask_userId_fkey` FOREIGN KEY (`use
 
 -- AddForeignKey
 ALTER TABLE `LearningMetrics` ADD CONSTRAINT `LearningMetrics_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `LearningMetrics` ADD CONSTRAINT `LearningMetrics_materiId_fkey` FOREIGN KEY (`materiId`) REFERENCES `Materi`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `WeaknessArea` ADD CONSTRAINT `WeaknessArea_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;

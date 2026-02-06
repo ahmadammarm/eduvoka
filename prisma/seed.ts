@@ -1,61 +1,139 @@
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
-import { LatihanSoalType, SessionType } from "../generated/prisma/enums";
-// import { MapTypeToSesi } from "@/lib/map-type-to-session";
+import { 
+	LatihanSoalType, 
+	SessionType, 
+	Role, 
+	PaketUser, 
+} from "../generated/prisma/enums";
 
-async function CreateUser() {
-	const email = "admineduvoka@example.com";
-	const existing = await prisma.user.findUnique({ where: { email } });
-	if (existing) return;
-
-	const hashedPassword = await bcrypt.hash("admineduvoka123", 10);
-	await prisma.user.upsert({
-		where: { email },
-		update: {},
-		create: {
-			email,
-			password: hashedPassword,
+// ==================== USER SEEDER ====================
+async function CreateUsers() {
+	const users = [
+		{
+			id: "user-admin-001",
+			email: "admineduvoka@example.com",
+			password: await bcrypt.hash("admineduvoka123", 10),
 			name: "Admin User",
+			role: Role.ADMIN,
+			paketUser: PaketUser.EDUVOKA,
+			isSubscribed: true,
+			subscriptionEndAt: new Date("2025-12-31"),
 		},
-	});
+		{
+			id: "user-001",
+			email: "student1@example.com",
+			password: await bcrypt.hash("student123", 10),
+			name: "Budi Santoso",
+			role: Role.USER,
+			paketUser: PaketUser.ACTIVE,
+			isSubscribed: true,
+			subscriptionEndAt: new Date("2025-06-30"),
+		},
+		{
+			id: "user-002",
+			email: "student2@example.com",
+			password: await bcrypt.hash("student123", 10),
+			name: "Siti Nurhaliza",
+			role: Role.USER,
+			paketUser: PaketUser.LITE,
+			isSubscribed: true,
+			subscriptionEndAt: new Date("2025-03-31"),
+		},
+		{
+			id: "user-003",
+			email: "student3@example.com",
+			password: await bcrypt.hash("student123", 10),
+			name: "Ahmad Wijaya",
+			role: Role.USER,
+			paketUser: PaketUser.BASIC,
+			isSubscribed: false,
+		},
+	];
+
+	for (const user of users) {
+		await prisma.user.upsert({
+			where: { email: user.email },
+			update: {},
+			create: user,
+		});
+	}
+
+	console.log("✅ Users seeded successfully");
 }
 
+// ==================== MATERI SEEDER ====================
 async function CreateMateri() {
 	const materiData = [
 		{
 			id: "materi-pu-001",
 			nama: "Penalaran Logis",
 			kategori: LatihanSoalType.PU,
-			deskripsi: "Materi tentang penalaran logis, silogisme, dan analisis argumen",
+			deskripsi: "Materi tentang penalaran logis, silogisme, dan analisis argumen. Pelajari cara berpikir sistematis dan menarik kesimpulan yang valid.",
 			urutan: 1,
+		},
+		{
+			id: "materi-pu-002",
+			nama: "Penalaran Analitis",
+			kategori: LatihanSoalType.PU,
+			deskripsi: "Materi tentang analisis data, grafik, dan tabel untuk pengambilan keputusan.",
+			urutan: 2,
 		},
 		{
 			id: "materi-pbm-001",
 			nama: "Struktur Paragraf",
 			kategori: LatihanSoalType.PBM,
-			deskripsi: "Materi tentang ide pokok, kalimat utama, dan pengembangan paragraf",
-			urutan: 2,
+			deskripsi: "Materi tentang ide pokok, kalimat utama, dan pengembangan paragraf yang efektif.",
+			urutan: 3,
+		},
+		{
+			id: "materi-pbm-002",
+			nama: "Teks Argumentasi",
+			kategori: LatihanSoalType.PBM,
+			deskripsi: "Materi tentang struktur argumentasi, premis, dan kesimpulan dalam teks.",
+			urutan: 4,
 		},
 		{
 			id: "materi-ppu-001",
 			nama: "Sejarah Indonesia",
 			kategori: LatihanSoalType.PPU,
-			deskripsi: "Materi tentang sejarah kemerdekaan dan perkembangan Indonesia",
-			urutan: 3,
+			deskripsi: "Materi tentang sejarah kemerdekaan dan perkembangan Indonesia dari masa ke masa.",
+			urutan: 5,
+		},
+		{
+			id: "materi-ppu-002",
+			nama: "Geografi Indonesia",
+			kategori: LatihanSoalType.PPU,
+			deskripsi: "Materi tentang kondisi geografis, iklim, dan sumber daya alam Indonesia.",
+			urutan: 6,
 		},
 		{
 			id: "materi-pk-001",
 			nama: "Aljabar Dasar",
 			kategori: LatihanSoalType.PK,
-			deskripsi: "Materi tentang persamaan linear, kuadrat, dan sistem persamaan",
-			urutan: 4,
+			deskripsi: "Materi tentang persamaan linear, kuadrat, dan sistem persamaan.",
+			urutan: 7,
+		},
+		{
+			id: "materi-pk-002",
+			nama: "Geometri",
+			kategori: LatihanSoalType.PK,
+			deskripsi: "Materi tentang bangun datar, bangun ruang, dan perhitungan luas serta volume.",
+			urutan: 8,
 		},
 		{
 			id: "materi-litindo-001",
 			nama: "Pemahaman Kosakata",
 			kategori: LatihanSoalType.LITERASIBINDO,
-			deskripsi: "Materi tentang makna kata, sinonim, antonim, dan konteks penggunaan",
-			urutan: 5,
+			deskripsi: "Materi tentang makna kata, sinonim, antonim, dan konteks penggunaan dalam Bahasa Indonesia.",
+			urutan: 9,
+		},
+		{
+			id: "materi-litindo-002",
+			nama: "Bacaan Pemahaman",
+			kategori: LatihanSoalType.LITERASIBINDO,
+			deskripsi: "Materi tentang teknik membaca cepat dan memahami isi bacaan secara komprehensif.",
+			urutan: 10,
 		},
 	];
 
@@ -74,6 +152,7 @@ async function CreateMateri() {
 	console.log("✅ Materi seeded successfully");
 }
 
+// ==================== LATIHAN SOAL SEEDER ====================
 async function CreateLatihanSoal() {
 	// Soal untuk Penalaran Logis (PU)
 	const soalPU = [
@@ -127,7 +206,7 @@ async function CreateLatihanSoal() {
 		},
 		{
 			id: "latihan-pu-004",
-			materiId: "materi-pu-001",
+			materiId: "materi-pu-002",
 			tipe: LatihanSoalType.PU,
 			tipeSesi: SessionType.LATIHAN,
 			content: "Tidak ada siswa yang bodoh. Ani adalah siswa. Maka...",
@@ -143,7 +222,7 @@ async function CreateLatihanSoal() {
 		},
 		{
 			id: "latihan-pu-005",
-			materiId: "materi-pu-001",
+			materiId: "materi-pu-002",
 			tipe: LatihanSoalType.PU,
 			tipeSesi: SessionType.TRY_OUT,
 			content: "Jika A > B dan B > C, maka...",
@@ -195,7 +274,7 @@ async function CreateLatihanSoal() {
 		},
 		{
 			id: "latihan-pbm-003",
-			materiId: "materi-pbm-001",
+			materiId: "materi-pbm-002",
 			tipe: LatihanSoalType.PBM,
 			tipeSesi: SessionType.TRY_OUT,
 			content: "Fungsi kalimat penjelas dalam paragraf adalah...",
@@ -211,7 +290,7 @@ async function CreateLatihanSoal() {
 		},
 		{
 			id: "latihan-pbm-004",
-			materiId: "materi-pbm-001",
+			materiId: "materi-pbm-002",
 			tipe: LatihanSoalType.PBM,
 			tipeSesi: SessionType.LATIHAN,
 			content: "Paragraf yang ide pokoknya di akhir disebut paragraf...",
@@ -223,22 +302,6 @@ async function CreateLatihanSoal() {
 				["C", "Campuran"],
 				["D", "Argumentatif"],
 				["E", "Persuasif"],
-			],
-		},
-		{
-			id: "latihan-pbm-005",
-			materiId: "materi-pbm-001",
-			tipe: LatihanSoalType.PBM,
-			tipeSesi: SessionType.TRY_OUT,
-			content: "Ciri kalimat utama adalah...",
-			kunciJawaban: "D",
-			tingkatKesulitan: 3,
-			pilihan: [
-				["A", "Mengandung kata sambung"],
-				["B", "Kalimat terpanjang"],
-				["C", "Selalu di akhir"],
-				["D", "Bersifat umum dan dapat berdiri sendiri"],
-				["E", "Mengandung angka"],
 			],
 		},
 	];
@@ -279,7 +342,7 @@ async function CreateLatihanSoal() {
 		},
 		{
 			id: "latihan-ppu-003",
-			materiId: "materi-ppu-001",
+			materiId: "materi-ppu-002",
 			tipe: LatihanSoalType.PPU,
 			tipeSesi: SessionType.TRY_OUT,
 			content: "Konferensi Meja Bundar (KMB) menghasilkan keputusan...",
@@ -291,38 +354,6 @@ async function CreateLatihanSoal() {
 				["C", "Pengakuan kedaulatan Indonesia"],
 				["D", "Pembentukan federasi"],
 				["E", "Perang berlanjut"],
-			],
-		},
-		{
-			id: "latihan-ppu-004",
-			materiId: "materi-ppu-001",
-			tipe: LatihanSoalType.PPU,
-			tipeSesi: SessionType.LATIHAN,
-			content: "Sumpah Pemuda dikumandangkan pada tahun...",
-			kunciJawaban: "D",
-			tingkatKesulitan: 1,
-			pilihan: [
-				["A", "1926"],
-				["B", "1927"],
-				["C", "1929"],
-				["D", "1928"],
-				["E", "1930"],
-			],
-		},
-		{
-			id: "latihan-ppu-005",
-			materiId: "materi-ppu-001",
-			tipe: LatihanSoalType.PPU,
-			tipeSesi: SessionType.TRY_OUT,
-			content: "Presiden pertama Republik Indonesia adalah...",
-			kunciJawaban: "A",
-			tingkatKesulitan: 1,
-			pilihan: [
-				["A", "Ir. Soekarno"],
-				["B", "Mohammad Hatta"],
-				["C", "Sutan Sjahrir"],
-				["D", "Soeharto"],
-				["E", "BJ Habibie"],
 			],
 		},
 	];
@@ -363,55 +394,23 @@ async function CreateLatihanSoal() {
 		},
 		{
 			id: "latihan-pk-003",
-			materiId: "materi-pk-001",
+			materiId: "materi-pk-002",
 			tipe: LatihanSoalType.PK,
 			tipeSesi: SessionType.TRY_OUT,
-			content: "Jika x² - 5x + 6 = 0, maka nilai x adalah...",
-			kunciJawaban: "A",
-			tingkatKesulitan: 3,
-			pilihan: [
-				["A", "2 atau 3"],
-				["B", "1 atau 6"],
-				["C", "-2 atau -3"],
-				["D", "5 atau 6"],
-				["E", "0 atau 5"],
-			],
-		},
-		{
-			id: "latihan-pk-004",
-			materiId: "materi-pk-001",
-			tipe: LatihanSoalType.PK,
-			tipeSesi: SessionType.LATIHAN,
-			content: "Bentuk sederhana dari 2x + 3x - x adalah...",
+			content: "Luas persegi panjang dengan panjang 8 cm dan lebar 5 cm adalah...",
 			kunciJawaban: "D",
 			tingkatKesulitan: 1,
 			pilihan: [
-				["A", "2x"],
-				["B", "3x"],
-				["C", "5x"],
-				["D", "4x"],
-				["E", "6x"],
-			],
-		},
-		{
-			id: "latihan-pk-005",
-			materiId: "materi-pk-001",
-			tipe: LatihanSoalType.PK,
-			tipeSesi: SessionType.TRY_OUT,
-			content: "Jika 2(x + 4) = 18, maka x = ...",
-			kunciJawaban: "B",
-			tingkatKesulitan: 2,
-			pilihan: [
-				["A", "4"],
-				["B", "5"],
-				["C", "6"],
-				["D", "7"],
-				["E", "8"],
+				["A", "13 cm²"],
+				["B", "26 cm²"],
+				["C", "30 cm²"],
+				["D", "40 cm²"],
+				["E", "48 cm²"],
 			],
 		},
 	];
 
-	// Soal untuk Pemahaman Kosakata (LITERASIBINDO)
+	// Soal untuk Literasi Indonesia
 	const soalLitIndo = [
 		{
 			id: "latihan-litindo-001",
@@ -447,7 +446,7 @@ async function CreateLatihanSoal() {
 		},
 		{
 			id: "latihan-litindo-003",
-			materiId: "materi-litindo-001",
+			materiId: "materi-litindo-002",
 			tipe: LatihanSoalType.LITERASIBINDO,
 			tipeSesi: SessionType.TRY_OUT,
 			content: "Makna kata \"empiris\" adalah...",
@@ -459,38 +458,6 @@ async function CreateLatihanSoal() {
 				["C", "Berdasarkan opini"],
 				["D", "Berdasarkan pengalaman"],
 				["E", "Berdasarkan dongeng"],
-			],
-		},
-		{
-			id: "latihan-litindo-004",
-			materiId: "materi-litindo-001",
-			tipe: LatihanSoalType.LITERASIBINDO,
-			tipeSesi: SessionType.LATIHAN,
-			content: "Kata \"komprehensif\" berarti...",
-			kunciJawaban: "A",
-			tingkatKesulitan: 3,
-			pilihan: [
-				["A", "Menyeluruh"],
-				["B", "Sebagian"],
-				["C", "Singkat"],
-				["D", "Rumit"],
-				["E", "Mudah"],
-			],
-		},
-		{
-			id: "latihan-litindo-005",
-			materiId: "materi-litindo-001",
-			tipe: LatihanSoalType.LITERASIBINDO,
-			tipeSesi: SessionType.TRY_OUT,
-			content: "Sinonim kata \"deduksi\" adalah...",
-			kunciJawaban: "E",
-			tingkatKesulitan: 3,
-			pilihan: [
-				["A", "Penambahan"],
-				["B", "Pengurangan"],
-				["C", "Perkalian"],
-				["D", "Induksi"],
-				["E", "Penyimpulan"],
 			],
 		},
 	];
@@ -530,27 +497,11 @@ async function CreateLatihanSoal() {
 					createMany: {
 						data: [
 							{
-								id: `${soal.id}-visual`,
-								konten: `<div class="pembahasan-visual">
-									<h4>Pembahasan Visual</h4>
+								id: `${soal.id}-pembahasan`,
+								konten: `<div class="pembahasan">
+									<h4>Pembahasan</h4>
 									<p>Jawaban yang benar adalah <strong>${soal.kunciJawaban}</strong>.</p>
-									<p>Penjelasan disajikan dalam bentuk poin-poin dan diagram.</p>
-								</div>`,
-							},
-							{
-								id: `${soal.id}-auditori`,
-								konten: `<div class="pembahasan-auditori">
-									<h4>Pembahasan Auditory</h4>
-									<p>Mari kita bahas langkah demi langkah...</p>
-									<p>Jawaban yang benar adalah pilihan ${soal.kunciJawaban}.</p>
-								</div>`,
-							},
-							{
-								id: `${soal.id}-kinestetik`,
-								konten: `<div class="pembahasan-kinestetik">
-									<h4>Pembahasan Kinesthetic</h4>
-									<p>Coba praktikkan dengan contoh nyata...</p>
-									<p>Jawaban: ${soal.kunciJawaban}</p>
+									<p>Penjelasan: ${soal.content}</p>
 								</div>`,
 							},
 						],
@@ -564,17 +515,13 @@ async function CreateLatihanSoal() {
 	console.log("✅ Latihan Soal seeded successfully");
 }
 
+// ==================== MAIN SEEDER ====================
 async function main() {
-	console.log("🌱 Starting seeding...");
+	console.log("🌱 Starting comprehensive seeding...");
 
-	await CreateUser();
-	console.log("✅ User created");
-
+	await CreateUsers();
 	await CreateMateri();
-	console.log("✅ Materi created");
-
 	await CreateLatihanSoal();
-	console.log("✅ Latihan Soal created");
 
 	console.log("🎉 Seeding completed!");
 }
