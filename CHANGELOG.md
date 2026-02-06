@@ -1,6 +1,7 @@
 ## [Unreleased]
 
 ### Added
+- Add latest version of latihan soal implementation.
 - Leaderboard feature to track utbk tryout scores among users.
 - Pomodoro Layout
 - Integreted with Spotify 
