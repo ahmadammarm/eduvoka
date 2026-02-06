@@ -70,7 +70,6 @@ export const authOptions: NextAuthOptions = {
 					id: user.id,
 					email: user.email,
 					name: user.name,
-					gayaBelajar: user.gayaBelajar,
 					role: user.role,
 				};
 			},
@@ -126,7 +125,6 @@ export const authOptions: NextAuthOptions = {
 						},
 					});
 
-					user.gayaBelajar = existingUser.gayaBelajar;
 					user.role = existingUser.role;
 
 					return true;
@@ -153,7 +151,6 @@ export const authOptions: NextAuthOptions = {
 						},
 					});
 
-					user.gayaBelajar = null;
 
 					return true;
 				}
@@ -167,14 +164,9 @@ export const authOptions: NextAuthOptions = {
 				token.name = user.name;
 				token.email = user.email;
 				token.role = (user as any).role || "USER";
-				token.gayaBelajar = user.gayaBelajar;
 				token.paketUser = (user as any).paketUser || "BASIC";
 
 				token.expiresAt = Math.floor(Date.now() / 1000) + 24 * 60 * 60;
-			}
-
-			if (trigger === "update" && session?.gayaBelajar) {
-				token.gayaBelajar = session.gayaBelajar;
 			}
 
 			if (typeof token.expiresAt === "number" && Date.now() / 1000 > token.expiresAt) {
@@ -189,14 +181,12 @@ export const authOptions: NextAuthOptions = {
 				const dbUser = await prisma.user.findUnique({
 					where: { id: token.id as string },
 					select: {
-						gayaBelajar: true,
 						role: true,
 						paketUser: true
 					},
 				});
 
 				if (dbUser) {
-					token.gayaBelajar = dbUser.gayaBelajar;
 					token.role = dbUser.role;
 					token.paketUser = dbUser.paketUser;
 				}
@@ -214,7 +204,6 @@ export const authOptions: NextAuthOptions = {
 			if (session.user) {
 				session.user.id = token.id as string;
 				session.user.role = token.role;
-				session.user.gayaBelajar = token.gayaBelajar;
 			}
 			return session;
 		},

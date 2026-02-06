@@ -34,7 +34,6 @@ export async function SignupAction(email: string, name: string, password: string
                 email: validEmail,
                 name: validName,
                 password: hashedPassword,
-                gayaBelajar: null,
             },
         });
 
