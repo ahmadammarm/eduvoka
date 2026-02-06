@@ -40,8 +40,8 @@ const data = {
 				},
 				{
 					icon: Book,
-					title: "Try Out UTBK",
-					url: "/dashboard/utbk-tryout",
+					title: "Latihan Soal UTBK",
+					url: "/dashboard/latihan-soal",
 				},
 				{
 					icon: NotebookText,
