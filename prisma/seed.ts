@@ -1,6 +1,5 @@
 import bcrypt from "bcryptjs";
-import { prisma } from "@/lib/prisma";
-import { LatihanSoalType, SessionType } from "../generated/prisma/enums";
+import { prisma, LatihanSoalType, SessionType } from "../src/lib/prisma";
 // import { MapTypeToSesi } from "@/lib/map-type-to-session";
 
 async function CreateUser() {
