@@ -1,6 +1,7 @@
 ## [Unreleased]
 
 ### Added
+- Add time decay API 
 - Materi completion tracking per user per day implementation.
 - Implement frontend data capture hooks
 - Add latest version of latihan soal implementation.
