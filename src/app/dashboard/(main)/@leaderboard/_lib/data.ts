@@ -11,7 +11,7 @@ export async function getLeaderboardData(page: number = 1) {
 			const pageSize = PAGE_SIZE;
 			const skip = (page - 1) * pageSize;
 
-			const bestScores = await prisma.utbkSession.groupBy({
+			const bestScores = await prisma.latihanSession.groupBy({
 				by: ["userId"],
 				where: {
 					endedAt: {
@@ -42,7 +42,7 @@ export async function getLeaderboardData(page: number = 1) {
 			for (const user of users) {
 				usersById.set(user.id, user);
 			}
-			const sessions = await prisma.utbkSession.findMany({
+			const sessions = await prisma.latihanSession.findMany({
 				where: {
 					OR: paginatedScores.map((score) => ({
 						userId: score.userId,
@@ -98,7 +98,7 @@ export async function getLeaderboardToday() {
 			const today = new Date();
 			today.setHours(0, 0, 0, 0);
 
-			const bestScores = await prisma.utbkSession.groupBy({
+			const bestScores = await prisma.latihanSession.groupBy({
 				by: ["userId"],
 				where: {
 					startedAt: {
@@ -125,7 +125,7 @@ export async function getLeaderboardToday() {
 			});
 			const userMap = new Map(users.map((user) => [user.id, user]));
 
-			const sessions = await prisma.utbkSession.findMany({
+			const sessions = await prisma.latihanSession.findMany({
 				where: {
 					userId: { in: userIds },
 					startedAt: { gte: today },
@@ -167,7 +167,7 @@ export async function getLeaderboardToday() {
 export async function getCurrentUserRank(userId: string) {
 	return unstable_cache(
 		async (userId: string) => {
-			const userBestScore = await prisma.utbkSession.groupBy({
+			const userBestScore = await prisma.latihanSession.groupBy({
 				by: ["userId"],
 				where: {
 					endedAt: {
@@ -189,7 +189,7 @@ export async function getCurrentUserRank(userId: string) {
 					SELECT CAST(COUNT(*) + 1 AS UNSIGNED) as \`rank\`
 					FROM (
 							SELECT userId, MAX(CAST(score AS DECIMAL(10,2))) as maxScore
-							FROM UtbkSession
+							FROM latihanSession
 							WHERE endedAt IS NOT NULL
 							GROUP BY userId
 					) as bestScores
@@ -202,7 +202,7 @@ export async function getCurrentUserRank(userId: string) {
 				prisma.user.findUnique({
 					where: { id: userId },
 				}),
-				prisma.utbkSession.findFirst({
+				prisma.latihanSession.findFirst({
 					where: {
 						userId: userId,
 						score: userScore,
@@ -236,7 +236,7 @@ export async function getCurrentUserRankToday(userId: string) {
 			const today = new Date();
 			today.setHours(0, 0, 0, 0);
 
-			const userBestScore = await prisma.utbkSession.groupBy({
+			const userBestScore = await prisma.latihanSession.groupBy({
 				by: ["userId"],
 				where: {
 					userId: userId,
@@ -262,7 +262,7 @@ export async function getCurrentUserRankToday(userId: string) {
 					SELECT CAST(COUNT(*) + 1 AS UNSIGNED) as \`rank\`
 					FROM (
 							SELECT userId, MAX(CAST(score AS DECIMAL(10,2))) as maxScore
-							FROM UtbkSession
+							FROM latihanSession
 							WHERE startedAt >= ${today}
 							AND endedAt IS NOT NULL
 							GROUP BY userId
@@ -276,7 +276,7 @@ export async function getCurrentUserRankToday(userId: string) {
 				prisma.user.findUnique({
 					where: { id: userId },
 				}),
-				prisma.utbkSession.findFirst({
+				prisma.latihanSession.findFirst({
 					where: {
 						userId: userId,
 						score: userScore,

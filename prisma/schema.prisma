@@ -14,7 +14,8 @@ datasource db {
 enum SessionType {
     TPS
     LITERASI
-    TRYOUT
+    TRY_OUT
+    LATIHAN
 }
 
 enum LatihanSoalType {
@@ -29,17 +30,6 @@ enum LatihanSoalType {
 enum Role {
   USER
   ADMIN
-}
-
-enum Status {
-  ACTIVE
-  INACTIVE
-}
-
-enum LearningStyle {
-  VISUAL
-  AUDITORY
-  KINESTHETIC
 }
 
 enum QuestionType {
@@ -77,28 +67,28 @@ enum TaskStatus {
 // ==================== USER & AUTH ====================
 
 model User {
-    id                String       @id @default(cuid())
-    email             String       @unique
+    id                String    @id @default(cuid())
+    email             String    @unique
     name              String
     password          String?
     profileImage      String?
-    createdAt         DateTime     @default(now())
-    updatedAt         DateTime     @updatedAt
-    gayaBelajar       GayaBelajar?
-    role              Role         @default(USER)
-    paketUser         PaketUser    @default(BASIC)
-    isSubscribed      Boolean      @default(false)
+    createdAt         DateTime  @default(now())
+    updatedAt         DateTime  @updatedAt
+    role              Role      @default(USER)
+    paketUser         PaketUser @default(BASIC)
+    isSubscribed      Boolean   @default(false)
     subscriptionEndAt DateTime?
 
     accounts            Account[]
     sessions            Session[]
-    jawabanUserKuisVAKs JawabanUserKuisVAK[]
     latihanSessions     LatihanSession[]
     tryoutParticipants  TryoutParticipant[]
     dailyTasks          DailyTask[]
     userInsights        UserInsight[]
     learningMetrics     LearningMetrics[]
     weaknessAreas       WeaknessArea[]
+    studySession        StudySession[]
+    rawEventLogs        RawEventLog[]
 
     @@index([email])
     @@index([paketUser])
@@ -138,54 +128,6 @@ model Session {
     @@index([expires])
 }
 
-// ==================== KUIS VAK ====================
-
-model PertanyaanKuisVAK {
-    id         String   @id @default(cuid())
-    pertanyaan String   @db.Text
-    createdAt  DateTime @default(now())
-    updatedAt  DateTime @updatedAt
-
-    jawabanKuisVAKs     JawabanKuisVAK[]
-    jawabanUserKuisVAKs JawabanUserKuisVAK[]
-
-    @@index([createdAt])
-}
-
-model JawabanKuisVAK {
-    id          String      @id @default(cuid())
-    kuisVAKId   String
-    jawaban     String
-    tipeJawaban GayaBelajar
-    createdAt   DateTime    @default(now())
-    updatedAt   DateTime    @updatedAt
-
-    kuisVAK             PertanyaanKuisVAK    @relation(fields: [kuisVAKId], references: [id], onDelete: Cascade)
-    jawabanUserKuisVAKs JawabanUserKuisVAK[]
-
-    @@index([kuisVAKId])
-    @@index([tipeJawaban])
-}
-
-model JawabanUserKuisVAK {
-    id                  String   @id @default(cuid())
-    userId              String
-    pertanyaanKuisVAKId String
-    jawabanKuisVAKId    String
-    createdAt           DateTime @default(now())
-    updatedAt           DateTime @updatedAt
-
-    user              User              @relation(fields: [userId], references: [id], onDelete: Cascade)
-    pertanyaanKuisVAK PertanyaanKuisVAK @relation(fields: [pertanyaanKuisVAKId], references: [id], onDelete: Cascade)
-    jawabanKuisVAK    JawabanKuisVAK    @relation(fields: [jawabanKuisVAKId], references: [id], onDelete: Cascade)
-
-    @@unique([userId, pertanyaanKuisVAKId])
-    @@index([userId])
-    @@index([pertanyaanKuisVAKId])
-    @@index([jawabanKuisVAKId])
-    @@index([createdAt])
-}
-
 // ==================== SOAL & MATERI ====================
 
 model Materi {
@@ -198,7 +140,9 @@ model Materi {
     updatedAt DateTime        @updatedAt
 
     soalLatihan   SoalLatihanSoal[]
+	learningMetrics LearningMetrics[]
     weaknessAreas WeaknessArea[]
+    studySession StudySession[]
 
     @@index([kategori])
     @@index([urutan])
@@ -234,7 +178,7 @@ model PilihanJawaban {
     soalUTBKId    String
     label         String // A, B, C, D, E
     pilihan       String
-    soalLatihanId String
+    soalLatihanId String @default("")
 
     soalLatihan SoalLatihanSoal      @relation(fields: [soalLatihanId], references: [id], onDelete: Cascade)
     jawabanUser LatihanJawabanUser[]
@@ -243,18 +187,16 @@ model PilihanJawaban {
 }
 
 model PembahasanSoalLatihan {
-    id            String      @id @default(cuid())
+    id            String   @id @default(cuid())
     soalLatihanId String
-    gayaBelajar   GayaBelajar
-    konten        String      @db.Text
-    createdAt     DateTime    @default(now())
-    updatedAt     DateTime    @updatedAt
+    konten        String   @db.Text
+    createdAt     DateTime @default(now())
+    updatedAt     DateTime @updatedAt
 
     soalLatihan SoalLatihanSoal @relation(fields: [soalLatihanId], references: [id], onDelete: Cascade)
 
-    @@unique([soalLatihanId, gayaBelajar])
+    @@unique([soalLatihanId])
     @@index([soalLatihanId])
-    @@index([gayaBelajar])
 }
 
 // ==================== LATIHAN SESSION ====================
@@ -263,6 +205,7 @@ model LatihanSession {
     id        String      @id @default(cuid())
     userId    String
     type      SessionType
+    materiId  String?
     startedAt DateTime    @default(now())
     endedAt   DateTime?
     score     Int?
@@ -279,6 +222,7 @@ model LatihanSession {
     @@index([userId])
     @@index([startedAt])
     @@index([type])
+    @@index([materiId])
     @@index([userId, type])
     @@index([userId, startedAt])
     @@index([endedAt])
@@ -389,9 +333,10 @@ model DailyTask {
 // ==================== LEARNING METRICS ====================
 
 model LearningMetrics {
-    id     String   @id @default(cuid())
-    userId String
-    date   DateTime @db.Date
+    id       String   @id @default(cuid())
+    userId   String
+    materiId String?
+    date     DateTime @db.Date
 
     // Daily metrics
     totalStudyTime     Int    @default(0) // in seconds
@@ -408,10 +353,12 @@ model LearningMetrics {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+    user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+    materi Materi? @relation(fields: [materiId], references: [id], onDelete: Cascade)
 
-    @@unique([userId, date])
+    @@unique([userId, materiId, date])
     @@index([userId, date])
+    @@index([materiId])
     @@index([date])
     @@index([userId, isActiveDay])
     @@index([currentStreak])
@@ -494,4 +441,64 @@ model AIPembahasan {
 
     @@index([sessionId])
     @@index([createdAt])
+}
+
+// ==================== RAW EVENT LOG ====================
+
+model RawEventLog {
+    id        String   @id @default(cuid())
+    userId    String
+    eventType String                    // e.g., "ANSWER_SUBMIT", "SOAL_VIEW", "STUDY_START", "STUDY_HEARTBEAT", etc.
+    payload   String   @db.Text         // JSON stringified event data
+    timestamp DateTime @default(now())
+    sessionRef String?                  // reference to LatihanSession.id or StudySession.id
+    synced    Boolean  @default(true)   // always true when reaching DB
+
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@index([userId, eventType])
+    @@index([userId, timestamp])
+    @@index([sessionRef])
+    @@index([eventType, timestamp])
+    @@index([timestamp])
+}
+
+// ================= STUDY SESSION (MATERIAL) =================
+
+model StudySession {
+    id        String   @id @default(cuid())
+    userId    String
+    materiId  String
+
+    startedAt     DateTime  @default(now())
+    endedAt       DateTime?
+    totalDuration Int       @default(0)     // active seconds only (excludes idle)
+    idleDuration  Int       @default(0)     // idle seconds detected
+
+    // Reading progress
+    scrollDepthMax  Float    @default(0)    // 0-100 percentage
+    scrollDepthAvg  Float    @default(0)    // average scroll position
+    totalScrollEvents Int    @default(0)
+
+    // Visibility
+    totalVisibleTime  Int    @default(0)    // seconds tab was active
+    totalHiddenTime   Int    @default(0)    // seconds tab was hidden
+    visibilityChanges Int    @default(0)    // how many times tab toggled
+
+    // Status
+    isCompleted Boolean @default(false)     // user reached bottom or spent enough time
+    isAbandoned Boolean @default(false)     // user left without meaningful engagement
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    materi Materi @relation(fields: [materiId], references: [id], onDelete: Cascade)
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@index([userId, materiId])
+    @@index([userId, startedAt])
+    @@index([materiId])
+    @@index([startedAt])
+    @@index([isCompleted])
+    @@index([userId, isCompleted])
 }
