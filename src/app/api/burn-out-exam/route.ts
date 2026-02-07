@@ -7,17 +7,17 @@ export async function POST(req: Request) {
 		const score: number = Number(body.score);
 		const userIdVar: string = String(body.InputUserId);
 
-		const getUserId = await prisma.learningMetrics.findFirst({
+		const getUserId = await prisma.studySession.findFirst({
 			where: { userId: userIdVar },
 		});
 
-		const timeStudyed = getUserId?.totalStudyTime || 0;
-		const correctAnswers = getUserId?.correctAnswers || 0;
+		const timeStudyed = getUserId?.totalDuration || 0;
+		const idleTime = getUserId?.idleDuration || 0;
 
 		let stressLevel: "Low" | "Moderate" | "High" = "Low";
-		if (timeStudyed > 60000 && correctAnswers < 50) {
+		if (timeStudyed > 60000 && idleTime < 30000) {
 			stressLevel = "High";
-		} else if (timeStudyed >= 30000 && correctAnswers < 75) {
+		} else if (timeStudyed >= 30000 && idleTime < 45000) {
 			stressLevel = "Moderate";
 		}
 

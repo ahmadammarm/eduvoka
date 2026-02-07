@@ -2,7 +2,8 @@
 // Supports comprehensive learning analytics and AI-driven insights
 
 generator client {
-    provider = "prisma-client-js"
+    provider = "prisma-client"
+    output   = "../generated/prisma"
 }
 
 datasource db {
@@ -28,18 +29,15 @@ enum LatihanSoalType {
 }
 
 enum Role {
-  USER
-  ADMIN
+    USER
+    ADMIN
 }
 
-enum QuestionType {
-  PG
-}
-
-enum TryoutStatus {
-  DRAFT
-  PUBLISHED
-  CLOSED
+enum PaketUser {
+    BASIC
+    LITE
+    ACTIVE
+    EDUVOKA
 }
 
 enum TryoutStatus {
@@ -110,7 +108,7 @@ model Account {
     id_token          String? @db.Text
     session_state     String?
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
     @@unique([provider, providerAccountId])
     @@index([userId])

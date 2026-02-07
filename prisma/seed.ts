@@ -1,10 +1,10 @@
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
-import { 
-	LatihanSoalType, 
-	SessionType, 
-	Role, 
-	PaketUser, 
+import {
+	LatihanSoalType,
+	SessionType,
+	Role,
+	PaketUser,
 } from "../generated/prisma/enums";
 
 // ==================== USER SEEDER ====================
@@ -69,70 +69,80 @@ async function CreateMateri() {
 			id: "materi-pu-001",
 			nama: "Penalaran Logis",
 			kategori: LatihanSoalType.PU,
-			deskripsi: "Materi tentang penalaran logis, silogisme, dan analisis argumen. Pelajari cara berpikir sistematis dan menarik kesimpulan yang valid.",
+			deskripsi:
+				"Materi tentang penalaran logis, silogisme, dan analisis argumen. Pelajari cara berpikir sistematis dan menarik kesimpulan yang valid.",
 			urutan: 1,
 		},
 		{
 			id: "materi-pu-002",
 			nama: "Penalaran Analitis",
 			kategori: LatihanSoalType.PU,
-			deskripsi: "Materi tentang analisis data, grafik, dan tabel untuk pengambilan keputusan.",
+			deskripsi:
+				"Materi tentang analisis data, grafik, dan tabel untuk pengambilan keputusan.",
 			urutan: 2,
 		},
 		{
 			id: "materi-pbm-001",
 			nama: "Struktur Paragraf",
 			kategori: LatihanSoalType.PBM,
-			deskripsi: "Materi tentang ide pokok, kalimat utama, dan pengembangan paragraf yang efektif.",
+			deskripsi:
+				"Materi tentang ide pokok, kalimat utama, dan pengembangan paragraf yang efektif.",
 			urutan: 3,
 		},
 		{
 			id: "materi-pbm-002",
 			nama: "Teks Argumentasi",
 			kategori: LatihanSoalType.PBM,
-			deskripsi: "Materi tentang struktur argumentasi, premis, dan kesimpulan dalam teks.",
+			deskripsi:
+				"Materi tentang struktur argumentasi, premis, dan kesimpulan dalam teks.",
 			urutan: 4,
 		},
 		{
 			id: "materi-ppu-001",
 			nama: "Sejarah Indonesia",
 			kategori: LatihanSoalType.PPU,
-			deskripsi: "Materi tentang sejarah kemerdekaan dan perkembangan Indonesia dari masa ke masa.",
+			deskripsi:
+				"Materi tentang sejarah kemerdekaan dan perkembangan Indonesia dari masa ke masa.",
 			urutan: 5,
 		},
 		{
 			id: "materi-ppu-002",
 			nama: "Geografi Indonesia",
 			kategori: LatihanSoalType.PPU,
-			deskripsi: "Materi tentang kondisi geografis, iklim, dan sumber daya alam Indonesia.",
+			deskripsi:
+				"Materi tentang kondisi geografis, iklim, dan sumber daya alam Indonesia.",
 			urutan: 6,
 		},
 		{
 			id: "materi-pk-001",
 			nama: "Aljabar Dasar",
 			kategori: LatihanSoalType.PK,
-			deskripsi: "Materi tentang persamaan linear, kuadrat, dan sistem persamaan.",
+			deskripsi:
+				"Materi tentang persamaan linear, kuadrat, dan sistem persamaan.",
 			urutan: 7,
 		},
 		{
 			id: "materi-pk-002",
 			nama: "Geometri",
 			kategori: LatihanSoalType.PK,
-			deskripsi: "Materi tentang bangun datar, bangun ruang, dan perhitungan luas serta volume.",
+			deskripsi:
+				"Materi tentang bangun datar, bangun ruang, dan perhitungan luas serta volume.",
 			urutan: 8,
 		},
 		{
 			id: "materi-litindo-001",
 			nama: "Pemahaman Kosakata",
 			kategori: LatihanSoalType.LITERASIBINDO,
-			deskripsi: "Materi tentang makna kata, sinonim, antonim, dan konteks penggunaan dalam Bahasa Indonesia.",
+			deskripsi:
+				"Materi tentang makna kata, sinonim, antonim, dan konteks penggunaan dalam Bahasa Indonesia.",
 			urutan: 9,
 		},
 		{
 			id: "materi-litindo-002",
 			nama: "Bacaan Pemahaman",
 			kategori: LatihanSoalType.LITERASIBINDO,
-			deskripsi: "Materi tentang teknik membaca cepat dan memahami isi bacaan secara komprehensif.",
+			deskripsi:
+				"Materi tentang teknik membaca cepat dan memahami isi bacaan secara komprehensif.",
 			urutan: 10,
 		},
 	];
@@ -161,7 +171,8 @@ async function CreateLatihanSoal() {
 			materiId: "materi-pu-001",
 			tipe: LatihanSoalType.PU,
 			tipeSesi: SessionType.LATIHAN,
-			content: "Semua mahasiswa adalah pelajar. Budi adalah mahasiswa. Kesimpulannya adalah...",
+			content:
+				"Semua mahasiswa adalah pelajar. Budi adalah mahasiswa. Kesimpulannya adalah...",
 			kunciJawaban: "A",
 			tingkatKesulitan: 2,
 			pilihan: [
@@ -177,7 +188,8 @@ async function CreateLatihanSoal() {
 			materiId: "materi-pu-001",
 			tipe: LatihanSoalType.PU,
 			tipeSesi: SessionType.LATIHAN,
-			content: "Jika hari ini hujan, maka jalanan basah. Jalanan tidak basah. Maka...",
+			content:
+				"Jika hari ini hujan, maka jalanan basah. Jalanan tidak basah. Maka...",
 			kunciJawaban: "B",
 			tingkatKesulitan: 3,
 			pilihan: [
@@ -193,7 +205,8 @@ async function CreateLatihanSoal() {
 			materiId: "materi-pu-001",
 			tipe: LatihanSoalType.PU,
 			tipeSesi: SessionType.TRY_OUT,
-			content: "Semua dokter adalah sarjana. Sebagian sarjana adalah PNS. Kesimpulannya...",
+			content:
+				"Semua dokter adalah sarjana. Sebagian sarjana adalah PNS. Kesimpulannya...",
 			kunciJawaban: "C",
 			tingkatKesulitan: 3,
 			pilihan: [
@@ -261,7 +274,8 @@ async function CreateLatihanSoal() {
 			materiId: "materi-pbm-001",
 			tipe: LatihanSoalType.PBM,
 			tipeSesi: SessionType.LATIHAN,
-			content: "Paragraf yang ide pokoknya terletak di awal paragraf disebut paragraf...",
+			content:
+				"Paragraf yang ide pokoknya terletak di awal paragraf disebut paragraf...",
 			kunciJawaban: "B",
 			tingkatKesulitan: 2,
 			pilihan: [
@@ -313,7 +327,8 @@ async function CreateLatihanSoal() {
 			materiId: "materi-ppu-001",
 			tipe: LatihanSoalType.PPU,
 			tipeSesi: SessionType.LATIHAN,
-			content: "Organisasi pergerakan nasional pertama di Indonesia adalah...",
+			content:
+				"Organisasi pergerakan nasional pertama di Indonesia adalah...",
 			kunciJawaban: "B",
 			tingkatKesulitan: 2,
 			pilihan: [
@@ -397,7 +412,8 @@ async function CreateLatihanSoal() {
 			materiId: "materi-pk-002",
 			tipe: LatihanSoalType.PK,
 			tipeSesi: SessionType.TRY_OUT,
-			content: "Luas persegi panjang dengan panjang 8 cm dan lebar 5 cm adalah...",
+			content:
+				"Luas persegi panjang dengan panjang 8 cm dan lebar 5 cm adalah...",
 			kunciJawaban: "D",
 			tingkatKesulitan: 1,
 			pilihan: [
@@ -417,7 +433,7 @@ async function CreateLatihanSoal() {
 			materiId: "materi-litindo-001",
 			tipe: LatihanSoalType.LITERASIBINDO,
 			tipeSesi: SessionType.LATIHAN,
-			content: "Sinonim dari kata \"antusias\" adalah...",
+			content: 'Sinonim dari kata "antusias" adalah...',
 			kunciJawaban: "C",
 			tingkatKesulitan: 2,
 			pilihan: [
@@ -433,7 +449,7 @@ async function CreateLatihanSoal() {
 			materiId: "materi-litindo-001",
 			tipe: LatihanSoalType.LITERASIBINDO,
 			tipeSesi: SessionType.LATIHAN,
-			content: "Antonim dari kata \"optimis\" adalah...",
+			content: 'Antonim dari kata "optimis" adalah...',
 			kunciJawaban: "B",
 			tingkatKesulitan: 2,
 			pilihan: [
@@ -449,7 +465,7 @@ async function CreateLatihanSoal() {
 			materiId: "materi-litindo-002",
 			tipe: LatihanSoalType.LITERASIBINDO,
 			tipeSesi: SessionType.TRY_OUT,
-			content: "Makna kata \"empiris\" adalah...",
+			content: 'Makna kata "empiris" adalah...',
 			kunciJawaban: "D",
 			tingkatKesulitan: 3,
 			pilihan: [
@@ -462,7 +478,13 @@ async function CreateLatihanSoal() {
 		},
 	];
 
-	const allSoal = [...soalPU, ...soalPBM, ...soalPPU, ...soalPK, ...soalLitIndo];
+	const allSoal = [
+		...soalPU,
+		...soalPBM,
+		...soalPPU,
+		...soalPK,
+		...soalLitIndo,
+	];
 
 	for (const soal of allSoal) {
 		await prisma.soalLatihanSoal.upsert({
