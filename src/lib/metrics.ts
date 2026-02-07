@@ -91,18 +91,22 @@ export async function calculateLearningVelocity(
     }
 
     // 5. Improvement (20%)
-    // Compare current accuracyRate vs avg accuracyRate from last 5 LearningMetrics
-    const lastMetrics = await prisma.learningMetrics.findMany({
-        where: { userId },
-        orderBy: { date: "desc" },
+    // Compare current accuracyRate vs avg accuracyRate from last 5 completed LatihanSessions
+    const lastSessions = await prisma.latihanSession.findMany({
+        where: {
+            userId,
+            id: { not: currentSessionId }, // Exclude current session
+            score: { not: null } // Only completed sessions
+        },
+        orderBy: { endedAt: "desc" },
         take: 5,
         select: { accuracyRate: true }
     });
 
     let improvementComp = 0;
-    if (lastMetrics.length > 0) {
-        const sumPrev = lastMetrics.reduce((acc, m) => acc + (m.accuracyRate ?? 0), 0);
-        const avgPrev = sumPrev / lastMetrics.length;
+    if (lastSessions.length > 0) {
+        const sumPrev = lastSessions.reduce((acc, s) => acc + (s.accuracyRate ?? 0), 0);
+        const avgPrev = sumPrev / lastSessions.length;
 
         // Improvement delta (normalized).
         // If current is 80, avg is 70, delta 10.
