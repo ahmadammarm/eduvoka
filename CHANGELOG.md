@@ -1,6 +1,7 @@
 ## [Unreleased]
 
 ### Added
+- Add Study Capture Hook for tracking study sessions and user engagement.
 - Materi completion tracking per user per day implementation.
 - Implement frontend data capture hooks
 - Add latest version of latihan soal implementation.
