@@ -170,7 +170,7 @@ export default function ResultPage() {
 	};
 
 	// Behavioral Analysis (DTA vs MBA)
-	const analyzeBehavior = (answers: typeof result.answers, mbaBoostCount: number) => {
+	const analyzeBehavior = (answers: SessionResultData['answers'], mbaBoostCount: number) => {
 		const avgTimePerQ = answers.reduce((sum, a) => sum + (a.timeSpent || 0), 0) / answers.length;
 		const quickAnswers = answers.filter(a => (a.timeSpent || 0) < 30).length;
 		const totalAnswers = answers.length;
