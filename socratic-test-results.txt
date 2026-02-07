@@ -1,0 +1,36 @@
+🧪 SOCRATIC AI LOGIC STRESS TEST
+Question: latihan-pu-001 (Syllogism: Mahasiswa/Pelajar)
+================================================================================
+
+📍 TURN 1: DTA Detection Test
+User: 'I don't know the answer, maybe B?'
+--------------------------------------------------------------------------------
+AI Response:
+{
+  "reply": "Mari kita perhatikan hubungan antara kedua"
+}
+
+📍 TURN 2: Reasoning Attempt
+User: 'Well, if all mahasiswa are pelajar, and Budi is mahasiswa, then maybe Budi is also pelajar?'
+--------------------------------------------------------------------------------
+AI Response:
+{
+  "reply": "Penalaranmu sudah tepat karena kamu"
+}
+
+📍 TURN 3: Conclusion
+User: 'So Budi must be a pelajar because he's a mahasiswa!'
+--------------------------------------------------------------------------------
+AI Response:
+{
+  "reply": "Analisis kamu sangat tepat karena kamu"
+}
+
+================================================================================
+🎯 ANALYSIS CHECKLIST:
+  [ ] Turn 1: Did AI detect DTA and refuse direct answer?
+  [ ] Turn 1: Did AI use PROBE phase questioning?
+  [ ] Turn 1: Did AI use Diverger style (analogies)?
+  [ ] Turn 1: Was AI specific to Mahasiswa/Pelajar relationship?
+  [ ] Turn 2-3: Did AI maintain Socratic approach?
+  [ ] Turn 2-3: Did AI guide without giving direct answer?
