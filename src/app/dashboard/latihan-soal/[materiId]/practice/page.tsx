@@ -11,11 +11,17 @@ import {
 	ChevronRight,
 	Check,
 	X,
-	Flag,
 	Loader2,
 	Clock,
-	AlertCircle
+	AlertCircle,
+	Flag
 } from 'lucide-react';
+import { useBurnoutMetrics } from '@/hooks/use-burnout';
+import { BurnoutCalculationResult } from '@/types/burnout';
+
+
+const CHECK_BURNOUT_EVERY_N_QUESTIONS = 10; // Check setiap 10 soal
+
 
 export default function PracticePage() {
 	const params = useParams();
@@ -48,6 +54,11 @@ export default function PracticePage() {
 		captureSessionComplete,
 	} = useLatihanCapture();
 
+	const {
+		calculateBurnout,
+		isCalculating: isCalculatingBurnout
+	} = useBurnoutMetrics();
+
 	const [selectedPilihan, setSelectedPilihan] = useState<string | null>(null);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [showResult, setShowResult] = useState(false);
@@ -55,6 +66,7 @@ export default function PracticePage() {
 	const [timeElapsed, setTimeElapsed] = useState(0);
 	const [isInitializing, setIsInitializing] = useState(true);
 	const [hasInitialized, setHasInitialized] = useState(false);
+	const [questionCount, setQuestionCount] = useState(0);
 
 	const currentSoal = soalList[currentIndex];
 	const currentProgress = currentSoal ? progress.get(currentSoal.id) : null;
@@ -144,10 +156,6 @@ export default function PracticePage() {
 
 	const handleSubmitAnswer = async () => {
 		if (!currentSoal || !sessionId) {
-			console.error('Cannot submit: missing soal or session', {
-				hasSoal: !!currentSoal,
-				sessionId
-			});
 			Swal.fire({
 				icon: 'warning',
 				title: 'Session Not Ready',
@@ -186,6 +194,21 @@ export default function PracticePage() {
 					selectedPilihan,
 					result.isCorrect ?? false,
 				);
+
+				// Increment question counter
+				setQuestionCount(prev => {
+					const newCount = prev + 1;
+
+					// ✅ FIX: Check burnout setiap N soal
+					if (newCount > 0 && newCount % CHECK_BURNOUT_EVERY_N_QUESTIONS === 0) {
+						// Delay sedikit agar UI smooth
+						setTimeout(() => {
+							checkRealtimeBurnout();
+						}, 500);
+					}
+
+					return newCount;
+				});
 			}
 		} catch (err) {
 			console.error('Error submitting answer:', err);
@@ -231,45 +254,237 @@ export default function PracticePage() {
 		}
 	};
 
+	const checkRealtimeBurnout = async () => {
+		if (!sessionId) return;
+
+		try {
+			// Call burnout API
+			const burnout = await calculateBurnout(sessionId);
+
+			// Hanya show warning jika ada burnout (bukan NONE)
+			if (burnout && burnout.burnoutLevel !== 'NONE') {
+
+				// Destructure untuk readability
+				const { burnoutLevel, fatigueIndex, recommendations } = burnout;
+
+				const levelConfig = {
+					MILD: {
+						icon: 'info' as const,
+						color: '#10b981',
+						title: '💡 Istirahat Sebentar?'
+					},
+					MODERATE: {
+						icon: 'warning' as const,
+						color: '#f59e0b',
+						title: '⚠️ Mulai Lelah Nih'
+					},
+					SEVERE: {
+						icon: 'error' as const,
+						color: '#ef4444',
+						title: '🛑 Burnout Detected!'
+					}
+				};
+
+				const config = levelConfig[burnoutLevel as keyof typeof levelConfig];
+				if (!config) return; // NONE level
+
+				// Show SweetAlert2 dengan auto-close untuk MILD
+				const result = await Swal.fire({
+					icon: config.icon,
+					title: config.title,
+					html: `
+					<div class="text-left space-y-3">
+						<div class="bg-gray-50 p-3 rounded-lg">
+							<p class="text-sm text-gray-600 mb-1">Fatigue Index</p>
+							<p class="text-2xl font-bold" style="color: ${config.color}">
+								${fatigueIndex.toFixed(1)} / 100
+							</p>
+						</div>
+						
+						<div class="bg-blue-50 p-3 rounded-lg">
+							<p class="text-sm font-semibold text-gray-700 mb-1">💡 Rekomendasi</p>
+							<p class="text-sm text-gray-800">${recommendations.message}</p>
+						</div>
+
+						${recommendations.shouldRest ? `
+							<div class="bg-green-50 p-3 rounded-lg">
+								<p class="text-sm font-semibold text-gray-700 mb-1">⏱️ Saran Istirahat</p>
+								<p class="text-sm text-gray-800">${recommendations.restDuration} menit</p>
+							</div>
+						` : ''}
+					</div>
+				`,
+					showCancelButton: true,
+					confirmButtonText: recommendations.shouldRest ? `Istirahat ${recommendations.restDuration} Menit` : 'OK',
+					cancelButtonText: 'Lanjut Latihan',
+					confirmButtonColor: config.color,
+					cancelButtonColor: '#6b7280',
+					// Auto-close untuk MILD setelah 10 detik
+					timer: burnoutLevel === 'MILD' ? 10000 : undefined,
+					timerProgressBar: true
+				});
+
+				// Jika user pilih istirahat
+				if (result.isConfirmed && recommendations.shouldRest) {
+					// Optional: Implement rest timer or pause session
+					await Swal.fire({
+						icon: 'success',
+						title: 'Selamat Istirahat!',
+						text: `Set timer ${recommendations.restDuration} menit dan kembali saat siap.`,
+						timer: 3000,
+						showConfirmButton: false
+					});
+				}
+			}
+		} catch (err) {
+			// Silent fail untuk real-time checks - jangan ganggu user experience
+			console.warn('[Practice] Real-time burnout check failed:', err);
+		}
+	};
+
+	// ✅ BARU: Burnout warning modal
+	const showBurnoutWarning = (burnout: BurnoutCalculationResult) => {
+		const levelConfig = {
+			MILD: { icon: 'info' as const, color: '#10b981' },
+			MODERATE: { icon: 'warning' as const, color: '#f59e0b' },
+			SEVERE: { icon: 'error' as const, color: '#ef4444' }
+		};
+
+		const config = levelConfig[burnout.burnoutLevel as keyof typeof levelConfig];
+		if (!config) {
+			// NONE level, langsung redirect
+			router.push(`/dashboard/latihan-soal/${materiId}/review?sessionId=${sessionId}`);
+			return;
+		}
+
+		Swal.fire({
+			icon: config.icon,
+			title: 'Analisis Kelelahan',
+			html: `
+			<div class="text-left space-y-4">
+				<div class="bg-gray-50 p-4 rounded-lg">
+					<p class="text-sm text-gray-600 mb-2">Fatigue Index</p>
+					<p class="text-3xl font-bold" style="color: ${config.color}">
+						${burnout.fatigueIndex.toFixed(1)} / 100
+					</p>
+				</div>
+				
+				<div class="bg-blue-50 p-4 rounded-lg">
+					<p class="text-sm font-semibold text-gray-700 mb-2">💡 Rekomendasi</p>
+					<p class="text-gray-800">${burnout.recommendations.message}</p>
+				</div>
+
+				${burnout.recommendations.shouldRest ? `
+					<div class="bg-green-50 p-4 rounded-lg">
+						<p class="text-sm font-semibold text-gray-700 mb-2">⏱️ Waktu Istirahat</p>
+						<p class="text-gray-800">${burnout.recommendations.restDuration} menit</p>
+					</div>
+				` : ''}
+				
+				<!-- Breakdown Components -->
+				<div class="bg-gray-50 p-4 rounded-lg">
+					<p class="text-sm font-semibold text-gray-700 mb-3">📊 Detail Analisis</p>
+					<div class="space-y-2 text-sm">
+						<div class="flex justify-between">
+							<span class="text-gray-600">Cognitive Load:</span>
+							<span class="font-semibold">${burnout.components.cognitiveLoad.value.toFixed(1)}%</span>
+						</div>
+						<div class="flex justify-between">
+							<span class="text-gray-600">Decision Quality:</span>
+							<span class="font-semibold">${burnout.components.decisionQuality.value.toFixed(1)}%</span>
+						</div>
+						<div class="flex justify-between">
+							<span class="text-gray-600">Engagement:</span>
+							<span class="font-semibold">${burnout.components.engagement.value.toFixed(1)}%</span>
+						</div>
+						<div class="flex justify-between">
+							<span class="text-gray-600">Consistency:</span>
+							<span class="font-semibold">${burnout.components.consistency.value.toFixed(1)}%</span>
+						</div>
+					</div>
+				</div>
+			</div>
+		`,
+			confirmButtonText: 'Lanjut ke Review',
+			confirmButtonColor: '#3b82f6',
+			showCancelButton: burnout.burnoutLevel === 'SEVERE',
+			cancelButtonText: 'Istirahat Dulu',
+			cancelButtonColor: '#6b7280',
+			allowOutsideClick: false
+		}).then((result) => {
+			if (result.isConfirmed) {
+				router.push(`/dashboard/latihan-soal/${materiId}/review?sessionId=${sessionId}`);
+			} else if (result.isDismissed) {
+				// User chose to rest
+				router.push('/dashboard');
+			}
+		});
+	};
+
 	const handleFinish = async () => {
 		if (!sessionId) return;
 
 		const result = await Swal.fire({
 			icon: 'question',
-			title: 'Finish Practice?',
-			text: 'Are you sure you want to finish this practice?',
+			title: 'Selesaikan Latihan?',
+			text: 'Yakin ingin menyelesaikan latihan ini?',
 			showCancelButton: true,
 			confirmButtonColor: '#3b82f6',
 			cancelButtonColor: '#6b7280',
-			confirmButtonText: 'Yes, Finish',
-			cancelButtonText: 'Cancel'
+			confirmButtonText: 'Ya, Selesaikan',
+			cancelButtonText: 'Batal'
 		});
 
 		if (!result.isConfirmed) return;
 
 		try {
-			const result = await completeSession();
-			if (result) {
-				const correctCount = Array.from(progress.values()).filter(
-					(p) => p.answered && p.isCorrect
-				).length;
+			const sessionResult = await completeSession();
+			if (!sessionResult) return;
 
-				// Capture session complete
-				captureSessionComplete({
-					score: result.score ?? 0,
-					totalQuestions: soalList.length,
-					correctCount,
-					totalDurationSeconds: result.totalDuration ?? 0,
+			const correctCount = Array.from(progress.values()).filter(
+				(p) => p.answered && p.isCorrect
+			).length;
+
+			// Capture session complete
+			captureSessionComplete({
+				score: sessionResult.score ?? 0,
+				totalQuestions: soalList.length,
+				correctCount,
+				totalDurationSeconds: sessionResult.totalDuration ?? 0,
+			});
+
+			// ✅ FIX: Calculate burnout dengan error handling yang lebih baik
+			try {
+				const burnout = await calculateBurnout(sessionId);
+
+				if (burnout && burnout.burnoutLevel !== 'NONE') {
+					// Show burnout warning BEFORE redirect
+					showBurnoutWarning(burnout);
+				} else {
+					// Direct redirect if no burnout
+					router.push(`/dashboard/latihan-soal/${materiId}/review?sessionId=${sessionId}`);
+				}
+			} catch (burnoutError) {
+				// Jika burnout calculation gagal, tetap redirect
+				console.warn('[Practice] Burnout calculation failed at finish:', burnoutError);
+
+				// Optional: Show info to user
+				await Swal.fire({
+					icon: 'info',
+					title: 'Analisis Kelelahan Tidak Tersedia',
+					text: 'Data tidak cukup untuk analisis burnout. Lanjut ke review.',
+					timer: 2000,
+					showConfirmButton: false
 				});
 
-				// Redirect to Socratic Review page first
 				router.push(`/dashboard/latihan-soal/${materiId}/review?sessionId=${sessionId}`);
 			}
+
 		} catch (err) {
 			Swal.fire({
 				icon: 'error',
-				title: 'Failed to Complete',
-				text: 'Failed to complete session. Please try again',
+				title: 'Gagal Menyelesaikan',
+				text: 'Gagal menyelesaikan sesi. Silakan coba lagi',
 				confirmButtonColor: '#3b82f6'
 			});
 		}
@@ -446,7 +661,7 @@ export default function PracticePage() {
 								<button
 									key={pilihan.id}
 									onClick={() => {
-										if (!showResult) setSelectedPilihan(pilihan.id);
+										if (!showResult) handleSelectPilihan(pilihan.id); // ✅ FIX: Gunakan handleSelectPilihan
 									}}
 									disabled={showResult}
 									className={`w-full text-left p-4 rounded-lg border-2 transition-all ${isCorrectAnswer
@@ -504,6 +719,7 @@ export default function PracticePage() {
 					<div className="flex gap-3">
 						{!showResult && (
 							<>
+								{/* ✅ RESTORE: Tombol Skip */}
 								<button
 									onClick={handleSkip}
 									disabled={isSubmitting}

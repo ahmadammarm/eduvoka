@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -19,6 +20,7 @@ import {
 	Award
 } from 'lucide-react';
 import Link from 'next/link';
+import type { BurnoutCalculationResult } from '@/types/burnout';
 
 interface SessionResultData {
 	sessionId: string;
@@ -73,6 +75,9 @@ export default function ResultPage() {
 	const [velocityComponents, setVelocityComponents] = useState<any>(null);
 	const [velocityLoading, setVelocityLoading] = useState(false);
 	const [mbaBoost, setMbaBoost] = useState<number>(0);
+	const [burnoutData, setBurnoutData] = useState<BurnoutCalculationResult | null>(null);
+	const [burnoutLoading, setBurnoutLoading] = useState(false);
+	const [burnoutError, setBurnoutError] = useState<string | null>(null);
 
 	useEffect(() => {
 		// Extract mbaBoost from URL
@@ -143,6 +148,41 @@ export default function ResultPage() {
 		};
 
 		fetchVelocity();
+	}, [result, sessionId]);
+
+	useEffect(() => {
+		const fetchBurnout = async () => {
+			if (!result || !sessionId) return;
+
+			setBurnoutLoading(true);
+			setBurnoutError(null);
+
+			try {
+				const response = await fetch(`/api/metrics/burnout/${sessionId}`);
+
+				if (response.ok) {
+					const data = await response.json();
+					setBurnoutData(data.data);
+				} else {
+					// Handle expected errors (insufficient data)
+					const errorData = await response.json();
+					if (response.status === 400) {
+						// Not enough data - this is OK, just don't show burnout card
+						console.info('[Result] Burnout data unavailable:', errorData.details);
+						setBurnoutError(errorData.details || 'Insufficient data for burnout analysis');
+					} else {
+						throw new Error(errorData.error || 'Failed to fetch burnout data');
+					}
+				}
+			} catch (err) {
+				console.error('[Result] Failed to fetch burnout:', err);
+				setBurnoutError(err instanceof Error ? err.message : 'Unknown error');
+			} finally {
+				setBurnoutLoading(false);
+			}
+		};
+
+		fetchBurnout();
 	}, [result, sessionId]);
 
 	const formatTime = (seconds: number) => {
@@ -225,6 +265,181 @@ export default function ResultPage() {
 			</div>
 		);
 	}
+
+	const BurnoutCard = () => {
+		if (burnoutLoading) {
+			return (
+				<div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-8 mb-6">
+					<div className="flex items-center justify-center py-8">
+						<Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+						<span className="ml-3 text-gray-600">Analyzing fatigue levels...</span>
+					</div>
+				</div>
+			);
+		}
+
+		// Jangan tampilkan card jika error atau tidak ada data
+		if (burnoutError || !burnoutData) {
+			return null;
+		}
+
+		const { burnoutLevel, fatigueIndex, components, recommendations } = burnoutData;
+
+		const levelConfig = {
+			NONE: {
+				color: 'from-green-500 to-emerald-600',
+				textColor: 'text-green-600',
+				bgColor: 'bg-green-50',
+				icon: '🎯',
+				title: 'Kondisi Prima!'
+			},
+			MILD: {
+				color: 'from-yellow-500 to-amber-600',
+				textColor: 'text-yellow-600',
+				bgColor: 'bg-yellow-50',
+				icon: '💡',
+				title: 'Sedikit Lelah'
+			},
+			MODERATE: {
+				color: 'from-orange-500 to-red-500',
+				textColor: 'text-orange-600',
+				bgColor: 'bg-orange-50',
+				icon: '⚠️',
+				title: 'Cukup Lelah'
+			},
+			SEVERE: {
+				color: 'from-red-500 to-rose-700',
+				textColor: 'text-red-600',
+				bgColor: 'bg-red-50',
+				icon: '🛑',
+				title: 'Burnout Detected!'
+			}
+		};
+
+		const config = levelConfig[burnoutLevel];
+
+		return (
+			<div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-8 mb-6">
+				<div className="flex items-start justify-between mb-6">
+					<div>
+						<h3 className="text-2xl font-bold text-gray-900 mb-2 flex items-center gap-2">
+							<span>{config.icon}</span>
+							Analisis Kelelahan
+						</h3>
+						<p className="text-gray-600 text-sm">
+							Deteksi burnout menggunakan AI-powered analysis
+						</p>
+					</div>
+					<div className={`px-4 py-2 rounded-full ${config.bgColor} ${config.textColor} font-bold text-sm`}>
+						{config.title}
+					</div>
+				</div>
+
+				{/* Fatigue Index Gauge */}
+				<div className="mb-8">
+					<div className="text-center mb-4">
+						<div className={`text-6xl font-bold ${config.textColor} mb-2`}>
+							{fatigueIndex.toFixed(1)}
+						</div>
+						<div className="text-gray-600 text-sm">Fatigue Index (0-100)</div>
+					</div>
+
+					{/* Gauge Bar */}
+					<div className="relative h-4 bg-gray-200 rounded-full overflow-hidden">
+						<div
+							className={`h-4 bg-gradient-to-r ${config.color} rounded-full transition-all duration-1000`}
+							style={{ width: `${Math.min(fatigueIndex, 100)}%` }}
+						/>
+					</div>
+
+					{/* Scale Labels */}
+					<div className="flex justify-between text-xs text-gray-500 mt-2">
+						<span>0 (Fresh)</span>
+						<span>50 (Moderate)</span>
+						<span>100 (Severe)</span>
+					</div>
+				</div>
+
+				{/* Components Breakdown */}
+				<div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+					<div className="bg-gray-50 rounded-lg p-4">
+						<div className="text-xs text-gray-600 mb-1">Cognitive Load</div>
+						<div className="text-2xl font-bold text-gray-900">
+							{components.cognitiveLoad.value.toFixed(1)}%
+						</div>
+						<div className="text-xs text-gray-500 mt-1">
+							{components.cognitiveLoad.interpretation}
+						</div>
+					</div>
+
+					<div className="bg-gray-50 rounded-lg p-4">
+						<div className="text-xs text-gray-600 mb-1">Decision Quality</div>
+						<div className="text-2xl font-bold text-gray-900">
+							{components.decisionQuality.value.toFixed(1)}%
+						</div>
+						<div className="text-xs text-gray-500 mt-1">
+							{components.decisionQuality.interpretation}
+						</div>
+					</div>
+
+					<div className="bg-gray-50 rounded-lg p-4">
+						<div className="text-xs text-gray-600 mb-1">Engagement</div>
+						<div className="text-2xl font-bold text-gray-900">
+							{components.engagement.value.toFixed(1)}%
+						</div>
+						<div className="text-xs text-gray-500 mt-1">
+							{components.engagement.interpretation}
+						</div>
+					</div>
+
+					<div className="bg-gray-50 rounded-lg p-4">
+						<div className="text-xs text-gray-600 mb-1">Consistency</div>
+						<div className="text-2xl font-bold text-gray-900">
+							{components.consistency.value.toFixed(1)}%
+						</div>
+						<div className="text-xs text-gray-500 mt-1">
+							{components.consistency.interpretation}
+						</div>
+					</div>
+				</div>
+
+				{/* Recommendations */}
+				<div className={`${config.bgColor} border-2 border-${burnoutLevel === 'NONE' ? 'green' : burnoutLevel === 'MILD' ? 'yellow' : burnoutLevel === 'MODERATE' ? 'orange' : 'red'}-200 rounded-lg p-6`}>
+					<h4 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+						💡 Rekomendasi
+					</h4>
+					<p className="text-gray-800 mb-4">
+						{recommendations.message}
+					</p>
+
+					{recommendations.shouldRest && (
+						<div className="bg-white bg-opacity-70 rounded-lg p-4">
+							<div className="flex items-center justify-between">
+								<div>
+									<p className="font-semibold text-gray-900">Saran Istirahat:</p>
+									<p className="text-2xl font-bold ${config.textColor}">
+										{recommendations.restDuration} menit
+									</p>
+								</div>
+								<div className="text-4xl">⏱️</div>
+							</div>
+						</div>
+					)}
+
+					{/* Next Action Guide */}
+					<div className="mt-4 pt-4 border-t border-gray-300">
+						<p className="text-sm text-gray-700">
+							<strong>Next Step:</strong> {' '}
+							{recommendations.nextAction === 'CONTINUE' && 'Lanjutkan ke materi berikutnya atau coba tryout!'}
+							{recommendations.nextAction === 'REST' && 'Istirahat sebentar lalu lanjut latihan.'}
+							{recommendations.nextAction === 'SWITCH_TOPIC' && 'Ganti topik atau materi yang lebih ringan.'}
+							{recommendations.nextAction === 'STOP_SESSION' && 'Hentikan latihan dan lanjut besok setelah istirahat cukup.'}
+						</p>
+					</div>
+				</div>
+			</div>
+		);
+	};
 
 	return (
 		<div className="min-h-screen bg-gradient-to-b from-blue-50 to-white py-12">
@@ -362,6 +577,8 @@ export default function ResultPage() {
 						</div>
 					)}
 				</div>
+
+				<BurnoutCard />
 
 				{/* Learning Velocity Card (PREMIUM) */}
 				<div className="bg-gradient-to-r from-purple-600 to-indigo-700 rounded-2xl shadow-2xl p-8 mb-6 text-white">
