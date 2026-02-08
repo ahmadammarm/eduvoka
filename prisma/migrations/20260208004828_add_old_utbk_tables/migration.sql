@@ -1,11 +1,14 @@
 -- DropIndex
-DROP INDEX `AIPembahasan_createdAt_idx` ON `aipembahasan`;
+DROP INDEX `AIPembahasan_createdAt_idx` ON `AIPembahasan`;
 
 -- DropIndex
-DROP INDEX `AIPembahasan_sessionId_idx` ON `aipembahasan`;
+DROP INDEX `AIPembahasan_sessionId_idx` ON `AIPembahasan`;
 
 -- AlterTable
-ALTER TABLE `user` ADD COLUMN `gayaBelajar` ENUM('VISUAL', 'AUDITORY', 'KINESTHETIC') NULL;
+ALTER TABLE `PilihanJawaban` MODIFY `soalUTBKId` VARCHAR(191) NULL;
+
+-- AlterTable
+ALTER TABLE `User` ADD COLUMN `gayaBelajar` ENUM('VISUAL', 'AUDITORY', 'KINESTHETIC') NULL;
 
 -- CreateTable
 CREATE TABLE `UtbkSession` (
@@ -78,7 +81,7 @@ CREATE TABLE `SessionMetrics` (
 CREATE INDEX `PilihanJawaban_soalUTBKId_idx` ON `PilihanJawaban`(`soalUTBKId`);
 
 -- AddForeignKey
-ALTER TABLE `PilihanJawaban` ADD CONSTRAINT `PilihanJawaban_soalUTBKId_fkey` FOREIGN KEY (`soalUTBKId`) REFERENCES `SoalUTBK`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `PilihanJawaban` ADD CONSTRAINT `PilihanJawaban_soalUTBKId_fkey` FOREIGN KEY (`soalUTBKId`) REFERENCES `SoalUTBK`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `UtbkSession` ADD CONSTRAINT `UtbkSession_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
