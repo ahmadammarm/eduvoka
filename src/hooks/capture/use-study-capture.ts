@@ -4,9 +4,9 @@ import { useState, useCallback, useRef, useEffect } from 'react';
 import { useEventBuffer } from './use-event-buffer';
 import type { StudySessionState } from '@/types/data-capture';
 
-const IDLE_TIMEOUT_MS = 60_000;       // 60 seconds tanpa aktivitas = idle
-const HEARTBEAT_INTERVAL_MS = 30_000; // heartbeat setiap 30 detik
-const SCROLL_DEBOUNCE_MS = 500;       // debounce scroll events
+const IDLE_TIMEOUT_MS = 60_000;
+const HEARTBEAT_INTERVAL_MS = 30_000;
+const SCROLL_DEBOUNCE_MS = 500;
 
 interface UseStudyCaptureOptions {
     materiId: string;
@@ -32,8 +32,13 @@ export function useStudyCapture({
         startedAt: 0,
         totalActiveTime: 0,
         totalIdleTime: 0,
+        totalHiddenTime: 0,
+        totalScrollEvents: 0,
+        visibilityChanges: 0,
         scrollDepthMax: 0,
         scrollDepthCurrent: 0,
+        scrollDepthSum: 0,
+        scrollDepthReadings: 0,
         lastActivityAt: Date.now(),
     });
 
@@ -42,11 +47,18 @@ export function useStudyCapture({
     const heartbeatRef = useRef<ReturnType<typeof setInterval> | null>(null);
     const activeTimeAccumulator = useRef(0);
     const idleTimeAccumulator = useRef(0);
+    const hiddenTimeAccumulator = useRef(0);
+    const scrollEventCounter = useRef(0);
+    const visibilityChangeCounter = useRef(0);
+    const scrollDepthSumAccumulator = useRef(0);
+    const scrollDepthReadingsCounter = useRef(0);
     const lastTickRef = useRef(Date.now());
     const scrollDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const serverSessionId = useRef<string | null>(null);
     const isEndingRef = useRef(false);
     const isMountedRef = useRef(true);
+    const hasStartedRef = useRef(false);
+    const isStartingRef = useRef(false);
 
     // Keep ref in sync
     useEffect(() => {
@@ -75,12 +87,11 @@ export function useStudyCapture({
             return data.sessionId;
         } catch (error) {
             console.error('[StudyCapture] Failed to create server session:', error);
-            // Generate a client-side ID as fallback
             return `client_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
         }
     }, [materiId]);
 
-    // Time tracking ticker
+    // Time tracking ticker — FIXED: track all time states
     useEffect(() => {
         if (!sessionState.isActive) return;
 
@@ -91,21 +102,32 @@ export function useStudyCapture({
 
             if (elapsed <= 0) return;
 
-            if (stateRef.current.isVisible && !stateRef.current.isIdle) {
-                activeTimeAccumulator.current += elapsed;
+            if (!stateRef.current.isVisible) {
+                // Tab is hidden
+                hiddenTimeAccumulator.current += elapsed;
                 if (isMountedRef.current) {
                     setSessionState((prev) => ({
-                    ...prev,
-                    totalActiveTime: activeTimeAccumulator.current,
-                }));
+                        ...prev,
+                        totalHiddenTime: hiddenTimeAccumulator.current,
+                    }));
                 }
             } else if (stateRef.current.isIdle) {
+                // Visible but idle
                 idleTimeAccumulator.current += elapsed;
                 if (isMountedRef.current) {
                     setSessionState((prev) => ({
-                    ...prev,
-                    totalIdleTime: idleTimeAccumulator.current,
-                }));
+                        ...prev,
+                        totalIdleTime: idleTimeAccumulator.current,
+                    }));
+                }
+            } else {
+                // Visible and active
+                activeTimeAccumulator.current += elapsed;
+                if (isMountedRef.current) {
+                    setSessionState((prev) => ({
+                        ...prev,
+                        totalActiveTime: activeTimeAccumulator.current,
+                    }));
                 }
             }
         }, 1_000);
@@ -119,7 +141,6 @@ export function useStudyCapture({
             clearTimeout(idleTimerRef.current);
         }
 
-        // If was idle, capture end-of-idle
         if (stateRef.current.isIdle && stateRef.current.isActive) {
             pushEvent({
                 type: 'STUDY_IDLE_END',
@@ -162,7 +183,7 @@ export function useStudyCapture({
             resetIdleTimer();
         };
 
-        const events = ['mousemove', 'keydown', 'scroll', 'touchstart', 'click'];
+        const events = ['mousemove', 'keydown', 'touchstart', 'click'];
         events.forEach((evt) => window.addEventListener(evt, handleActivity, { passive: true }));
 
         return () => {
@@ -177,7 +198,13 @@ export function useStudyCapture({
         const handleVisibilityChange = () => {
             const isVisible = document.visibilityState === 'visible';
 
-            setSessionState((prev) => ({ ...prev, isVisible }));
+            visibilityChangeCounter.current += 1;
+
+            setSessionState((prev) => ({
+                ...prev,
+                isVisible,
+                visibilityChanges: visibilityChangeCounter.current,
+            }));
 
             pushEvent({
                 type: 'STUDY_VISIBILITY_CHANGE',
@@ -186,6 +213,8 @@ export function useStudyCapture({
                     materiId,
                     isVisible,
                     totalActiveTimeSoFar: activeTimeAccumulator.current,
+                    totalHiddenTimeSoFar: hiddenTimeAccumulator.current,
+                    visibilityChangeCount: visibilityChangeCounter.current,
                 },
             });
 
@@ -206,6 +235,8 @@ export function useStudyCapture({
         if (!sessionState.isActive) return;
 
         const container = scrollContainerRef?.current;
+
+        if (scrollContainerRef && !container) return;
 
         const handleScroll = () => {
             if (scrollDebounceRef.current) {
@@ -230,10 +261,17 @@ export function useStudyCapture({
                             : 0;
                 }
 
+                scrollEventCounter.current += 1;
+                scrollDepthSumAccumulator.current += scrollDepth;
+                scrollDepthReadingsCounter.current += 1;
+
                 setSessionState((prev) => ({
                     ...prev,
                     scrollDepthCurrent: scrollDepth,
                     scrollDepthMax: Math.max(prev.scrollDepthMax, scrollDepth),
+                    totalScrollEvents: scrollEventCounter.current,
+                    scrollDepthSum: scrollDepthSumAccumulator.current,
+                    scrollDepthReadings: scrollDepthReadingsCounter.current,
                 }));
 
                 pushEvent({
@@ -246,6 +284,7 @@ export function useStudyCapture({
                             stateRef.current.scrollDepthMax,
                             scrollDepth
                         ),
+                        scrollEventCount: scrollEventCounter.current,
                     },
                 });
             }, SCROLL_DEBOUNCE_MS);
@@ -263,7 +302,7 @@ export function useStudyCapture({
     }, [sessionState.isActive, materiId, scrollContainerRef, pushEvent]);
 
     // Heartbeat
-     useEffect(() => {
+    useEffect(() => {
         if (!sessionState.isActive) return;
 
         heartbeatRef.current = setInterval(() => {
@@ -276,8 +315,11 @@ export function useStudyCapture({
                     materiId,
                     totalActiveTimeSeconds: activeTimeAccumulator.current,
                     totalIdleTimeSeconds: idleTimeAccumulator.current,
+                    totalHiddenTimeSeconds: hiddenTimeAccumulator.current,
                     scrollDepthMax: stateRef.current.scrollDepthMax,
                     scrollDepthCurrent: stateRef.current.scrollDepthCurrent,
+                    totalScrollEvents: scrollEventCounter.current,
+                    visibilityChanges: visibilityChangeCounter.current,
                     isVisible: stateRef.current.isVisible,
                 },
             });
@@ -292,45 +334,73 @@ export function useStudyCapture({
 
     // Public API
     const startStudy = useCallback(async () => {
-        const sid = await createServerSession();
-        serverSessionId.current = sid;
+        if (hasStartedRef.current || isStartingRef.current) return;
+        isStartingRef.current = true;
 
-        activeTimeAccumulator.current = 0;
-        idleTimeAccumulator.current = 0;
-        lastTickRef.current = Date.now();
+        try {
+            isEndingRef.current = false;
 
-        setSessionState({
-            sessionId: sid,
-            materiId,
-            isActive: true,
-            isVisible: true,
-            isIdle: false,
-            startedAt: Date.now(),
-            totalActiveTime: 0,
-            totalIdleTime: 0,
-            scrollDepthMax: 0,
-            scrollDepthCurrent: 0,
-            lastActivityAt: Date.now(),
-        });
+            const sid = await createServerSession();
+            serverSessionId.current = sid;
+            hasStartedRef.current = true;
 
-        pushEvent({
-            type: 'STUDY_START',
-            sessionRef: sid ?? undefined,
-            payload: {
+            activeTimeAccumulator.current = 0;
+            idleTimeAccumulator.current = 0;
+            hiddenTimeAccumulator.current = 0;
+            scrollEventCounter.current = 0;
+            visibilityChangeCounter.current = 0;
+            scrollDepthSumAccumulator.current = 0;
+            scrollDepthReadingsCounter.current = 0;
+            lastTickRef.current = Date.now();
+
+            setSessionState({
+                sessionId: sid,
                 materiId,
+                isActive: true,
+                isVisible: true,
+                isIdle: false,
                 startedAt: Date.now(),
-            },
-        });
+                totalActiveTime: 0,
+                totalIdleTime: 0,
+                totalHiddenTime: 0,
+                totalScrollEvents: 0,
+                visibilityChanges: 0,
+                scrollDepthMax: 0,
+                scrollDepthCurrent: 0,
+                scrollDepthSum: 0,
+                scrollDepthReadings: 0,
+                lastActivityAt: Date.now(),
+            });
 
-        resetIdleTimer();
+            pushEvent({
+                type: 'STUDY_START',
+                sessionRef: sid ?? undefined,
+                payload: {
+                    materiId,
+                    startedAt: Date.now(),
+                },
+            });
+
+            resetIdleTimer();
+        } catch (error) {
+            console.error('[StudyCapture] startStudy failed:', error);
+            isStartingRef.current = false;
+            hasStartedRef.current = false;
+        }
     }, [materiId, createServerSession, pushEvent, resetIdleTimer]);
 
     const endStudy = useCallback(async () => {
         if (!stateRef.current.isActive || isEndingRef.current) return;
+        isEndingRef.current = true;
 
         // Clear timers
         if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
         if (heartbeatRef.current) clearInterval(heartbeatRef.current);
+
+        const scrollDepthAvg =
+            scrollDepthReadingsCounter.current > 0
+                ? Math.round(scrollDepthSumAccumulator.current / scrollDepthReadingsCounter.current)
+                : 0;
 
         pushEvent({
             type: 'STUDY_END',
@@ -339,7 +409,11 @@ export function useStudyCapture({
                 materiId,
                 totalActiveTimeSeconds: activeTimeAccumulator.current,
                 totalIdleTimeSeconds: idleTimeAccumulator.current,
+                totalHiddenTimeSeconds: hiddenTimeAccumulator.current,
                 scrollDepthMax: stateRef.current.scrollDepthMax,
+                scrollDepthAvg,
+                totalScrollEvents: scrollEventCounter.current,
+                visibilityChanges: visibilityChangeCounter.current,
                 sessionDurationSeconds: Math.floor(
                     (Date.now() - stateRef.current.startedAt) / 1000
                 ),
@@ -352,24 +426,45 @@ export function useStudyCapture({
             serverSessionId.current &&
             !serverSessionId.current.startsWith('client_')
         ) {
-            try {
-                const updatePayload = JSON.stringify({
-                    totalDuration: activeTimeAccumulator.current,
-                    idleDuration: idleTimeAccumulator.current,
-                    scrollDepthMax: stateRef.current.scrollDepthMax,
-                    isCompleted: stateRef.current.scrollDepthMax >= 80,
-                    isAbandoned: activeTimeAccumulator.current < 10,
-                });
+            const totalVisibleTime =
+                    activeTimeAccumulator.current + idleTimeAccumulator.current;
 
-                navigator.sendBeacon(
+            const updatePayload = {
+                totalDuration: activeTimeAccumulator.current,
+                idleDuration: idleTimeAccumulator.current,
+                scrollDepthMax: stateRef.current.scrollDepthMax,
+                scrollDepthAvg,
+                totalScrollEvents: scrollEventCounter.current,
+                totalVisibleTime,
+                totalHiddenTime: hiddenTimeAccumulator.current,
+                visibilityChanges: visibilityChangeCounter.current,
+                isCompleted: stateRef.current.scrollDepthMax >= 80,
+                isAbandoned: activeTimeAccumulator.current < 10,
+            };
+
+            try {
+                const response = await fetch(
                     `/api/capture/study-session/${serverSessionId.current}`,
-                    new Blob([updatePayload], { type: 'application/json' })
+                    {
+                        method: 'PATCH',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(updatePayload),
+                    }
                 );
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
             } catch (error) {
-                console.error(
-                    '[StudyCapture] Failed to update server session:',
-                    error
-                );
+                console.warn('[StudyCapture] fetch failed, fallback to sendBeacon:', error);
+                try {
+                    navigator.sendBeacon(
+                        `/api/capture/study-session/${serverSessionId.current}`,
+                        new Blob([JSON.stringify(updatePayload)], { type: 'application/json' })
+                    );
+                } catch (beaconError) {
+                    console.error('[StudyCapture] sendBeacon also failed:', beaconError);
+                }
             }
         }
 
@@ -383,8 +478,16 @@ export function useStudyCapture({
             }));
         }
 
+        stateRef.current = {
+            ...stateRef.current,
+            isActive: false,
+            isIdle: false,
+        };
+
         serverSessionId.current = null;
         isEndingRef.current = false;
+        hasStartedRef.current = false;
+        isStartingRef.current = false;
     }, [materiId, pushEvent, forceFlush]);
 
     // Stable ref for cleanup
@@ -392,15 +495,6 @@ export function useStudyCapture({
     useEffect(() => {
         endStudyRef.current = endStudy;
     }, [endStudy]);
-
-    // Cleanup on unmount — uses stable ref
-    useEffect(() => {
-        return () => {
-            if (stateRef.current.isActive) {
-                endStudyRef.current();
-            }
-        };
-    }, []);
 
     return {
         startStudy,

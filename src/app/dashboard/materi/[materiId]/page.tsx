@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useCallback, useState, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { Clock, BookOpen, Calendar, TrendingUp, ArrowLeft, Wifi, WifiOff } from 'lucide-react';
 import { useStudyCapture } from '@/hooks/capture/use-study-capture';
@@ -37,22 +37,7 @@ export default function MateriDetailPage() {
 		heartbeatIntervalMs: 30_000, // 30 seconds heartbeat
 	});
 
-	// Fetch materi data
-	useEffect(() => {
-		fetchMateri();
-	}, [materiId]);
-
-	// Start study session when component mounts
-	useEffect(() => {
-		startStudy();
-
-		// Cleanup: end study on unmount
-		return () => {
-			endStudy();
-		};
-	}, []);
-
-	const fetchMateri = async () => {
+	const fetchMateri = useCallback(async () => {
 		try {
 			const response = await fetch(`/api/materi/${materiId}`);
 			if (!response.ok) throw new Error('Failed to fetch materi');
@@ -63,7 +48,20 @@ export default function MateriDetailPage() {
 		} finally {
 			setIsLoading(false);
 		}
-	};
+	}, [materiId]);
+
+	// Fetch materi data
+	useEffect(() => {
+		fetchMateri();
+	}, [fetchMateri]);
+
+	// Start study session when component mounts
+	useEffect(() => {
+			startStudy();
+			return () => {
+					endStudy();
+			};
+	}, [startStudy, endStudy]);
 
 	const handleMarkComplete = async () => {
 		// End study session before navigating away
@@ -156,19 +154,19 @@ export default function MateriDetailPage() {
 								)}
 
 								{/* Sync Status */}
-								{syncStatus === 'syncing' as any && (
+								{syncStatus.isPending && (
 									<span className="text-xs text-blue-600 flex items-center">
 										<Wifi className="w-3 h-3 mr-1 animate-pulse" />
 										Syncing...
 									</span>
 								)}
-								{syncStatus === 'error' as any && (
+								{syncStatus.failedAttempts > 0 && (
 									<span className="text-xs text-red-600 flex items-center">
 										<WifiOff className="w-3 h-3 mr-1" />
 										Offline
 									</span>
 								)}
-								{syncStatus === 'idle' as any && sessionState.isActive && (
+								{!syncStatus.isPending && syncStatus.failedAttempts === 0 && sessionState.isActive && (
 									<span className="text-xs text-green-600 flex items-center">
 										<span className="w-1.5 h-1.5 bg-green-600 rounded-full mr-1" />
 										Active
