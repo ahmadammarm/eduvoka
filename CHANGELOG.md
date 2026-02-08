@@ -2,6 +2,9 @@
 
 ### Added
 - Add time decay API 
+- Add analytics data visualization in dashboard page
+- Implement the AI-based discussion and learning velocity tracking system.
+- Add Study Capture Hook for tracking study sessions and user engagement.
 - Materi completion tracking per user per day implementation.
 - Implement frontend data capture hooks
 - Add latest version of latihan soal implementation.
@@ -19,3 +22,4 @@
 - Database schema and migration setup using Prisma ORM.
 - Landing page development with responsive design.
 - Authentication module with credentials and OAuth support.
+- Remove 20 unused test files from root directory

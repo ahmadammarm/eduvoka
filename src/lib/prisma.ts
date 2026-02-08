@@ -1,4 +1,4 @@
-import { PrismaClient } from "../../generated/prisma/client";
+import { PrismaClient } from "../generated/prisma/client";
 import { PrismaMariaDb } from "@prisma/adapter-mariadb";
 import mariadb from "mariadb";
 
@@ -14,18 +14,18 @@ if (!DATABASE_URL) {
 }
 
 const url = new URL(DATABASE_URL);
+const isLocal = url.hostname === "localhost" || url.hostname === "127.0.0.1";
 
 const poolConfig: mariadb.PoolConfig = {
-	host: url.hostname,
-	port: parseInt(url.port) || 3306,
-	user: url.username,
-	password: url.password,
-	database: url.pathname.slice(1),
-	connectionLimit: 10,
-	connectTimeout: 30000,
-	ssl: {
-		rejectUnauthorized: false, // Accept self-signed certificates
-        // rejectUnauthorized: true,
+    host: isLocal ? "127.0.0.1" : url.hostname,
+    port: parseInt(url.port) || 3306,
+    user: url.username,
+    password: url.password,
+    database: url.pathname.slice(1),
+    connectionLimit: 10,
+    connectTimeout: 30000,
+    ssl: isLocal ? undefined : {
+        rejectUnauthorized: true,
     },
 };
 

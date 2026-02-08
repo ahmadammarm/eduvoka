@@ -6,6 +6,10 @@ import { prisma } from '@/lib/prisma';
 async function handleUpdate(req: NextRequest, sessionId: string) {
     try {
         const session = await getServerSession(authOptions);
+
+        console.log('[StudySession Update] sessionId:', sessionId);
+        console.log('[StudySession Update] auth:', session?.user?.id ?? 'NO_AUTH');
+
         if (!session?.user?.id) {
             return NextResponse.json(
                 { error: 'Unauthorized' },
@@ -14,6 +18,7 @@ async function handleUpdate(req: NextRequest, sessionId: string) {
         }
 
         const body = await req.json();
+        console.log('[StudySession Update] payload:', JSON.stringify(body));
 
         // Verify ownership
         const studySession = await prisma.studySession.findFirst({
@@ -37,6 +42,11 @@ async function handleUpdate(req: NextRequest, sessionId: string) {
                 totalDuration: body.totalDuration ?? studySession.totalDuration,
                 idleDuration: body.idleDuration ?? studySession.idleDuration,
                 scrollDepthMax: body.scrollDepthMax ?? studySession.scrollDepthMax,
+                scrollDepthAvg: body.scrollDepthAvg ?? studySession.scrollDepthAvg,
+                totalScrollEvents: body.totalScrollEvents ?? studySession.totalScrollEvents,
+                totalVisibleTime: body.totalVisibleTime ?? studySession.totalVisibleTime,
+                totalHiddenTime: body.totalHiddenTime ?? studySession.totalHiddenTime,
+                visibilityChanges: body.visibilityChanges ?? studySession.visibilityChanges,
                 isCompleted: body.isCompleted ?? studySession.isCompleted,
                 isAbandoned: body.isAbandoned ?? studySession.isAbandoned,
             },

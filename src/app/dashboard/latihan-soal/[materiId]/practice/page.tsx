@@ -229,7 +229,8 @@ export default function PracticePage() {
 						totalDurationSeconds: result.totalDuration ?? 0,
 				});
 
-				router.push(`/dashboard/latihan-soal/${materiId}/result?sessionId=${sessionId}`);
+				// Redirect to Socratic Review page first
+				router.push(`/dashboard/latihan-soal/${materiId}/review?sessionId=${sessionId}`);
 			}
 		} catch (err) {
 			alert('Gagal menyelesaikan sesi');
