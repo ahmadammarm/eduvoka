@@ -1,11 +1,6 @@
 import bcrypt from "bcryptjs";
-import { prisma } from "@/lib/prisma";
-import { 
-	LatihanSoalType, 
-	SessionType, 
-	Role, 
-	PaketUser, 
-} from "../generated/prisma/enums";
+import { prisma,} from "../src/lib/prisma";
+import { Role, PaketUser, LatihanSoalType, SessionType } from "../src/generated/prisma/enums";
 
 // ==================== USER SEEDER ====================
 async function CreateUsers() {

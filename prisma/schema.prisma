@@ -1,10 +1,16 @@
-// Enhanced Prisma Schema for EDUVOKA MVP
-// Supports comprehensive learning analytics and AI-driven insights
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-    provider = "prisma-client"
-    output   = "../generated/prisma"
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
 }
+
+// Enhanced Prisma Schema for EDUVOKA MVP
+// Supports comprehensive learning analytics and AI-driven insights
 
 datasource db {
     provider = "mysql"
@@ -72,6 +78,7 @@ model User {
     profileImage      String?
     createdAt         DateTime  @default(now())
     updatedAt         DateTime  @updatedAt
+    gayaBelajar       GayaBelajar?
     role              Role      @default(USER)
     paketUser         PaketUser @default(BASIC)
     isSubscribed      Boolean   @default(false)
@@ -87,6 +94,7 @@ model User {
     weaknessAreas       WeaknessArea[]
     studySession        StudySession[]
     rawEventLogs        RawEventLog[]
+    utbkSessions        UtbkSession[]
 
     @@index([email])
     @@index([paketUser])
@@ -172,16 +180,18 @@ model SoalLatihanSoal {
 }
 
 model PilihanJawaban {
-    id            String @id @default(cuid())
-    soalUTBKId    String
-    label         String // A, B, C, D, E
+    id            String  @id @default(cuid())
+    soalUTBKId    String?
+    label         String  // A, B, C, D, E
     pilihan       String
-    soalLatihanId String @default("")
+    soalLatihanId String  @default("")
 
     soalLatihan SoalLatihanSoal      @relation(fields: [soalLatihanId], references: [id], onDelete: Cascade)
+    soalUTBK    SoalUTBK?            @relation("SoalUTBKPilihan", fields: [soalUTBKId], references: [id])
     jawabanUser LatihanJawabanUser[]
 
     @@index([soalLatihanId])
+    @@index([soalUTBKId])
 }
 
 model PembahasanSoalLatihan {
@@ -436,9 +446,90 @@ model AIPembahasan {
     recommendations String?  @db.Text // JSON array of recommendations
     createdAt       DateTime @default(now())
     updatedAt       DateTime @updatedAt
+}
 
+// ==================== LEGACY UTBK SYSTEM (Restored for Compatibility) ====================
+
+enum GayaBelajar {
+    VISUAL
+    AUDITORY
+    KINESTHETIC
+}
+
+model UtbkSession {
+    id        String      @id @default(cuid())
+    userId    String
+    type      SessionType
+    startedAt DateTime    @default(now())
+    endedAt   DateTime?
+    score     Int?
+
+    user        User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+    jawabanUser UtbkJawabanUser[]
+    metrics     SessionMetrics?
+
+    @@index([userId])
+}
+
+model SoalUTBK {
+    id             String           @id @default(cuid())
+    tipe           LatihanSoalType 
+    tipeSesi       SessionType     
+    content        String           @db.Text
+    kunciJawaban   String           
+    
+    pilihanJawaban PilihanJawaban[] @relation("SoalUTBKPilihan") 
+    pembahasan     PembahasanSoalUTBK[]
+    jawabanUser    UtbkJawabanUser[]
+}
+
+model PembahasanSoalUTBK {
+    id          String      @id @default(cuid())
+    soalUTBKId  String
+    gayaBelajar GayaBelajar
+    konten      String      @db.Text
+
+    soalUTBK    SoalUTBK    @relation(fields: [soalUTBKId], references: [id], onDelete: Cascade)
+
+    @@index([soalUTBKId])
+}
+
+model UtbkJawabanUser {
+    id         String   @id @default(cuid())
+    sessionId  String
+    soalUTBKId String
+    pilihanId  String
+    isCorrect  Boolean
+    answeredAt DateTime @default(now())
+
+    session  UtbkSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+    soalUTBK SoalUTBK    @relation(fields: [soalUTBKId], references: [id], onDelete: Cascade)
+
+    @@unique([sessionId, soalUTBKId])
     @@index([sessionId])
-    @@index([createdAt])
+    @@index([soalUTBKId])
+}
+
+// ==================== NEW: LEARNING VELOCITY METRICS ====================
+
+model SessionMetrics {
+    id             String @id @default(cuid())
+    sessionId      String @unique
+
+    // Velocity Metrics
+    velocityScore  Float? // 0-100 indicating learning speed
+    timeEfficiency Float? // Normalized time score
+    consistency    Float? // Variance in answer time
+    improvement    Float? // Improvement from previous session
+
+    // Burnout Metrics
+    burnoutLevel   String? // NONE, MILD, MODERATE, SEVERE
+    fatigueIndex   Float?  // 0-100 indicating fatigue
+
+    createdAt      DateTime @default(now())
+    updatedAt      DateTime @updatedAt
+
+    session        UtbkSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
 }
 
 // ==================== RAW EVENT LOG ====================
