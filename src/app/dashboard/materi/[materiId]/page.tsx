@@ -57,10 +57,10 @@ export default function MateriDetailPage() {
 
 	// Start study session when component mounts
 	useEffect(() => {
-			startStudy();
-			return () => {
-					endStudy();
-			};
+		startStudy();
+		return () => {
+			endStudy();
+		};
 	}, [startStudy, endStudy]);
 
 	const handleMarkComplete = async () => {
@@ -100,12 +100,12 @@ export default function MateriDetailPage() {
 	if (!materi) {
 		return (
 			<div className="flex flex-col items-center justify-center min-h-screen">
-				<p className="text-gray-600 mb-4">Materi tidak ditemukan</p>
+				<p className="text-gray-600 mb-4">Material not found</p>
 				<button
 					onClick={() => router.push('/dashboard/materi')}
 					className="text-blue-600 hover:underline"
 				>
-					Kembali ke daftar materi
+					Back to study materials
 				</button>
 			</div>
 		);
@@ -125,7 +125,7 @@ export default function MateriDetailPage() {
 							className="flex items-center text-gray-600 hover:text-gray-900"
 						>
 							<ArrowLeft className="w-5 h-5 mr-2" />
-							Kembali
+							Back
 						</button>
 
 						<div className="flex items-center gap-4">
@@ -184,30 +184,30 @@ export default function MateriDetailPage() {
 					<div className="bg-white rounded-lg shadow-sm p-6">
 						<div className="flex items-center mb-2">
 							<Clock className="w-5 h-5 text-blue-600 mr-2" />
-							<span className="text-sm text-gray-600">Total Waktu Belajar</span>
+							<span className="text-sm text-gray-600">Total Study Time</span>
 						</div>
 						<p className="text-2xl font-bold text-gray-900">
 							{formatTime(materi.userProgress.totalStudyTime)}
 						</p>
 						<p className="text-xs text-gray-500 mt-1">
-							Sesi ini: {formatTime(sessionState.totalActiveTime)}
+							Current session: {formatTime(sessionState.totalActiveTime)}
 						</p>
 					</div>
 
 					<div className="bg-white rounded-lg shadow-sm p-6">
 						<div className="flex items-center mb-2">
 							<Calendar className="w-5 h-5 text-green-600 mr-2" />
-							<span className="text-sm text-gray-600">Hari Aktif</span>
+							<span className="text-sm text-gray-600">Active Days</span>
 						</div>
 						<p className="text-2xl font-bold text-gray-900">
-							{materi.userProgress.activeDays} hari
+							{materi.userProgress.activeDays} days
 						</p>
 					</div>
 
 					<div className="bg-white rounded-lg shadow-sm p-6">
 						<div className="flex items-center mb-2">
 							<TrendingUp className="w-5 h-5 text-purple-600 mr-2" />
-							<span className="text-sm text-gray-600">Progress Membaca</span>
+							<span className="text-sm text-gray-600">Reading Progress</span>
 						</div>
 						<p className="text-2xl font-bold text-gray-900">
 							{sessionState.scrollDepthMax}%
@@ -251,18 +251,18 @@ export default function MateriDetailPage() {
 					<div className="border-t pt-8">
 						<h2 className="text-xl font-semibold mb-4 flex items-center">
 							<BookOpen className="w-5 h-5 mr-2" />
-							Konten Pembelajaran
+							Learning Content
 						</h2>
 
 						<div className="space-y-4">
 							<div className="bg-gray-50 rounded-lg p-6">
 								<p className="text-gray-600">
-									Konten materi akan ditampilkan di sini...
+									Content materials will be displayed here...
 								</p>
 								{/* Example content sections */}
 								<div className="mt-6 space-y-6">
 									<div>
-										<h3 className="font-semibold text-lg mb-2">Pengenalan</h3>
+										<h3 className="font-semibold text-lg mb-2">Introduction</h3>
 										<p className="text-gray-700">
 											Lorem ipsum dolor sit amet, consectetur adipiscing elit.
 											Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
@@ -271,35 +271,35 @@ export default function MateriDetailPage() {
 									</div>
 
 									<div>
-										<h3 className="font-semibold text-lg mb-2">Konsep Utama</h3>
+										<h3 className="font-semibold text-lg mb-2">Key Concepts</h3>
 										<ul className="list-disc list-inside space-y-2 text-gray-700">
-											<li>Konsep pertama tentang materi ini</li>
-											<li>Konsep kedua yang perlu dipahami</li>
-											<li>Konsep ketiga sebagai pelengkap</li>
+											<li>First concept about this material</li>
+											<li>Second concept needed to understand</li>
+											<li>Third concept as a complement</li>
 										</ul>
 									</div>
 
 									<div>
-										<h3 className="font-semibold text-lg mb-2">Contoh Soal</h3>
+										<h3 className="font-semibold text-lg mb-2">Example Problems</h3>
 										<p className="text-gray-700">
-											Contoh penerapan konsep dalam soal latihan...
+											Example application of concepts in practice questions...
 										</p>
 									</div>
 
 									<div>
-										<h3 className="font-semibold text-lg mb-2">Pembahasan Lanjutan</h3>
+										<h3 className="font-semibold text-lg mb-2">Advanced Discussion</h3>
 										<p className="text-gray-700">
-											Pembahasan lebih detail tentang materi...
+											More detailed discussion about the material...
 											Lorem ipsum dolor sit amet, consectetur adipiscing elit.
 										</p>
 									</div>
 
 									<div>
-										<h3 className="font-semibold text-lg mb-2">Tips dan Trik</h3>
+										<h3 className="font-semibold text-lg mb-2">Tips and Tricks</h3>
 										<ul className="list-disc list-inside space-y-2 text-gray-700">
-											<li>Tips pertama untuk menguasai materi</li>
-											<li>Tips kedua untuk mengerjakan soal lebih cepat</li>
-											<li>Tips ketiga untuk mengingat konsep penting</li>
+											<li>First tip to master the material</li>
+											<li>Second tip to solve questions faster</li>
+											<li>Third tip to remember important concepts</li>
 										</ul>
 									</div>
 								</div>
@@ -313,14 +313,14 @@ export default function MateriDetailPage() {
 							onClick={handleNavigateToLatihan}
 							className="px-6 py-3 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
 						>
-							Latihan Soal
+							Practice Questions
 						</button>
 						<button
 							onClick={handleMarkComplete}
 							className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
 						>
 							<Clock className="w-4 h-4" />
-							Selesai & Simpan Progress
+							Finish & Save Progress
 						</button>
 					</div>
 				</div>

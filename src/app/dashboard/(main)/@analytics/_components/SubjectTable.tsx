@@ -38,30 +38,30 @@ const SUBTEST_SHORT: Record<string, string> = {
     PK: "PK",
     PPU: "PPU",
     PBM: "PBM",
-    LITERASIBINDO: "Lit. Indo",
-    LITERASIBINGG: "Lit. Ingg",
+    LITERASIBINDO: "Indo Lit",
+    LITERASIBINGG: "Eng Lit",
 };
 
 // All 6 subtests
 const ALL_SUBTESTS = [
-    { key: "PU", label: "Penalaran Umum" },
-    { key: "PK", label: "Pengetahuan Kuantitatif" },
-    { key: "PPU", label: "Pengetahuan & Pemahaman Umum" },
-    { key: "PBM", label: "Pemahaman Bacaan & Menulis" },
-    { key: "LITERASIBINDO", label: "Literasi Bahasa Indonesia" },
-    { key: "LITERASIBINGG", label: "Literasi Bahasa Inggris" },
+    { key: "PU", label: "General Reasoning" },
+    { key: "PK", label: "Quantitative Knowledge" },
+    { key: "PPU", label: "General Knowledge & Understanding" },
+    { key: "PBM", label: "Reading Comprehension & Writing" },
+    { key: "LITERASIBINDO", label: "Indonesian Literacy" },
+    { key: "LITERASIBINGG", label: "English Literacy" },
 ];
 
 const radarChartConfig = {
     accuracy: {
-        label: "Akurasi (%)",
+        label: "Accuracy (%)",
         color: "#6366f1",
     },
 } satisfies ChartConfig;
 
 const barChartConfig = {
     accuracy: {
-        label: "Akurasi (%)",
+        label: "Accuracy (%)",
         color: "#6366f1",
     },
 } satisfies ChartConfig;
@@ -74,10 +74,10 @@ function getAccuracyColor(accuracy: number): string {
 }
 
 function getAccuracyLabel(accuracy: number): string {
-    if (accuracy >= 80) return "Sangat Baik";
-    if (accuracy >= 60) return "Baik";
-    if (accuracy >= 40) return "Cukup";
-    return "Perlu Ditingkatkan";
+    if (accuracy >= 80) return "Excellent";
+    if (accuracy >= 60) return "Good";
+    if (accuracy >= 40) return "Fair";
+    return "Needs Improvement";
 }
 
 export default function SubjectTable({
@@ -110,8 +110,7 @@ export default function SubjectTable({
     if (!hasData) {
         return (
             <div className="bg-gray-50 dark:bg-stone-800 rounded-lg p-6 text-center text-gray-500">
-                Belum ada data performa subtest. Mulai latihan untuk melihat
-                analisis!
+                No subtest performance data yet. Start practicing to see analysis!
             </div>
         );
     }
@@ -121,11 +120,11 @@ export default function SubjectTable({
     const avgAccuracy =
         attempted.length > 0
             ? Number(
-                  (
-                      attempted.reduce((s, d) => s + d.accuracy, 0) /
-                      attempted.length
-                  ).toFixed(1)
-              )
+                (
+                    attempted.reduce((s, d) => s + d.accuracy, 0) /
+                    attempted.length
+                ).toFixed(1)
+            )
             : 0;
 
     // Best & worst
@@ -141,7 +140,7 @@ export default function SubjectTable({
             {/* Summary Cards */}
             <div className="grid grid-cols-3 gap-3">
                 <div className="bg-gray-50 dark:bg-stone-800 rounded-lg p-3 text-center">
-                    <p className="text-xs text-gray-500">Rata-rata Akurasi</p>
+                    <p className="text-xs text-gray-500">Average Accuracy</p>
                     <p
                         className="text-xl font-bold mt-1"
                         style={{ color: getAccuracyColor(avgAccuracy) }}
@@ -153,14 +152,14 @@ export default function SubjectTable({
                     </p>
                 </div>
                 <div className="bg-green-50 dark:bg-green-950 rounded-lg p-3 text-center">
-                    <p className="text-xs text-gray-500">Subtest Terbaik</p>
+                    <p className="text-xs text-gray-500">Best Subtest</p>
                     <p className="text-sm font-semibold text-green-600 mt-1">
                         {best.shortLabel}
                     </p>
                     <p className="text-xs text-green-500">{best.accuracy}%</p>
                 </div>
                 <div className="bg-red-50 dark:bg-red-950 rounded-lg p-3 text-center">
-                    <p className="text-xs text-gray-500">Perlu Ditingkatkan</p>
+                    <p className="text-xs text-gray-500">Needs Improvement</p>
                     <p className="text-sm font-semibold text-red-600 mt-1">
                         {worst.shortLabel}
                     </p>
@@ -173,10 +172,10 @@ export default function SubjectTable({
                 {/* Radar Chart */}
                 <div className="bg-gray-50 dark:bg-stone-800 rounded-lg p-4 space-y-2">
                     <h3 className="text-sm font-semibold">
-                        Radar Performa
+                        Performance Radar
                     </h3>
                     <p className="text-xs text-gray-500">
-                        Visualisasi keseimbangan kemampuan di semua subtest
+                        Visualizing skill balance across all subtests
                     </p>
 
                     <ChartContainer
@@ -242,7 +241,7 @@ export default function SubjectTable({
                                                         {p.kategoriLabel}
                                                     </p>
                                                     <p>
-                                                        Akurasi:{" "}
+                                                        Accuracy:{" "}
                                                         <span
                                                             className="font-medium"
                                                             style={{
@@ -256,11 +255,11 @@ export default function SubjectTable({
                                                     </p>
                                                     <p>
                                                         {p.correctAnswers}/
-                                                        {p.totalQuestions} benar
+                                                        {p.totalQuestions} correct
                                                     </p>
                                                     <p>
                                                         Avg:{" "}
-                                                        {p.avgTimePerQuestion}s/soal
+                                                        {p.avgTimePerQuestion}s/question
                                                     </p>
                                                 </div>
                                             );
@@ -269,7 +268,7 @@ export default function SubjectTable({
                                 }
                             />
                             <Radar
-                                name="Akurasi"
+                                name="Accuracy"
                                 dataKey="accuracy"
                                 stroke="#6366f1"
                                 fill="#6366f1"
@@ -288,10 +287,10 @@ export default function SubjectTable({
                 {/* Horizontal Bar Chart */}
                 <div className="bg-gray-50 dark:bg-stone-800 rounded-lg p-4 space-y-2">
                     <h3 className="text-sm font-semibold">
-                        Persentase Akurasi per Subtest
+                        Accuracy Percentage per Subtest
                     </h3>
                     <p className="text-xs text-gray-500">
-                        Perbandingan performa di setiap subtest
+                        Performance comparison across each subtest
                     </p>
 
                     <ChartContainer
@@ -343,7 +342,7 @@ export default function SubjectTable({
                                                         {p.kategoriLabel}
                                                     </p>
                                                     <p>
-                                                        Akurasi:{" "}
+                                                        Accuracy:{" "}
                                                         <span
                                                             className="font-medium"
                                                             style={{
@@ -357,11 +356,11 @@ export default function SubjectTable({
                                                     </p>
                                                     <p>
                                                         {p.correctAnswers}/
-                                                        {p.totalQuestions} benar
+                                                        {p.totalQuestions} correct
                                                     </p>
                                                     <p>
-                                                        {p.sessionsCount} sesi •{" "}
-                                                        {p.avgTimePerQuestion}s/soal
+                                                        {p.sessionsCount} sessions •{" "}
+                                                        {p.avgTimePerQuestion}s/question
                                                     </p>
                                                 </div>
                                             );
@@ -404,7 +403,7 @@ export default function SubjectTable({
 
             {/* Detail Table */}
             <div className="bg-gray-50 dark:bg-stone-800 rounded-lg p-4 space-y-3">
-                <h3 className="text-sm font-semibold">Detail Performa</h3>
+                <h3 className="text-sm font-semibold">Performance Detail</h3>
 
                 <div className="overflow-x-auto">
                     <table className="w-full text-xs">
@@ -414,19 +413,19 @@ export default function SubjectTable({
                                     Subtest
                                 </th>
                                 <th className="text-center py-2 px-2 font-medium text-gray-500">
-                                    Soal
+                                    Questions
                                 </th>
                                 <th className="text-center py-2 px-2 font-medium text-gray-500">
-                                    Benar
+                                    Correct
                                 </th>
                                 <th className="text-center py-2 px-2 font-medium text-gray-500">
-                                    Akurasi
+                                    Accuracy
                                 </th>
                                 <th className="text-center py-2 px-2 font-medium text-gray-500">
-                                    Avg/Soal
+                                    Avg/Q
                                 </th>
                                 <th className="text-right py-2 pl-2 font-medium text-gray-500">
-                                    Sesi
+                                    Sessions
                                 </th>
                             </tr>
                         </thead>

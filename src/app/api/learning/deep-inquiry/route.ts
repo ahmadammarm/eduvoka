@@ -54,6 +54,11 @@ export async function POST(req: Request) {
                 styleInstruction = "Style: Balanced Socratic questioning.";
         }
 
+        // Calculate Turn Count (approximate)
+        const turnCount = history ? Math.ceil(history.length / 2) : 0;
+        const MAX_TURNS = 4; // Strict 4-turn limit (4 round trips)
+        const isDeepConversation = turnCount >= MAX_TURNS;
+
         // 3. System Prompt Construction
         const systemPrompt = `
       You are a Socratic Tutor for UTBK preparation.
@@ -79,6 +84,9 @@ export async function POST(req: Request) {
       Correct Answer Key: ${questionData?.kunciJawaban || "Unknown"}
       Discussion/Hint Bank: ${pembahasanContent}
       
+      ### CURRENT STATUS
+      Turn Count: ${turnCount} / ${MAX_TURNS}
+      
       ### BEHAVIORAL TRIGGERS
       - **DTA (Direct Translation Approach)**: If the user's message is short (under 5 words), just a formula, or asks "What is the answer?", **STAY IN PROBE PHASE**. Do not explain yet. Ask them to define terms or show their start.
       - **MBA (Meaning-Based Approach)**: If user explains reasoning, move to **ANALYZE**.
@@ -88,25 +96,85 @@ export async function POST(req: Request) {
       - **NEVER** output the full discussion block directly.
       - Reveal hints progressively only if the user is stuck (PERSIST phase).
       
+      ### COMPLETION PROTOCOL (CRITICAL)
+      - **WHEN TO FINISH**: 
+        1. If the student has successfully identified the correct answer AND understood the reasoning.
+        2. OR if you have reached turn ${MAX_TURNS} (STRICT LIMIT).
+      - **HOW TO FINISH**: 
+        - Provide a final concluding sentence.
+        - Append a specialized token with the mastery score (0-100).
+        - Format: "[[COMPLETED|SCORE:85]]"
+      - **SCORING CRITERIA**:
+        - 90-100: Flawless reasoning, minimal help needed.
+        - 75-89: Good understanding, needed some hints.
+        - 60-74: Struggled but eventually understood.
+        - <60: Did not understand or reached limit without solving.
+      
+      ### DEPTH CONTROL
+      - You are currently at turn ${turnCount}.
+      - **IF TURN COUNT IS ${MAX_TURNS}**: You MUST wrap up immediately. Briefly explain the correct answer if they haven't found it, assign the score, and end with the token.
+      
       ### ADAPTATION
       - ${styleInstruction}
       
       ### RULES
       - Max 3 sentences.
-      - Always end with a question.
+      - Always end with a question (unless completing).
       - Phase sequence: PROBE -> ANALYZE -> PERSIST -> EVALUATE.
       - **Match the student's primary language** (see LANGUAGE RULE above).
     `;
 
-        const chatHistory = history ? history.map((h: any) => ({
+        let chatHistory = history ? history.map((h: any) => ({
             role: h.role === "ai" ? "model" : "user",
             parts: [{ text: h.content }]
         })) : [];
 
+        // Gemini requires first message to be from 'user'
+        // If history starts with 'model' (AI greeting), prepend a synthetic user message
+        if (chatHistory.length > 0 && chatHistory[0].role === "model") {
+            chatHistory = [
+                { role: "user", parts: [{ text: "Hi, I need help understanding this question." }] },
+                ...chatHistory
+            ];
+        }
+
+        // Special handling for __INIT__ to get AI's first greeting
+        if (message === "__INIT__") {
+            const chat = geminiModel.startChat({
+                history: [],
+                generationConfig: {
+                    maxOutputTokens: 60000,
+                    temperature: 0.6,
+                }
+            });
+
+            // Send user message first (required by Gemini), prompting AI to greet
+            const initPrompt = `${systemPrompt}\n\nStudent Message: Hi, I got this question wrong. Can you help me understand it?`;
+
+            const initResult = await chat.sendMessage(initPrompt);
+            let aiGreeting = "";
+
+            try {
+                aiGreeting = initResult.response.text();
+            } catch (error) {
+                if (initResult.response.candidates && initResult.response.candidates.length > 0) {
+                    const candidate = initResult.response.candidates[0];
+                    if (candidate.content && candidate.content.parts) {
+                        aiGreeting = candidate.content.parts.map((part: any) => part.text).join('');
+                    }
+                }
+            }
+
+            return NextResponse.json({
+                reply: aiGreeting || "Halo! Saya lihat kamu salah menjawab soal ini. Coba jelaskan ke saya, kenapa kamu memilih jawaban tersebut?"
+            });
+        }
+
+        // Normal conversation flow
         const chat = geminiModel.startChat({
             history: chatHistory,
             generationConfig: {
-                maxOutputTokens: 60000, // Increased for complete analogies and explanations
+                maxOutputTokens: 60000,
                 temperature: 0.6,
             }
         });
@@ -147,6 +215,23 @@ export async function POST(req: Request) {
             console.log("Safety ratings:", candidate.safetyRatings);
         }
 
+        // Check for completion token and score
+        let isCompleted = false;
+        let score = 0;
+
+        // Regex to find [[COMPLETED|SCORE:85]] or just [[COMPLETED]]
+        const completionRegex = /\[\[COMPLETED(?:\|SCORE:(\d+))?\]\]/;
+        const match = response.match(completionRegex);
+
+        if (match) {
+            isCompleted = true;
+            if (match[1]) {
+                score = parseInt(match[1], 10);
+            }
+            response = response.replace(completionRegex, "").trim();
+            console.log(`✅ Completion token detected. Score: ${score}`);
+        }
+
         // Log the final response
         console.log("Final response length:", response.length);
         console.log("Final response:", response);
@@ -159,7 +244,11 @@ export async function POST(req: Request) {
             console.warn("Last 50 chars:", response.slice(-50));
         }
 
-        return NextResponse.json({ reply: response });
+        return NextResponse.json({
+            reply: response,
+            isCompleted: isCompleted,
+            score: score
+        });
 
     } catch (error) {
         console.error("Socratic API Error:", error);

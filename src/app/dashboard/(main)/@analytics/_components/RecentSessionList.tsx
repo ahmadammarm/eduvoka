@@ -12,14 +12,14 @@ export default function RecentSessionList({
     if (sessions.length === 0) {
         return (
             <div className="bg-gray-50 dark:bg-stone-800 rounded-lg p-6 text-center text-gray-500">
-                Belum ada sesi latihan.
+                No practice sessions yet.
             </div>
         );
     }
 
     return (
         <div className="bg-gray-50 dark:bg-stone-800 rounded-lg p-4">
-            <h3 className="text-sm font-semibold mb-3">Sesi Terakhir</h3>
+            <h3 className="text-sm font-semibold mb-3">Recent Sessions</h3>
             <div className="space-y-2 max-h-80 overflow-y-auto">
                 {sessions.map((s) => (
                     <div
@@ -38,7 +38,7 @@ export default function RecentSessionList({
                                 </p>
                                 <p className="text-xs text-gray-500">
                                     {new Date(s.startedAt).toLocaleDateString(
-                                        "id-ID",
+                                        "en-US",
                                         {
                                             day: "numeric",
                                             month: "short",
@@ -53,13 +53,12 @@ export default function RecentSessionList({
                         <div className="flex items-center gap-2 shrink-0">
                             <Badge
                                 variant="outline"
-                                className={`text-[10px] ${
-                                    s.type === "LATIHAN"
+                                className={`text-[10px] ${s.type === "LATIHAN"
                                         ? "border-blue-300 text-blue-600"
                                         : "border-purple-300 text-purple-600"
-                                }`}
+                                    }`}
                             >
-                                {s.type === "LATIHAN" ? "Latihan" : "Materi"}
+                                {s.type === "LATIHAN" ? "Practice" : "Reading"}
                             </Badge>
 
                             {s.accuracy !== null && (
@@ -70,8 +69,8 @@ export default function RecentSessionList({
                                             s.accuracy >= 70
                                                 ? "text-green-600"
                                                 : s.accuracy >= 40
-                                                  ? "text-yellow-600"
-                                                  : "text-red-600"
+                                                    ? "text-yellow-600"
+                                                    : "text-red-600"
                                         }
                                     >
                                         {s.accuracy}%
@@ -90,7 +89,7 @@ export default function RecentSessionList({
 
                             {s.totalQuestions > 0 && (
                                 <span className="text-xs text-gray-400">
-                                    {s.totalQuestions} soal
+                                    {s.totalQuestions} questions
                                 </span>
                             )}
                         </div>

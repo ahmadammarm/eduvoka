@@ -6,12 +6,12 @@ import Link from 'next/link';
 import { Book, ChevronRight, Loader2 } from 'lucide-react';
 
 const KATEGORI_LABELS: Record<LatihanSoalType, string> = {
-    PU: 'Penalaran Umum',
-    PBM: 'Pemahaman Bacaan dan Menulis',
-    PPU: 'Pengetahuan & Pemahaman Umum',
-    PK: 'Pengetahuan Kuantitatif',
-    LITERASIBINDO: 'Literasi Bahasa Indonesia',
-    LITERASIBINGG: 'Literasi Bahasa Inggris'
+    PU: 'General Reasoning',
+    PBM: 'Reading Comprehension & Writing',
+    PPU: 'General Knowledge & Understanding',
+    PK: 'Quantitative Knowledge',
+    LITERASIBINDO: 'Indonesian Literacy',
+    LITERASIBINGG: 'English Literacy'
 };
 
 const KATEGORI_COLORS: Record<LatihanSoalType, string> = {
@@ -48,10 +48,10 @@ export default function LatihanSoalPage() {
         <div className="container mx-auto px-4 py-8 max-w-6xl">
             <div className="mb-8">
                 <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                    Latihan Soal UTBK
+                    UTBK Practice Questions
                 </h1>
                 <p className="text-gray-600">
-                    Pilih materi yang ingin Anda pelajari
+                    Select the material you want to study
                 </p>
             </div>
 
@@ -82,7 +82,7 @@ export default function LatihanSoalPage() {
                                 </span>
                                 {materi._count && (
                                     <span className="text-blue-600 font-medium">
-                                        {materi._count.soalLatihan} soal
+                                        {materi._count.soalLatihan} questions
                                     </span>
                                 )}
                             </div>
@@ -100,7 +100,7 @@ export default function LatihanSoalPage() {
             {materiList.length === 0 && (
                 <div className="text-center py-12">
                     <Book className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                    <p className="text-gray-500">Belum ada materi tersedia</p>
+                    <p className="text-gray-500">No materials available yet</p>
                 </div>
             )}
         </div>

@@ -11,11 +11,11 @@ import type { StudyTimeDistribution } from "../_types/analytics";
 
 const chartConfig = {
     totalMinutes: {
-        label: "Waktu Belajar (menit)",
+        label: "Study Time (minutes)",
         color: "#a855f7",
     },
     sessionsCount: {
-        label: "Jumlah Sesi",
+        label: "Session Count",
         color: "#8b5cf6",
     },
 } satisfies ChartConfig;
@@ -30,7 +30,7 @@ export default function StudyTimeChart({
     if (!hasData) {
         return (
             <div className="bg-gray-50 dark:bg-stone-800 rounded-lg p-6 text-center text-gray-500">
-                Belum ada data waktu belajar.
+                No study time data available.
             </div>
         );
     }
@@ -51,7 +51,7 @@ export default function StudyTimeChart({
     return (
         <div className="bg-gray-50 dark:bg-stone-800 rounded-lg p-4 space-y-4">
             <h3 className="text-sm font-semibold">
-                Distribusi Waktu Belajar (per Jam)
+                Study Time Distribution (Hourly)
             </h3>
 
             <ChartContainer config={chartConfig} className="h-[200px] w-full">
@@ -93,13 +93,13 @@ export default function StudyTimeChart({
                                                 <span className="font-medium">
                                                     {payload.totalMinutes}
                                                 </span>{" "}
-                                                menit
+                                                minutes
                                             </p>
                                             <p>
                                                 <span className="font-medium">
                                                     {payload.sessionsCount}
                                                 </span>{" "}
-                                                sesi
+                                                sessions
                                             </p>
                                         </div>
                                     );
@@ -132,12 +132,12 @@ export default function StudyTimeChart({
             {/* Peak time insight */}
             {peak.totalMinutes > 0 && (
                 <p className="text-xs text-gray-500">
-                    Waktu paling produktif:{" "}
+                    Most Productive Time:{" "}
                     <span className="font-semibold text-purple-600">
                         {peak.hour.toString().padStart(2, "0")}:00 -{" "}
                         {((peak.hour + 1) % 24).toString().padStart(2, "0")}:00
                     </span>{" "}
-                    ({peak.totalMinutes} menit total)
+                    ({peak.totalMinutes} minutes total)
                 </p>
             )}
         </div>

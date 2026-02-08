@@ -19,18 +19,18 @@ import type { DailyActivity } from "../_types/analytics";
 
 const soalChartConfig = {
     questionsAnswered: {
-        label: "Soal Dijawab",
+        label: "Questions Answered",
         color: "#6366f1",
     },
 } satisfies ChartConfig;
 
 const waktuChartConfig = {
     latihanMinutes: {
-        label: "Latihan Soal",
+        label: "Practice Questions",
         color: "#6366f1",
     },
     materiMinutes: {
-        label: "Belajar Materi",
+        label: "Study Material",
         color: "#22c55e",
     },
 } satisfies ChartConfig;
@@ -56,8 +56,7 @@ export default function ActivityChart({
     if (!hasAnyData) {
         return (
             <div className="bg-gray-50 dark:bg-stone-800 rounded-lg p-6 text-center text-gray-500">
-                Belum ada data aktivitas. Mulai latihan atau baca materi untuk
-                melihat progress!
+                No activity data available. Start practicing or reading materials to see progress!
             </div>
         );
     }
@@ -82,7 +81,7 @@ export default function ActivityChart({
                 <div className="bg-gray-50 dark:bg-stone-800 rounded-lg p-4 space-y-3">
                     <div className="flex items-center justify-between">
                         <h3 className="text-sm font-semibold">
-                            Soal Dikerjakan (30 Hari)
+                            Questions Answered (30 Days)
                         </h3>
                         <p className="text-xs text-gray-500">
                             Total:{" "}
@@ -92,7 +91,7 @@ export default function ActivityChart({
                                     0
                                 )}
                             </span>{" "}
-                            soal
+                            questions
                         </p>
                     </div>
 
@@ -145,26 +144,25 @@ export default function ActivityChart({
                                                         {
                                                             p.questionsAnswered
                                                         }{" "}
-                                                        soal dikerjakan
+                                                        questions answered
                                                     </p>
                                                     <p>
-                                                        Akurasi:{" "}
+                                                        Accuracy:{" "}
                                                         <span
                                                             className={
                                                                 p.accuracy >= 70
                                                                     ? "text-green-600"
                                                                     : p.accuracy >=
                                                                         40
-                                                                      ? "text-yellow-600"
-                                                                      : "text-red-600"
+                                                                        ? "text-yellow-600"
+                                                                        : "text-red-600"
                                                             }
                                                         >
                                                             {p.accuracy}%
                                                         </span>
                                                     </p>
                                                     <p>
-                                                        {p.latihanSessions} sesi
-                                                        latihan
+                                                        practice sessions
                                                     </p>
                                                 </div>
                                             );
@@ -218,7 +216,7 @@ export default function ActivityChart({
                 <div className="bg-gray-50 dark:bg-stone-800 rounded-lg p-4 space-y-3">
                     <div className="flex items-center justify-between">
                         <h3 className="text-sm font-semibold">
-                            Waktu Belajar (30 Hari)
+                            Study Time (30 Days)
                         </h3>
                         <p className="text-xs text-gray-500">
                             Total:{" "}
@@ -228,7 +226,7 @@ export default function ActivityChart({
                                     0
                                 )}
                             </span>{" "}
-                            menit
+                            minutes
                         </p>
                     </div>
 
@@ -281,27 +279,27 @@ export default function ActivityChart({
                                                     <div className="flex items-center gap-1">
                                                         <div className="w-2 h-2 rounded-sm bg-indigo-500" />
                                                         <span>
-                                                            Latihan:{" "}
+                                                            Practice:{" "}
                                                             {p.latihanMinutes}{" "}
-                                                            menit (
+                                                            minutes (
                                                             {p.latihanSessions}{" "}
-                                                            sesi)
+                                                            sessions)
                                                         </span>
                                                     </div>
                                                     <div className="flex items-center gap-1">
                                                         <div className="w-2 h-2 rounded-sm bg-green-500" />
                                                         <span>
-                                                            Materi:{" "}
+                                                            Material:{" "}
                                                             {p.materiMinutes}{" "}
-                                                            menit (
+                                                            minutes (
                                                             {p.materiSessions}{" "}
-                                                            sesi)
+                                                            sessions)
                                                         </span>
                                                     </div>
                                                     <p className="font-medium border-t pt-0.5 mt-0.5">
                                                         Total:{" "}
                                                         {p.totalStudyMinutes}{" "}
-                                                        menit
+                                                        minutes
                                                     </p>
                                                 </div>
                                             );
@@ -316,8 +314,8 @@ export default function ActivityChart({
                                 iconSize={10}
                                 formatter={(value: string) => {
                                     const labels: Record<string, string> = {
-                                        latihanMinutes: "Latihan Soal",
-                                        materiMinutes: "Belajar Materi",
+                                        latihanMinutes: "Practice Questions",
+                                        materiMinutes: "Study Material",
                                     };
                                     return (
                                         <span className="text-xs text-gray-600 dark:text-gray-400">

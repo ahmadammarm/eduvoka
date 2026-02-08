@@ -67,14 +67,14 @@ const SESSION_CONFIGS: SessionConfig[] = [
 	{
 		type: "TPS",
 		duration: 1800,
-		title: "Tes Potensi Skolastik (TPS)",
-		description: "Penalaran Umum, Pengetahuan Kuantitatif, Pemahaman Bacaan",
+		title: "Scholastic Potential Test (TPS)",
+		description: "General Reasoning, Quantitative Knowledge, Reading Comprehension",
 	},
 	{
 		type: "LITERASI",
 		duration: 2700,
-		title: "Literasi",
-		description: "Literasi Bahasa Indonesia dan Bahasa Inggris",
+		title: "Literacy",
+		description: "Indonesian and English Literacy",
 	},
 ]
 
@@ -145,7 +145,7 @@ const UTBKTryout = () => {
 			setStage("quiz")
 		} catch (err) {
 			console.error("Error starting session:", err)
-			setError("Gagal memulai sesi. Silakan coba lagi.")
+			setError("Failed to start session. Please try again.")
 		} finally {
 			setLoading(false)
 		}
@@ -227,7 +227,7 @@ const UTBKTryout = () => {
 			}
 		} catch (err) {
 			console.error(err)
-			setError("Gagal menyelesaikan sesi.")
+			setError("Failed to finish session.")
 		} finally {
 			setLoading(false)
 		}
@@ -261,10 +261,10 @@ const UTBKTryout = () => {
 				<div className="bg-card border border-border/50 dark:border-border rounded-lg shadow-2xl dark:shadow-primary/20 p-6 sm:p-8 lg:p-10 max-w-2xl w-full">
 					<div className="text-center mb-8 sm:mb-10">
 						<h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-2 text-balance">
-							Simulasi UTBK
+							UTBK Simulation
 						</h1>
 						<p className="text-muted-foreground text-sm sm:text-base px-4">
-							Tryout lengkap untuk persiapan ujian masuk perguruan tinggi
+							Complete tryout for university entrance exam preparation
 						</p>
 					</div>
 
@@ -278,14 +278,14 @@ const UTBKTryout = () => {
 									<div className="flex-1">
 										<div className="flex items-center gap-2 mb-2">
 											<span className="bg-secondary text-secondary-foreground px-3 py-1 rounded-lg text-xs font-bold shadow-md">
-												Sesi {idx + 1}
+												Session {idx + 1}
 											</span>
 										</div>
 										<h3 className="font-bold text-foreground text-lg sm:text-xl mb-2">{config.title}</h3>
 										<p className="text-sm text-muted-foreground leading-relaxed">{config.description}</p>
 									</div>
 									<span className="bg-linear-to-br from-primary to-primary/80 text-primary-foreground px-4 py-2 rounded-lg text-sm font-bold shadow-lg">
-										{Math.floor(config.duration / 60)} menit
+										{Math.floor(config.duration / 60)} minutes
 									</span>
 								</div>
 							</div>
@@ -295,8 +295,8 @@ const UTBKTryout = () => {
 					<div className="bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/30 rounded-lg p-4 sm:p-5 mb-8">
 						<p className="text-sm text-amber-700 dark:text-amber-400 font-medium flex items-start gap-2">
 							<span>
-								Tryout akan dilakukan dalam 2 sesi berurutan. Pastikan Anda memiliki waktu yang cukup untuk
-								menyelesaikan keseluruhan tes.
+								The tryout will be conducted in 2 sequential sessions. Ensure you have enough time to
+								complete the entire test.
 							</span>
 						</p>
 					</div>
@@ -315,11 +315,11 @@ const UTBKTryout = () => {
 						{loading ? (
 							<>
 								<Loader2 className="w-5 h-5 sm:w-6 sm:h-6 mr-2 animate-spin" />
-								Memulai...
+								Starting...
 							</>
 						) : (
 							<>
-								Mulai Tryout
+								Start Tryout
 							</>
 						)}
 					</button>
@@ -338,10 +338,10 @@ const UTBKTryout = () => {
 				<div className="bg-card border border-border/50 dark:border-border rounded-lg shadow-2xl dark:shadow-secondary/20 p-6 sm:p-8 lg:p-10 max-w-lg w-full">
 					<div className="text-center mb-8 sm:mb-10">
 						<h2 className="text-2xl sm:text-3xl font-bold text-foreground mb-6 text-balance">
-							Sesi {lastResult.session.type} Selesai!
+							Session {lastResult.session.type} Finished!
 						</h2>
 						<div className="bg-linear-to-br from-primary/10 via-secondary/10 to-tertiary/10 dark:from-primary/20 dark:via-secondary/15 dark:to-tertiary/20 rounded-lg p-6 sm:p-8 mb-4 border border-primary/20 dark:border-primary/30">
-							<p className="text-sm sm:text-base text-muted-foreground mb-2 font-medium">Skor Anda</p>
+							<p className="text-sm sm:text-base text-muted-foreground mb-2 font-medium">Your Score</p>
 							<p className="text-6xl sm:text-7xl font-bold bg-linear-to-r from-primary via-secondary to-tertiary bg-clip-text text-transparent">
 								{lastResult.stats.score}
 							</p>
@@ -349,19 +349,19 @@ const UTBKTryout = () => {
 						<div className="flex justify-center gap-4 sm:gap-6 text-sm sm:text-base">
 							<div className="bg-secondary/10 dark:bg-secondary/20 px-4 py-2 rounded-lg border border-secondary/30 dark:border-secondary/40">
 								<span className="font-bold text-secondary block text-lg sm:text-xl">{lastResult.stats.correct}</span>
-								<span className="text-muted-foreground text-xs sm:text-sm">Benar</span>
+								<span className="text-muted-foreground text-xs sm:text-sm">Correct</span>
 							</div>
 							<div className="bg-red-500/10 dark:bg-red-500/20 px-4 py-2 rounded-lg border border-red-500/30 dark:border-red-500/40">
 								<span className="font-bold text-red-500 block text-lg sm:text-xl">{lastResult.stats.incorrect}</span>
-								<span className="text-muted-foreground text-xs sm:text-sm">Salah</span>
+								<span className="text-muted-foreground text-xs sm:text-sm">Incorrect</span>
 							</div>
 						</div>
 					</div>
 
 					{isPassed && (
 						<div className="bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 px-5 py-4 rounded-lg mb-6 text-sm sm:text-base font-semibold text-center">
-							Selamat! Nilai Anda memenuhi syarat.
-							Silakan lanjut ke sesi berikutnya.
+							Congratulations! Your score meets the requirements.
+							Please continue to the next session.
 						</div>
 					)}
 
@@ -370,13 +370,13 @@ const UTBKTryout = () => {
 						<>
 							<div className="bg-linear-to-br from-tertiary/10 to-primary/10 dark:from-tertiary/20 dark:to-primary/20 border border-primary/30 dark:border-primary/40 rounded-lg p-5 sm:p-6 mb-6">
 								<h3 className="font-bold text-foreground mb-3 flex items-center gap-2 text-base sm:text-lg">
-									Sesi Berikutnya
+									Next Session
 								</h3>
 								<p className="text-foreground font-semibold text-base sm:text-lg mb-1">{nextSession.title}</p>
 								<p className="text-sm text-muted-foreground mb-3 leading-relaxed">{nextSession.description}</p>
 								<div className="flex items-center gap-2 text-sm text-muted-foreground bg-background/50 dark:bg-background/30 px-3 py-2 rounded-lg w-fit">
 									<Clock className="w-4 h-4 shrink-0" />
-									<span>Durasi: {Math.floor(nextSession.duration / 60)} menit</span>
+									<span>Duration: {Math.floor(nextSession.duration / 60)} minutes</span>
 								</div>
 							</div>
 
@@ -385,21 +385,21 @@ const UTBKTryout = () => {
 								onClick={handleContinueToNextSession}
 								disabled={loading || !isPassed}
 								className={`w-full py-3 sm:py-4 rounded-lg font-bold text-base sm:text-lg transition-all duration-300 flex items-center justify-center shadow-xl ${isPassed
-										? "bg-linear-to-r from-secondary to-secondary/80 hover:from-secondary/90 hover:to-secondary/70 text-white"
-										: "bg-muted text-muted-foreground cursor-not-allowed"
+									? "bg-linear-to-r from-secondary to-secondary/80 hover:from-secondary/90 hover:to-secondary/70 text-white"
+									: "bg-muted text-muted-foreground cursor-not-allowed"
 									} disabled:opacity-50`}
 							>
 								{loading ? (
 									<>
 										<Loader2 className="w-5 h-5 sm:w-6 sm:h-6 mr-2 animate-spin" />
-										Memulai...
+										Starting...
 									</>
 								) : isPassed ? (
 									<>
-										Lanjut ke Sesi Berikutnya
+										Continue to Next Session
 									</>
 								) : (
-									"Nilai Tidak Memenuhi Syarat"
+									"Score Does Not Meet Requirements"
 								)}
 							</button>
 
@@ -432,14 +432,14 @@ const UTBKTryout = () => {
 							</div>
 						</div>
 						<div className="text-sm text-muted-foreground font-medium">
-							Soal {currentIndex + 1} dari {soalList.length}
+							Question {currentIndex + 1} of {soalList.length}
 						</div>
 					</div>
 
 					{/* Progress */}
 					<div className="bg-card border border-border/50 dark:border-border rounded-lg shadow-lg dark:shadow-secondary/10 p-4 sm:p-5">
 						<div className="flex justify-between text-sm text-muted-foreground mb-3 font-medium">
-							<span>Progress Pengerjaan</span>
+							<span>Progress</span>
 							<span className="text-foreground font-semibold">
 								{answeredCount} / {soalList.length}
 							</span>
@@ -495,7 +495,7 @@ const UTBKTryout = () => {
 							disabled={currentIndex === 0}
 							className="px-6 sm:px-8 py-3 border-2 border-tertiary/50 bg-card hover:bg-tertiary/5 hover:border-tertiary rounded-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed font-semibold text-foreground shadow-md hover:shadow-lg text-sm sm:text-base"
 						>
-							Sebelumnya
+							Previous
 						</button>
 
 						{currentIndex === soalList.length - 1 ? (
@@ -507,11 +507,11 @@ const UTBKTryout = () => {
 								{loading ? (
 									<>
 										<Loader2 className="w-5 h-5 mr-2 animate-spin" />
-										Memproses...
+										Processing...
 									</>
 								) : (
 									<>
-										Selesai
+										Finish
 									</>
 								)}
 							</button>
@@ -520,7 +520,7 @@ const UTBKTryout = () => {
 								onClick={handleNext}
 								className="px-6 sm:px-8 py-3 bg-linear-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-primary-foreground rounded-lg transition-all duration-300 font-semibold shadow-xl hover:shadow-2xl flex items-center justify-center text-sm sm:text-base"
 							>
-								Selanjutnya
+								Next
 							</button>
 						)}
 					</div>
@@ -546,25 +546,25 @@ const UTBKTryout = () => {
 				<div className="max-w-5xl mx-auto space-y-6 sm:space-y-8">
 					{/* Overall Score Card */}
 					<div className="bg-primary rounded-lg shadow-2xl dark:shadow-primary/30 p-6 sm:p-8 lg:p-10 text-primary-foreground border border-primary/20">
-						<h2 className="text-3xl sm:text-4xl font-bold text-center mb-4 text-balance">Hasil Tryout UTBK</h2>
+						<h2 className="text-3xl sm:text-4xl font-bold text-center mb-4 text-balance">UTBK Tryout Results</h2>
 						<div className="text-center">
 							<div className="text-6xl sm:text-7xl font-bold mb-3">{totalScore}</div>
-							<p className="text-xl sm:text-2xl opacity-90 font-semibold">Skor Total</p>
+							<p className="text-xl sm:text-2xl opacity-90 font-semibold">Total Score</p>
 						</div>
 						<div className="grid grid-cols-3 gap-3 sm:gap-6 mt-6 sm:mt-8 pt-6 sm:pt-8 border-t border-white/30 dark:border-white/20">
 							<div className="text-center">
 								<div className="text-2xl sm:text-3xl font-bold mb-1">{totalCorrect}</div>
-								<div className="text-xs sm:text-sm opacity-80 font-medium">Benar</div>
+								<div className="text-xs sm:text-sm opacity-80 font-medium">Correct</div>
 							</div>
 							<div className="text-center">
 								<div className="text-2xl sm:text-3xl font-bold mb-1">{totalQuestions - totalCorrect}</div>
-								<div className="text-xs sm:text-sm opacity-80 font-medium">Salah</div>
+								<div className="text-xs sm:text-sm opacity-80 font-medium">Incorrect</div>
 							</div>
 							<div className="text-center">
 								<div className="text-2xl sm:text-3xl font-bold mb-1">
 									{Math.round((totalCorrect / totalQuestions) * 100)}%
 								</div>
-								<div className="text-xs sm:text-sm opacity-80 font-medium">Akurasi</div>
+								<div className="text-xs sm:text-sm opacity-80 font-medium">Accuracy</div>
 							</div>
 						</div>
 					</div>
@@ -579,17 +579,17 @@ const UTBKTryout = () => {
 								<h3 className="font-bold text-lg text-foreground mb-4">{SESSION_CONFIGS[idx].title}</h3>
 								<div className="space-y-3">
 									<div className="flex justify-between items-center">
-										<span className="text-muted-foreground font-medium">Skor</span>
+										<span className="text-muted-foreground font-medium">Score</span>
 										<span className="font-bold text-primary text-lg">{result.stats.score}</span>
 									</div>
 									<div className="flex justify-between items-center">
-										<span className="text-muted-foreground font-medium">Benar</span>
+										<span className="text-muted-foreground font-medium">Correct</span>
 										<span className="font-bold text-secondary">
 											{result.stats.correct}/{result.stats.total}
 										</span>
 									</div>
 									<div className="flex justify-between items-center">
-										<span className="text-muted-foreground font-medium">Durasi Pengerjaan</span>
+										<span className="text-muted-foreground font-medium">Duration</span>
 										<span className="font-bold text-tertiary">
 											{formatTime(
 												Math.max(
@@ -610,11 +610,11 @@ const UTBKTryout = () => {
 					{!isPassed && (
 						lastResult?.session.type === "LITERASI" ? (
 							<div className="bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/30 text-amber-700 dark:text-amber-400 px-5 py-4 rounded-lg mb-6 text-sm sm:text-base font-semibold text-center">
-								Nilai sesi Literasi Anda di bawah {MIN_SCORE_TO_CONTINUE}. Fokus perbaikan pada Literasi. Tinjau pembahasan dan ulangi sesi untuk meningkatkan skor.
+								Your Literacy session score is below {MIN_SCORE_TO_CONTINUE}. Focus on improving Literacy. Review the discussion and repeat the session to increase your score.
 							</div>
 						) : (
 							<div className="bg-red-500/10 border border-red-500/30 text-red-600 dark:text-red-400 px-5 py-4 rounded-lg mb-6 text-sm sm:text-base font-semibold text-center">
-								Nilai Anda di bawah {MIN_SCORE_TO_CONTINUE}. Anda <b>harus mengulang tryout</b> dan tidak dapat melanjutkan ke sesi berikutnya.
+								Your score is below {MIN_SCORE_TO_CONTINUE}. You <b>must retake the tryout</b> and cannot proceed to the next session.
 							</div>
 						)
 					)}
@@ -625,7 +625,7 @@ const UTBKTryout = () => {
 						onClick={() => setStage("start")}
 						className="w-full text-white bg-linear-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 py-4 sm:py-5 rounded-lg font-bold text-lg transition-all duration-300 shadow-xl hover:shadow-2xl"
 					>
-						Ulangi Tryout
+						Retake Tryout
 					</button>
 				</div>
 			</div>
