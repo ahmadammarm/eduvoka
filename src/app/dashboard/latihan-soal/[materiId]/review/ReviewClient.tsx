@@ -130,11 +130,11 @@ export default function ReviewClient({ reviewData }: ReviewClientProps) {
     // Intro Screen (Not Started)
     if (!reviewStarted) {
         return (
-            <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 flex items-center justify-center p-4">
+            <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 flex items-center justify-center p-4">
                 <div className="max-w-2xl w-full">
                     {/* Header */}
                     <div className="text-center mb-8">
-                        <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full mb-4 shadow-lg">
+                        <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-orange-500 to-amber-600 rounded-full mb-4 shadow-lg">
                             <MessageSquare className="w-10 h-10 text-white" />
                         </div>
                         <h1 className="text-4xl font-bold text-gray-900 mb-2">
@@ -165,7 +165,7 @@ export default function ReviewClient({ reviewData }: ReviewClientProps) {
                         {/* Info: Only reviewing wrong answers */}
                         <div className="border-t pt-6">
                             <p className="text-center text-gray-600">
-                                You will review <span className="font-bold text-indigo-600">{reviewData.wrongAnswers} questions</span> you answered incorrectly
+                                You will review <span className="font-bold text-orange-600">{reviewData.wrongAnswers} questions</span> you answered incorrectly
                             </p>
                             <p className="text-xs text-center text-gray-500 mt-2">
                                 Deep discussion to maximize your learning
@@ -176,20 +176,20 @@ export default function ReviewClient({ reviewData }: ReviewClientProps) {
                     {/* Action: Auto-start countdown */}
                     <div className="space-y-3">
                         {/* Countdown Display */}
-                        <div className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold py-8 px-6 rounded-xl shadow-lg text-center">
+                        <div className="bg-gradient-to-r from-orange-600 to-amber-600 text-white font-bold py-8 px-6 rounded-xl shadow-lg text-center">
                             <div className="text-sm mb-2">Review starts in...</div>
                             <div className="text-7xl font-bold mb-2">{countdown}</div>
-                            <div className="text-sm text-purple-100">Prepare to deeply understand your mistakes!</div>
+                            <div className="text-sm text-orange-100">Prepare to deeply understand your mistakes!</div>
                         </div>
                     </div>
 
                     {/* Benefits */}
-                    <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                    <div className="mt-6 p-4 bg-orange-50 rounded-lg border border-orange-200">
                         <div className="flex items-start gap-3">
-                            <Lightbulb className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                            <Lightbulb className="w-5 h-5 text-orange-600 flex-shrink-0 mt-0.5" />
                             <div>
-                                <p className="text-sm text-blue-900 font-medium">Why deep review matters?</p>
-                                <ul className="text-sm text-blue-800 mt-2 space-y-1">
+                                <p className="text-sm text-orange-900 font-medium">Why deep review matters?</p>
+                                <ul className="text-sm text-orange-800 mt-2 space-y-1">
                                     <li>• Understand WHY you got it wrong, not just the correct answer</li>
                                     <li>• Build conceptual thinking (best test strategy)</li>
                                     <li>• Improve Learning Velocity by up to 40%</li>
@@ -206,7 +206,7 @@ export default function ReviewClient({ reviewData }: ReviewClientProps) {
     if (reviewStarted && questionsToReview.length === 0) {
         return (
             <div className="flex flex-col items-center justify-center min-h-screen gap-4">
-                <div className="w-16 h-16 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
+                <div className="w-16 h-16 border-4 border-orange-600 border-t-transparent rounded-full animate-spin"></div>
                 <p className="text-gray-600">Preparing your review...</p>
             </div>
         );
@@ -214,7 +214,7 @@ export default function ReviewClient({ reviewData }: ReviewClientProps) {
 
     // Active Review Screen
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-50 to-indigo-50 p-4">
+        <div className="min-h-screen bg-gradient-to-br from-gray-50 to-orange-50 p-4">
             <div className="max-w-7xl mx-auto">
                 {/* Header with Progress */}
                 <div className="mb-6">
@@ -231,7 +231,7 @@ export default function ReviewClient({ reviewData }: ReviewClientProps) {
                         {/* Progress Bar */}
                         <div className="w-full bg-gray-200 rounded-full h-2.5">
                             <div
-                                className="bg-gradient-to-r from-indigo-600 to-purple-600 h-2.5 rounded-full transition-all duration-300"
+                                className="bg-gradient-to-r from-orange-600 to-amber-600 h-2.5 rounded-full transition-all duration-300"
                                 style={{ width: `${progress}%` }}
                             />
                         </div>
@@ -252,6 +252,7 @@ export default function ReviewClient({ reviewData }: ReviewClientProps) {
                     {/* Right: Socratic Chat */}
                     <div className="h-[600px]">
                         <SocraticChat
+                            key={currentQuestion.soalId}
                             questionId={currentQuestion.soalId}
                             questionContent={currentQuestion.content}
                             selectedOption={currentQuestion.userAnswerLabel || undefined}
@@ -336,7 +337,7 @@ export default function ReviewClient({ reviewData }: ReviewClientProps) {
 
                         <button
                             onClick={handleNext}
-                            className="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg transition-colors flex items-center gap-2"
+                            className="px-6 py-3 bg-orange-600 hover:bg-orange-700 text-white font-semibold rounded-lg transition-colors flex items-center gap-2"
                         >
                             {isLastReviewQuestion ? 'Finish' : 'Next'}
                             <ChevronRight className="w-5 h-5" />

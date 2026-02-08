@@ -22,7 +22,7 @@ export default function MainLayout({
 				</BreadcrumbList>
 			</Breadcrumb>
 			<div>
-				<h1 className="font-bold md:text-2xl text-lg text-white">
+				<h1 className="font-bold md:text-2xl text-lg text-foreground">
 					Pantau Progress Belajarmu
 				</h1>
 			</div>

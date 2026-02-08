@@ -2,29 +2,30 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowRight, BookOpen, BrainCircuit, PlayCircle } from "lucide-react";
 import Link from "next/link";
+import { ScientificMethodologyCard } from "../_components/ScientificMethodologyCard";
 
 export default function Page() {
 	return (
 		<div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
 			{/* Hero Action Card */}
-			<Card className="col-span-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white border-none shadow-lg">
+			<Card className="col-span-full bg-gradient-to-r from-orange-500 to-amber-600 text-white border-none shadow-lg">
 				<CardHeader>
 					<CardTitle className="text-2xl md:text-3xl font-bold">
 						Welcome back, Scholar!
 					</CardTitle>
-					<CardDescription className="text-blue-100 text-base md:text-lg">
+					<CardDescription className="text-orange-50 text-base md:text-lg">
 						Your personalized AI tutor is ready. Let's boost your UTBK score today.
 					</CardDescription>
 				</CardHeader>
 				<CardContent className="flex flex-col sm:flex-row gap-4">
 					<Link href="/dashboard/latihan-soal">
-						<Button size="lg" variant="secondary" className="w-full sm:w-auto font-bold text-blue-700 hover:text-blue-800">
+						<Button size="lg" variant="secondary" className="w-full sm:w-auto font-bold text-orange-700 hover:text-orange-800 bg-white hover:bg-orange-50">
 							<BrainCircuit className="w-5 h-5 mr-2" />
 							Start Diagnostic Test
 						</Button>
 					</Link>
 					<Link href="/dashboard/materi">
-						<Button size="lg" variant="outline" className="w-full sm:w-auto bg-blue-700/50 border-blue-400 text-white hover:bg-blue-700 hover:text-white">
+						<Button size="lg" variant="outline" className="w-full sm:w-auto bg-orange-700/50 border-orange-400 text-white hover:bg-orange-700 hover:text-white hover:border-orange-300">
 							<BookOpen className="w-5 h-5 mr-2" />
 							Resume Materials
 						</Button>
@@ -73,6 +74,9 @@ export default function Page() {
 					</Link>
 				</CardContent>
 			</Card>
+			<div className="col-span-full">
+				<ScientificMethodologyCard />
+			</div>
 		</div>
 	);
 }

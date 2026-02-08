@@ -182,24 +182,24 @@ export default function SocraticChat({
             {/* Score Overlay */}
             {masteryScore !== null && (
                 <div className="absolute inset-0 z-50 flex items-center justify-center bg-white/90 backdrop-blur-sm animate-in fade-in duration-500">
-                    <div className="bg-white rounded-2xl shadow-2xl p-8 border-2 border-indigo-100 text-center transform scale-110">
+                    <div className="bg-white rounded-2xl shadow-2xl p-8 border-2 border-orange-100 text-center transform scale-110">
                         <Award className="w-16 h-16 text-yellow-500 mx-auto mb-4 animate-bounce" />
                         <h2 className="text-2xl font-bold text-gray-900 mb-2">Session Complete!</h2>
-                        <div className="text-5xl font-black text-indigo-600 mb-2">{masteryScore}</div>
+                        <div className="text-5xl font-black text-orange-600 mb-2">{masteryScore}</div>
                         <p className="text-sm text-gray-500 uppercase tracking-wider font-semibold">Mastery Score</p>
                     </div>
                 </div>
             )}
 
             {/* Header */}
-            <div className="border-b border-gray-200 p-4 bg-gradient-to-r from-indigo-50 to-purple-50">
+            <div className="border-b border-gray-200 p-4 bg-gradient-to-r from-orange-50 to-amber-50">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                        <Bot className="w-5 h-5 text-indigo-600" />
+                        <Bot className="w-5 h-5 text-orange-600" />
                         <h3 className="font-bold text-gray-900">Socratic Tutor</h3>
                     </div>
                     <div className="flex items-center gap-2">
-                        <span className="text-xs bg-indigo-100 text-indigo-700 px-2 py-1 rounded-full">
+                        <span className="text-xs bg-orange-100 text-orange-700 px-2 py-1 rounded-full">
                             {currentPhase}
                         </span>
                     </div>
@@ -225,14 +225,14 @@ export default function SocraticChat({
                         >
                             {msg.role === 'ai' && (
                                 <div className="flex-shrink-0 mt-1">
-                                    <div className="w-7 h-7 rounded-full bg-indigo-100 flex items-center justify-center">
-                                        <Bot className="w-4 h-4 text-indigo-600" />
+                                    <div className="w-7 h-7 rounded-full bg-orange-100 flex items-center justify-center">
+                                        <Bot className="w-4 h-4 text-orange-600" />
                                     </div>
                                 </div>
                             )}
                             <div
                                 className={`max-w-[75%] rounded-lg p-3 ${msg.role === 'user'
-                                    ? 'bg-blue-600 text-white'
+                                    ? 'bg-orange-600 text-white'
                                     : 'bg-gray-100 text-gray-900'
                                     }`}
                             >
@@ -240,8 +240,8 @@ export default function SocraticChat({
                             </div>
                             {msg.role === 'user' && (
                                 <div className="flex-shrink-0 mt-1">
-                                    <div className="w-7 h-7 rounded-full bg-blue-100 flex items-center justify-center">
-                                        <UserIcon className="w-4 h-4 text-blue-600" />
+                                    <div className="w-7 h-7 rounded-full bg-orange-100 flex items-center justify-center">
+                                        <UserIcon className="w-4 h-4 text-orange-600" />
                                     </div>
                                 </div>
                             )}
@@ -251,13 +251,13 @@ export default function SocraticChat({
                 {loading && (
                     <div className="flex gap-2 justify-start">
                         <div className="flex-shrink-0 mt-1">
-                            <div className="w-7 h-7 rounded-full bg-indigo-100 flex items-center justify-center">
-                                <Bot className="w-4 h-4 text-indigo-600 animate-pulse" />
+                            <div className="w-7 h-7 rounded-full bg-orange-100 flex items-center justify-center">
+                                <Bot className="w-4 h-4 text-orange-600 animate-pulse" />
                             </div>
                         </div>
                         <div className="bg-gray-100 rounded-lg p-3">
                             <div className="flex gap-1 items-center">
-                                <Loader2 className="w-4 h-4 animate-spin text-indigo-600" />
+                                <Loader2 className="w-4 h-4 animate-spin text-orange-600" />
                                 <span className="text-xs text-gray-600 ml-2">Thinking...</span>
                             </div>
                         </div>
@@ -285,13 +285,13 @@ export default function SocraticChat({
                         onChange={(e) => setInput(e.target.value)}
                         onKeyPress={(e) => e.key === 'Enter' && !loading && sendMessage()}
                         placeholder="Ask a question..."
-                        className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                        className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                         disabled={loading}
                     />
                     <button
                         onClick={() => sendMessage()}
                         disabled={loading || !input.trim()}
-                        className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                        className="px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                     >
                         <Send className="w-4 h-4" />
                     </button>

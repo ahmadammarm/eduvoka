@@ -14,6 +14,7 @@ import {
     ChevronRight
 } from 'lucide-react';
 import Link from 'next/link';
+import { ScientificMethodologyCard } from '../_components/ScientificMethodologyCard';
 
 interface VelocityData {
     velocity: number;
@@ -268,6 +269,9 @@ export default function LearningVelocityPage() {
                     </Link>
                 </div>
             )}
+
+            {/* Scientific Methodology Information Card */}
+            <ScientificMethodologyCard />
         </div>
     );
 }
