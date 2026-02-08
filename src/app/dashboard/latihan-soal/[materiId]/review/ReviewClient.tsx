@@ -266,6 +266,10 @@ export default function ReviewClient({ reviewData }: ReviewClientProps) {
                                 // Mark as frustrated when frustration is detected
                                 setFrustratedQuestions(prev => new Set(prev).add(currentQuestion.soalId));
                             }}
+                            onConceptMastered={() => {
+                                // Auto-advance when AI signals mastery
+                                handleMarkAsUnderstood();
+                            }}
                         />
 
                         {/* PAPE Phase Indicator */}

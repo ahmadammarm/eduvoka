@@ -43,16 +43,11 @@ export default function MainLayout({
 				</div>
 			</div> */}
 
+			{/* Action Center (Main Content) */}
+			{children}
+
 			{/* analytics */}
 			{analytics}
-
-			{/* main content + leaderboard */}
-			{/* <div className="grid auto-rows-min gap-4 md:grid-cols-2 min-h-200">
-				{children}
-				<div className="bg-white dark:bg-stone-900 rounded-xl flex items-center justify-center h-full">
-					Analytics
-				</div>
-			</div> */}
 		</div>
 	);
 }

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { Send, Bot, User as UserIcon, Lightbulb, Loader2 } from 'lucide-react';
+import { Send, Bot, User as UserIcon, Lightbulb, Loader2, Award } from 'lucide-react';
 
 interface Message {
     role: 'user' | 'ai';
@@ -15,6 +15,7 @@ interface SocraticChatProps {
     onPhaseChange?: (phase: 'PROBE' | 'ANALYZE' | 'PERSIST' | 'EVALUATE') => void;
     onMessageSent?: () => void; // Callback when user sends first message
     onFrustrationDetected?: () => void; // Callback when frustration is detected
+    onConceptMastered?: (score?: number) => void; // Callback when AI detects concept mastery
 }
 
 export default function SocraticChat({
@@ -23,12 +24,14 @@ export default function SocraticChat({
     selectedOption,
     onPhaseChange,
     onMessageSent,
-    onFrustrationDetected
+    onFrustrationDetected,
+    onConceptMastered
 }: SocraticChatProps) {
     const [messages, setMessages] = useState<Message[]>([]);
     const [input, setInput] = useState('');
     const [loading, setLoading] = useState(false);
     const [currentPhase, setCurrentPhase] = useState<string>('PROBE');
+    const [masteryScore, setMasteryScore] = useState<number | null>(null);
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
     const scrollToBottom = () => {
@@ -128,11 +131,30 @@ export default function SocraticChat({
             };
             setMessages(prev => [...prev, aiMsg]);
 
-            // Simple phase detection based on message count
-            if (messages.length < 2) setCurrentPhase('PROBE');
-            else if (messages.length < 4) setCurrentPhase('ANALYZE');
-            else if (messages.length < 6) setCurrentPhase('PERSIST');
-            else setCurrentPhase('EVALUATE');
+            // Handle completion signal from AI
+            if (data.isCompleted && onConceptMastered) {
+                // Determine phase based on mastery
+                setCurrentPhase('EVALUATE');
+                if (onPhaseChange) onPhaseChange('EVALUATE');
+
+                // Set score if present
+                if (data.score) {
+                    setMasteryScore(data.score);
+                }
+
+                // Delay slightly to let user read the final message, then trigger completion
+                setTimeout(() => {
+                    onConceptMastered(data.score);
+                }, 4000); // 4 seconds delay for "Wow" effect
+            }
+            // Normal phase detection if not completed
+            else {
+                // Simple phase detection based on message count
+                if (messages.length < 2) setCurrentPhase('PROBE');
+                else if (messages.length < 4) setCurrentPhase('ANALYZE');
+                else if (messages.length < 6) setCurrentPhase('PERSIST');
+                else setCurrentPhase('EVALUATE');
+            }
 
             // Trigger frustration callback if detected
             if (isFrustrated && onFrustrationDetected) {
@@ -156,7 +178,19 @@ export default function SocraticChat({
     };
 
     return (
-        <div className="flex flex-col h-full bg-white rounded-lg shadow-lg">
+        <div className="flex flex-col h-full bg-white rounded-lg shadow-lg relative overflow-hidden">
+            {/* Score Overlay */}
+            {masteryScore !== null && (
+                <div className="absolute inset-0 z-50 flex items-center justify-center bg-white/90 backdrop-blur-sm animate-in fade-in duration-500">
+                    <div className="bg-white rounded-2xl shadow-2xl p-8 border-2 border-indigo-100 text-center transform scale-110">
+                        <Award className="w-16 h-16 text-yellow-500 mx-auto mb-4 animate-bounce" />
+                        <h2 className="text-2xl font-bold text-gray-900 mb-2">Session Complete!</h2>
+                        <div className="text-5xl font-black text-indigo-600 mb-2">{masteryScore}</div>
+                        <p className="text-sm text-gray-500 uppercase tracking-wider font-semibold">Mastery Score</p>
+                    </div>
+                </div>
+            )}
+
             {/* Header */}
             <div className="border-b border-gray-200 p-4 bg-gradient-to-r from-indigo-50 to-purple-50">
                 <div className="flex items-center justify-between">

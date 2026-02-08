@@ -38,7 +38,7 @@ export default function DashboardNavbar() {
 				<SidebarTrigger className="bg-white dark:bg-stone-900 rounded-md hover:bg-white dark:hover:bg-stone-900 hover:text-black dark:hover:text-white cursor-pointer" />
 				<Separator orientation="vertical" className="mr-2 h-4" />
 				<div className="font-semibold md:text-lg text-sm">
-					Hallo, {session?.user?.name}
+					Hey There, {session?.user?.name}
 				</div>
 			</div>
 

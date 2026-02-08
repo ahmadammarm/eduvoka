@@ -59,21 +59,21 @@ export default function MateriPage() {
 		<div className="container mx-auto p-6 space-y-6">
 			<div className="flex items-center justify-between">
 				<div>
-					<h1 className="text-3xl font-bold tracking-tight">Materi Pembelajaran</h1>
+					<h1 className="text-3xl font-bold tracking-tight">Learning Materials</h1>
 					<p className="text-muted-foreground mt-2">
-						Kelola dan akses materi pembelajaran Anda
+						Manage and access your learning materials
 					</p>
 				</div>
 				<Button>
 					<Plus className="w-4 h-4 mr-2" />
-					Tambah Materi
+					Add Material
 				</Button>
 			</div>
 
 			<div className="relative">
 				<Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
 				<Input
-					placeholder="Cari materi..."
+					placeholder="Search materials..."
 					value={searchQuery}
 					onChange={(e) => setSearchQuery(e.target.value)}
 					className="pl-10"
@@ -91,7 +91,7 @@ export default function MateriPage() {
 								<div className="flex-1">
 									<CardTitle className="line-clamp-1">{materi.nama}</CardTitle>
 									<CardDescription className="mt-1">
-										{new Date(materi.createdAt).toLocaleDateString('id-ID')}
+										{new Date(materi.createdAt).toLocaleDateString('en-US')}
 									</CardDescription>
 								</div>
 							</div>
@@ -101,7 +101,7 @@ export default function MateriPage() {
 								{materi.deskripsi}
 							</p>
 							<Button variant="outline" className="w-full" onClick={handleDetailMateri.bind(null, materi.id)}>
-								Lihat Detail
+								View Details
 							</Button>
 						</CardContent>
 					</Card>
@@ -111,9 +111,9 @@ export default function MateriPage() {
 			{filteredMateris.length === 0 && (
 				<div className="text-center py-12">
 					<BookOpen className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-					<h3 className="text-lg font-semibold">Tidak ada materi ditemukan</h3>
+					<h3 className="text-lg font-semibold">No materials found</h3>
 					<p className="text-muted-foreground mt-2">
-						{searchQuery ? 'Coba kata kunci lain' : 'Mulai dengan menambahkan materi baru'}
+						{searchQuery ? 'Try different keywords' : 'Start by adding new material'}
 					</p>
 				</div>
 			)}
