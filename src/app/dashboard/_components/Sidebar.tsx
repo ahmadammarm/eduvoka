@@ -1,10 +1,10 @@
 "use client";
 
 import {
+	ActivitySquare,
 	Book,
 	CircleQuestionMark,
 	CreditCard,
-	FilePen,
 	Home,
 	NotebookText,
 	Settings,
@@ -40,23 +40,18 @@ const data = {
 				},
 				{
 					icon: Book,
-					title: "Materi Belajar",
+					title: "Study Materials",
 					url: "/dashboard/materi",
 				},
 				{
 					icon: NotebookText,
-					title: "Latihan Soal UTBK",
+					title: "Practice Questions",
 					url: "/dashboard/latihan-soal",
 				},
 				{
-					icon: FilePen,
-					title: "Generate Soal",
-					url: "/dashboard/generate-soal",
-				},
-				{
-					icon: NotebookText,
-					title: "Evaluasi",
-					url: "/dashboard/evaluasi",
+					icon: ActivitySquare,
+					title: "Learning Velocity",
+					url: "/dashboard/learning-velocity",
 				},
 			],
 		},
@@ -119,25 +114,23 @@ export function DashboardSidebar(props: React.ComponentProps<typeof Sidebar>) {
 										const isActive = isDashboardRoot
 											? pathname === "/dashboard"
 											: pathname === item.url ||
-											  pathname.startsWith(item.url + "/");
+											pathname.startsWith(item.url + "/");
 
 										return (
 											<SidebarMenuSubItem key={item.title}>
 												<SidebarMenuSubButton
 													asChild
-													className={`py-5 rounded-lg transition-colors ${
-														isActive
-															? "bg-primary text-white hover:text-white hover:bg-primary dark:hover:text-white"
-															: "border border-primary/10 bg-stone-100 dark:bg-stone-900 hover:bg-primary/10 hover:text-black dark:hover:text-white"
-													}`}
+													className={`py-5 rounded-lg transition-colors ${isActive
+														? "bg-primary text-white hover:text-white hover:bg-primary dark:hover:text-white"
+														: "border border-primary/10 bg-stone-100 dark:bg-stone-900 hover:bg-primary/10 hover:text-black dark:hover:text-white"
+														}`}
 												>
 													<Link href={item.url}>
 														<item.icon
-															className={`size-4 mr-2 ${
-																isActive
-																	? "stroke-white"
-																	: "stroke-black dark:stroke-white"
-															}`}
+															className={`size-4 mr-2 ${isActive
+																? "stroke-white"
+																: "stroke-black dark:stroke-white"
+																}`}
 														/>
 														{item.title}
 													</Link>
@@ -161,10 +154,10 @@ export function DashboardSidebar(props: React.ComponentProps<typeof Sidebar>) {
 						<span className="font-semibold text-sm">Eduvoka Premium</span>
 					</div>
 					<p className="text-xs mb-4 text-white/90">
-						Dapatkan akses penuh ke semua fitur dengan berlangganan Eduvoka Pro!
+						Get full access to all features with Eduvoka Pro subscription!
 					</p>
 					<Button size="sm" variant="secondary" className="w-full text-white">
-						Upgrade Sekarang
+						Upgrade Now
 					</Button>
 				</div>
 			</SidebarFooter>

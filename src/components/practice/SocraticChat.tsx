@@ -13,13 +13,17 @@ interface SocraticChatProps {
     questionContent: string;
     selectedOption?: string;
     onPhaseChange?: (phase: 'PROBE' | 'ANALYZE' | 'PERSIST' | 'EVALUATE') => void;
+    onMessageSent?: () => void; // Callback when user sends first message
+    onFrustrationDetected?: () => void; // Callback when frustration is detected
 }
 
 export default function SocraticChat({
     questionId,
     questionContent,
     selectedOption,
-    onPhaseChange
+    onPhaseChange,
+    onMessageSent,
+    onFrustrationDetected
 }: SocraticChatProps) {
     const [messages, setMessages] = useState<Message[]>([]);
     const [input, setInput] = useState('');
@@ -35,14 +39,73 @@ export default function SocraticChat({
         scrollToBottom();
     }, [messages]);
 
+    // Auto-send AI's first question when component mounts
+    useEffect(() => {
+        const sendInitialQuestion = async () => {
+            if (messages.length > 0) return; // Already initialized
+
+            setLoading(true);
+            try {
+                const response = await fetch('/api/learning/deep-inquiry', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        message: '__INIT__', // Special flag for initial greeting
+                        context: {
+                            soalLatihanId: questionId,
+                            selectedOption: selectedOption || null,
+                            questionContent
+                        },
+                        history: []
+                    })
+                });
+
+                const data = await response.json();
+                const aiGreeting: Message = {
+                    role: 'ai',
+                    content: data.reply || data.error || 'Halo! Mari kita bahas soal ini bersama-sama.'
+                };
+                setMessages([aiGreeting]);
+            } catch (error) {
+                console.error('Error sending initial question:', error);
+                // Fallback greeting if API fails
+                const fallbackGreeting: Message = {
+                    role: 'ai',
+                    content: 'Halo! Saya lihat kamu salah menjawab soal ini. Coba jelaskan ke saya, kenapa kamu memilih jawaban tersebut?'
+                };
+                setMessages([fallbackGreeting]);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        sendInitialQuestion();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [questionId]); // Re-run when question changes
+
     const sendMessage = async (messageText?: string) => {
         const textToSend = messageText || input;
         if (!textToSend.trim()) return;
+
+        // Detect frustration keywords
+        const frustrationKeywords = [
+            'gak ngerti', 'ga ngerti', 'tidak mengerti', 'bingung', 'susah banget',
+            'ribet', 'males', 'capek', 'pusing', 'sudahlah', 'gak paham', 'ga paham',
+            'skip aja', 'lewat aja', 'lanjut aja', 'udah deh', 'udah ah', 'cukup',
+            'stop', 'enough', 'confused', 'too hard', 'give up', 'giveup'
+        ];
+        const lowerText = textToSend.toLowerCase();
+        const isFrustrated = frustrationKeywords.some(keyword => lowerText.includes(keyword));
 
         setLoading(true);
         const userMsg: Message = { role: 'user', content: textToSend };
         setMessages(prev => [...prev, userMsg]);
         setInput('');
+
+        // Trigger onMessageSent callback on first user message
+        if (messages.length === 1 && onMessageSent) {
+            onMessageSent();
+        }
 
         try {
             const response = await fetch('/api/learning/deep-inquiry', {
@@ -70,6 +133,11 @@ export default function SocraticChat({
             else if (messages.length < 4) setCurrentPhase('ANALYZE');
             else if (messages.length < 6) setCurrentPhase('PERSIST');
             else setCurrentPhase('EVALUATE');
+
+            // Trigger frustration callback if detected
+            if (isFrustrated && onFrustrationDetected) {
+                onFrustrationDetected();
+            }
 
         } catch (error) {
             console.error('Error:', error);
@@ -130,8 +198,8 @@ export default function SocraticChat({
                             )}
                             <div
                                 className={`max-w-[75%] rounded-lg p-3 ${msg.role === 'user'
-                                        ? 'bg-blue-600 text-white'
-                                        : 'bg-gray-100 text-gray-900'
+                                    ? 'bg-blue-600 text-white'
+                                    : 'bg-gray-100 text-gray-900'
                                     }`}
                             >
                                 <p className="text-sm whitespace-pre-wrap leading-relaxed">{msg.content}</p>

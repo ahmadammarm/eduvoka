@@ -26,7 +26,7 @@ export default function SearchDialogContent() {
 							className="w-full justify-start font-normal hover:bg-primary/20 hover:text-black dark:hover:text-white"
 						>
 							<Book className="h-4 w-4" />
-							Materi
+							Materials
 						</Button>
 						<Button
 							variant="ghost"

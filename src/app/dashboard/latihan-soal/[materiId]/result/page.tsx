@@ -197,7 +197,7 @@ export default function ResultPage() {
 		return (
 			<div className="flex flex-col items-center justify-center min-h-screen gap-4">
 				<Loader2 className="w-12 h-12 animate-spin text-blue-600" />
-				<p className="text-gray-600">Memuat hasil...</p>
+				<p className="text-gray-600">Loading results...</p>
 			</div>
 		);
 	}
@@ -209,16 +209,16 @@ export default function ResultPage() {
 					<div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
 						<AlertCircle className="w-12 h-12 text-red-600 mx-auto mb-4" />
 						<h2 className="text-xl font-semibold text-gray-900 mb-2">
-							Gagal Memuat Hasil
+							Failed to Load Results
 						</h2>
 						<p className="text-gray-600 mb-6">
-							{error || 'Terjadi kesalahan saat memuat hasil latihan'}
+							{error || 'An error occurred while loading practice results'}
 						</p>
 						<Link
 							href={`/dashboard/latihan-soal/${materiId}`}
 							className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors"
 						>
-							Kembali ke Materi
+							Back to Materials
 						</Link>
 					</div>
 				</div>
@@ -235,10 +235,10 @@ export default function ResultPage() {
 						<Trophy className="w-12 h-12 text-white" />
 					</div>
 					<h1 className="text-3xl font-bold text-gray-900 mb-2">
-						Latihan Selesai!
+						Practice Complete!
 					</h1>
 					<p className="text-gray-600">
-						{result.type === 'LATIHAN' ? 'Mode Latihan' : 'Mode Try Out'}
+						{result.type === 'LATIHAN' ? 'Practice Mode' : 'Try Out Mode'}
 					</p>
 				</div>
 
@@ -253,13 +253,13 @@ export default function ResultPage() {
 						</div>
 						<div className="inline-block bg-gray-100 rounded-full px-4 py-2">
 							<span className="text-sm font-medium text-gray-700">
-								{result.correctAnswers} dari {result.answeredQuestions} dijawab benar
+								{result.correctAnswers} of {result.answeredQuestions} answered correctly
 							</span>
 						</div>
 						{result.skippedQuestions > 0 && (
 							<div className="mt-2">
 								<span className="text-sm text-gray-500">
-									({result.skippedQuestions} soal dilewati)
+									({result.skippedQuestions} questions skipped)
 								</span>
 							</div>
 						)}
@@ -272,7 +272,7 @@ export default function ResultPage() {
 							<div className="text-2xl font-bold text-gray-900">
 								{result.accuracyRate.toFixed(1)}%
 							</div>
-							<div className="text-xs text-gray-600">Akurasi</div>
+							<div className="text-xs text-gray-600">Accuracy</div>
 						</div>
 
 						<div className="bg-green-50 rounded-lg p-4 text-center">
@@ -280,7 +280,7 @@ export default function ResultPage() {
 							<div className="text-2xl font-bold text-gray-900">
 								{result.correctAnswers}
 							</div>
-							<div className="text-xs text-gray-600">Benar</div>
+							<div className="text-xs text-gray-600">Correct</div>
 						</div>
 
 						<div className="bg-red-50 rounded-lg p-4 text-center">
@@ -288,7 +288,7 @@ export default function ResultPage() {
 							<div className="text-2xl font-bold text-gray-900">
 								{result.wrongAnswers}
 							</div>
-							<div className="text-xs text-gray-600">Salah</div>
+							<div className="text-xs text-gray-600">Wrong</div>
 						</div>
 
 						<div className="bg-purple-50 rounded-lg p-4 text-center">
@@ -296,7 +296,7 @@ export default function ResultPage() {
 							<div className="text-2xl font-bold text-gray-900">
 								{formatTime(result.totalDuration)}
 							</div>
-							<div className="text-xs text-gray-600">Total Waktu</div>
+							<div className="text-xs text-gray-600">Total Time</div>
 						</div>
 					</div>
 
@@ -304,7 +304,7 @@ export default function ResultPage() {
 					<div className="space-y-3 mb-6">
 						<div>
 							<div className="flex justify-between text-sm mb-1">
-								<span className="text-gray-600">Tingkat Penyelesaian</span>
+								<span className="text-gray-600">Completion Rate</span>
 								<span className="font-semibold text-gray-900">
 									{result.completionRate.toFixed(0)}%
 								</span>
@@ -319,7 +319,7 @@ export default function ResultPage() {
 
 						<div>
 							<div className="flex justify-between text-sm mb-1">
-								<span className="text-gray-600">Rata-rata Waktu per Soal</span>
+								<span className="text-gray-600">Avg Time per Question</span>
 								<span className="font-semibold text-gray-900">
 									{formatTime(Math.round(result.averageTimePerQ))}
 								</span>
@@ -332,7 +332,7 @@ export default function ResultPage() {
 						<div className="border-t pt-6">
 							<h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
 								<TrendingUp className="w-5 h-5" />
-								Performa per Tingkat Kesulitan
+								Performance by Difficulty
 							</h3>
 							<div className="space-y-3">
 								{result.difficultyBreakdown.map((diff) => (
@@ -491,14 +491,14 @@ export default function ResultPage() {
 						<BarChart3 className="w-8 h-8 flex-shrink-0" />
 						<div>
 							<h3 className="font-semibold text-lg mb-2">
-								Rekomendasi untuk Anda
+								Recommendations for You
 							</h3>
 							<p className="text-blue-50 text-sm">
 								{result.score >= 80
-									? 'Luar biasa! Anda sudah menguasai materi ini dengan baik. Cobalah materi yang lebih menantang atau ikuti try out untuk mengukur kemampuan Anda.'
+									? 'Excellent! You have mastered this material well. Try more challenging materials or take a try-out to measure your skills.'
 									: result.score >= 60
-										? 'Bagus! Anda sudah memahami sebagian besar materi. Review kembali soal yang salah dan pelajari pembahasannya untuk meningkatkan pemahaman.'
-										: 'Tetap semangat! Fokus pada pemahaman konsep dasar sebelum melanjutkan. Ulangi latihan ini atau pelajari materi terkait terlebih dahulu.'}
+										? 'Good job! You understand most of the material. Review the incorrect answers and study the explanations to improve your understanding.'
+										: 'Keep going! Focus on understanding the basic concepts before continuing. Repeat this practice or study the related material first.'}
 							</p>
 						</div>
 					</div>
@@ -508,31 +508,31 @@ export default function ResultPage() {
 				<div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
 					<h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
 						<BookOpen className="w-5 h-5" />
-						Ringkasan Sesi
+						Session Summary
 					</h3>
 					<div className="grid grid-cols-2 gap-4 text-sm">
 						<div>
-							<span className="text-gray-600">Total Soal:</span>
+							<span className="text-gray-600">Total Questions:</span>
 							<span className="ml-2 font-semibold text-gray-900">
 								{result.totalQuestions}
 							</span>
 						</div>
 						<div>
-							<span className="text-gray-600">Dijawab:</span>
+							<span className="text-gray-600">Answered:</span>
 							<span className="ml-2 font-semibold text-gray-900">
 								{result.answeredQuestions}
 							</span>
 						</div>
 						<div>
-							<span className="text-gray-600">Dilewati:</span>
+							<span className="text-gray-600">Skipped:</span>
 							<span className="ml-2 font-semibold text-gray-900">
 								{result.skippedQuestions}
 							</span>
 						</div>
 						<div>
-							<span className="text-gray-600">Waktu Mulai:</span>
+							<span className="text-gray-600">Start Time:</span>
 							<span className="ml-2 font-semibold text-gray-900">
-								{new Date(result.startedAt).toLocaleTimeString('id-ID')}
+								{new Date(result.startedAt).toLocaleTimeString('en-US')}
 							</span>
 						</div>
 					</div>
@@ -545,7 +545,7 @@ export default function ResultPage() {
 						className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 px-6 rounded-lg transition-colors"
 					>
 						<RotateCcw className="w-5 h-5" />
-						Latihan Lagi
+						Practice Again
 					</Link>
 
 					<Link
@@ -553,7 +553,7 @@ export default function ResultPage() {
 						className="flex items-center justify-center gap-2 bg-white hover:bg-gray-50 text-gray-700 font-semibold py-4 px-6 rounded-lg border-2 border-gray-300 transition-colors"
 					>
 						<ArrowRight className="w-5 h-5" />
-						Materi Lain
+						Other Materials
 					</Link>
 
 					<Link
@@ -561,7 +561,7 @@ export default function ResultPage() {
 						className="flex items-center justify-center gap-2 bg-white hover:bg-gray-50 text-gray-700 font-semibold py-4 px-6 rounded-lg border-2 border-gray-300 transition-colors"
 					>
 						<Home className="w-5 h-5" />
-						Ke Beranda
+						Go Home
 					</Link>
 				</div>
 

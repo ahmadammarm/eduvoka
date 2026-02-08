@@ -98,15 +98,57 @@ export async function POST(req: Request) {
       - **Match the student's primary language** (see LANGUAGE RULE above).
     `;
 
-        const chatHistory = history ? history.map((h: any) => ({
+        let chatHistory = history ? history.map((h: any) => ({
             role: h.role === "ai" ? "model" : "user",
             parts: [{ text: h.content }]
         })) : [];
 
+        // Gemini requires first message to be from 'user'
+        // If history starts with 'model' (AI greeting), prepend a synthetic user message
+        if (chatHistory.length > 0 && chatHistory[0].role === "model") {
+            chatHistory = [
+                { role: "user", parts: [{ text: "Hi, I need help understanding this question." }] },
+                ...chatHistory
+            ];
+        }
+
+        // Special handling for __INIT__ to get AI's first greeting
+        if (message === "__INIT__") {
+            const chat = geminiModel.startChat({
+                history: [],
+                generationConfig: {
+                    maxOutputTokens: 60000,
+                    temperature: 0.6,
+                }
+            });
+
+            // Send user message first (required by Gemini), prompting AI to greet
+            const initPrompt = `${systemPrompt}\n\nStudent Message: Hi, I got this question wrong. Can you help me understand it?`;
+
+            const initResult = await chat.sendMessage(initPrompt);
+            let aiGreeting = "";
+
+            try {
+                aiGreeting = initResult.response.text();
+            } catch (error) {
+                if (initResult.response.candidates && initResult.response.candidates.length > 0) {
+                    const candidate = initResult.response.candidates[0];
+                    if (candidate.content && candidate.content.parts) {
+                        aiGreeting = candidate.content.parts.map((part: any) => part.text).join('');
+                    }
+                }
+            }
+
+            return NextResponse.json({
+                reply: aiGreeting || "Halo! Saya lihat kamu salah menjawab soal ini. Coba jelaskan ke saya, kenapa kamu memilih jawaban tersebut?"
+            });
+        }
+
+        // Normal conversation flow
         const chat = geminiModel.startChat({
             history: chatHistory,
             generationConfig: {
-                maxOutputTokens: 60000, // Increased for complete analogies and explanations
+                maxOutputTokens: 60000,
                 temperature: 0.6,
             }
         });

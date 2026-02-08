@@ -5,6 +5,7 @@ import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { useSoalByMateri, useLatihanSession } from '@/hooks/use-latihan-soal'
 import { useLatihanCapture } from '@/hooks/capture/use-latihan-capture';
 import { SessionType, JawabanUser } from '@/types/latihan-soal';
+import Swal from 'sweetalert2';
 import {
 	ChevronLeft,
 	ChevronRight,
@@ -39,12 +40,12 @@ export default function PracticePage() {
 
 	// Data capture layer
 	const {
-			initCapture,
-			captureQuestionView,
-			captureAnswerChange,
-			captureAnswerSubmit,
-			captureAnswerSkip,
-			captureSessionComplete,
+		initCapture,
+		captureQuestionView,
+		captureAnswerChange,
+		captureAnswerSubmit,
+		captureAnswerSkip,
+		captureSessionComplete,
 	} = useLatihanCapture();
 
 	const [selectedPilihan, setSelectedPilihan] = useState<string | null>(null);
@@ -75,7 +76,12 @@ export default function PracticePage() {
 				setHasInitialized(true);
 			} catch (error) {
 				console.error('Failed to create session:', error);
-				alert('Gagal membuat sesi latihan. Silakan coba lagi.');
+				Swal.fire({
+					icon: 'error',
+					title: 'Failed to Create Session',
+					text: 'Please try again',
+					confirmButtonColor: '#3b82f6'
+				});
 				router.push(`/latihan-soal/${materiId}`);
 			} finally {
 				setIsInitializing(false);
@@ -115,25 +121,25 @@ export default function PracticePage() {
 
 	// Init capture when session is created
 	useEffect(() => {
-			if (sessionId && materiId) {
-					initCapture(sessionId, materiId);
-			}
+		if (sessionId && materiId) {
+			initCapture(sessionId, materiId);
+		}
 	}, [sessionId, materiId, initCapture]);
 
 	// Capture question view on index change
 	useEffect(() => {
-			if (currentSoal && sessionId) {
-					captureQuestionView(currentSoal.id, currentIndex, soalList.length);
-			}
+		if (currentSoal && sessionId) {
+			captureQuestionView(currentSoal.id, currentIndex, soalList.length);
+		}
 	}, [currentIndex, currentSoal?.id, sessionId, soalList.length, captureQuestionView]);
 
 
 	// Wrap setSelectedPilihan to capture answer changes
 	const handleSelectPilihan = (pilihanId: string) => {
-			setSelectedPilihan(pilihanId);
-			if (currentSoal) {
-					captureAnswerChange(currentSoal.id, pilihanId);
-			}
+		setSelectedPilihan(pilihanId);
+		if (currentSoal) {
+			captureAnswerChange(currentSoal.id, pilihanId);
+		}
 	};
 
 	const handleSubmitAnswer = async () => {
@@ -142,12 +148,22 @@ export default function PracticePage() {
 				hasSoal: !!currentSoal,
 				sessionId
 			});
-			alert('Session belum siap. Silakan refresh halaman.');
+			Swal.fire({
+				icon: 'warning',
+				title: 'Session Not Ready',
+				text: 'Please refresh the page',
+				confirmButtonColor: '#3b82f6'
+			});
 			return;
 		}
 
 		if (!selectedPilihan) {
-			alert('Pilih jawaban terlebih dahulu');
+			Swal.fire({
+				icon: 'info',
+				title: 'Select Answer',
+				text: 'Please select an answer first',
+				confirmButtonColor: '#3b82f6'
+			});
 			return;
 		}
 
@@ -166,14 +182,19 @@ export default function PracticePage() {
 
 				// Capture answer submit
 				captureAnswerSubmit(
-						currentSoal.id,
-						selectedPilihan,
-						result.isCorrect ?? false,
+					currentSoal.id,
+					selectedPilihan,
+					result.isCorrect ?? false,
 				);
 			}
 		} catch (err) {
 			console.error('Error submitting answer:', err);
-			alert('Gagal menyimpan jawaban. Silakan coba lagi.');
+			Swal.fire({
+				icon: 'error',
+				title: 'Failed to Save',
+				text: 'Failed to save answer. Please try again',
+				confirmButtonColor: '#3b82f6'
+			});
 		} finally {
 			setIsSubmitting(false);
 		}
@@ -191,7 +212,12 @@ export default function PracticePage() {
 
 			handleNext();
 		} catch (err) {
-			alert('Gagal skip soal');
+			Swal.fire({
+				icon: 'error',
+				title: 'Gagal Skip',
+				text: 'Gagal skip soal. Silakan coba lagi',
+				confirmButtonColor: '#3b82f6'
+			});
 		} finally {
 			setIsSubmitting(false);
 		}
@@ -208,11 +234,18 @@ export default function PracticePage() {
 	const handleFinish = async () => {
 		if (!sessionId) return;
 
-		const confirmFinish = confirm(
-			'Apakah Anda yakin ingin menyelesaikan latihan?'
-		);
+		const result = await Swal.fire({
+			icon: 'question',
+			title: 'Finish Practice?',
+			text: 'Are you sure you want to finish this practice?',
+			showCancelButton: true,
+			confirmButtonColor: '#3b82f6',
+			cancelButtonColor: '#6b7280',
+			confirmButtonText: 'Yes, Finish',
+			cancelButtonText: 'Cancel'
+		});
 
-		if (!confirmFinish) return;
+		if (!result.isConfirmed) return;
 
 		try {
 			const result = await completeSession();
@@ -220,20 +253,25 @@ export default function PracticePage() {
 				const correctCount = Array.from(progress.values()).filter(
 					(p) => p.answered && p.isCorrect
 				).length;
-				
+
 				// Capture session complete
 				captureSessionComplete({
-						score: result.score ?? 0,
-						totalQuestions: soalList.length,
-						correctCount,
-						totalDurationSeconds: result.totalDuration ?? 0,
+					score: result.score ?? 0,
+					totalQuestions: soalList.length,
+					correctCount,
+					totalDurationSeconds: result.totalDuration ?? 0,
 				});
 
 				// Redirect to Socratic Review page first
 				router.push(`/dashboard/latihan-soal/${materiId}/review?sessionId=${sessionId}`);
 			}
 		} catch (err) {
-			alert('Gagal menyelesaikan sesi');
+			Swal.fire({
+				icon: 'error',
+				title: 'Failed to Complete',
+				text: 'Failed to complete session. Please try again',
+				confirmButtonColor: '#3b82f6'
+			});
 		}
 	};
 
@@ -249,9 +287,9 @@ export default function PracticePage() {
 				<Loader2 className="w-8 h-8 animate-spin text-blue-500" />
 				<p className="text-gray-600">
 					{loading
-						? 'Memuat soal...'
+						? 'Loading questions...'
 						: isInitializing
-							? 'Mempersiapkan sesi latihan...'
+							? 'Preparing practice session...'
 							: 'Loading...'}
 				</p>
 			</div>
@@ -265,16 +303,16 @@ export default function PracticePage() {
 					<div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 text-center">
 						<AlertCircle className="w-12 h-12 text-yellow-600 mx-auto mb-4" />
 						<h2 className="text-xl font-semibold text-gray-900 mb-2">
-							Tidak Ada Soal Tersedia
+							No Questions Available
 						</h2>
 						<p className="text-gray-600 mb-6">
-							Belum ada soal untuk mode ini. Silakan pilih mode lain atau kembali ke daftar materi.
+							No questions for this mode yet. Please select another mode or return to materials.
 						</p>
 						<button
 							onClick={() => router.push(`/dashboard/latihan-soal/${materiId}`)}
 							className="px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors"
 						>
-							Kembali ke Materi
+							Back to Materials
 						</button>
 					</div>
 				</div>
@@ -286,12 +324,12 @@ export default function PracticePage() {
 		return (
 			<div className="container mx-auto px-4 py-8">
 				<div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-800">
-					<p>Error: Soal tidak ditemukan</p>
+					<p>Error: Question not found</p>
 					<button
 						onClick={() => router.push(`/dashboard/latihan-soal/${materiId}`)}
 						className="mt-4 px-4 py-2 bg-red-600 text-white rounded"
 					>
-						Kembali
+						Go Back
 					</button>
 				</div>
 			</div>
@@ -309,7 +347,7 @@ export default function PracticePage() {
 								{materi?.nama}
 							</h1>
 							<p className="text-sm text-gray-600">
-								Soal {currentIndex + 1} dari {soalList.length}
+								Question {currentIndex + 1} of {soalList.length}
 							</p>
 						</div>
 						<div className="flex items-center gap-4">

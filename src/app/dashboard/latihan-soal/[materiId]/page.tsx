@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
+import Swal from 'sweetalert2';
 import { useSoalByMateri } from '@/hooks/use-latihan-soal';
 import { SessionType } from '@/types/latihan-soal';
 import { Book, Clock, Target, Loader2, ArrowLeft } from 'lucide-react';
@@ -18,7 +19,12 @@ export default function MateriDetailPage() {
 
 	const handleStartSession = async () => {
 		if (soalList.length === 0) {
-			alert('Tidak ada soal tersedia untuk mode ini');
+			Swal.fire({
+				icon: 'warning',
+				title: 'No Questions',
+				text: 'No questions available for this mode',
+				confirmButtonColor: '#3b82f6'
+			});
 			return;
 		}
 
@@ -27,7 +33,12 @@ export default function MateriDetailPage() {
 			// Navigate to practice page with mode parameter
 			router.push(`/dashboard/latihan-soal/${materiId}/practice?mode=${selectedMode}`);
 		} catch (err) {
-			alert('Gagal memulai sesi latihan');
+			Swal.fire({
+				icon: 'error',
+				title: 'Failed to Start',
+				text: 'Failed to start practice session. Please try again',
+				confirmButtonColor: '#3b82f6'
+			});
 			setIsStarting(false);
 		}
 	};
@@ -44,7 +55,7 @@ export default function MateriDetailPage() {
 		return (
 			<div className="container mx-auto px-4 py-8">
 				<div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-800">
-					Error: {error || 'Materi tidak ditemukan'}
+					Error: {error || 'Material not found'}
 				</div>
 			</div>
 		);
@@ -57,7 +68,7 @@ export default function MateriDetailPage() {
 				className="inline-flex items-center text-blue-600 hover:text-blue-700 mb-6"
 			>
 				<ArrowLeft className="w-4 h-4 mr-2" />
-				Kembali ke Daftar Materi
+				Back to Material List
 			</Link>
 
 			<div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 mb-6">
@@ -70,7 +81,7 @@ export default function MateriDetailPage() {
 							{materi.nama}
 						</h1>
 						<p className="text-gray-600">
-							{materi.deskripsi || 'Latihan soal untuk materi ini'}
+							{materi.deskripsi || 'Practice questions for this material'}
 						</p>
 					</div>
 				</div>
@@ -81,7 +92,7 @@ export default function MateriDetailPage() {
 						<div className="text-2xl font-bold text-gray-900">
 							{soalList.length}
 						</div>
-						<div className="text-sm text-gray-600">Total Soal</div>
+						<div className="text-sm text-gray-600">Total Questions</div>
 					</div>
 					{/* <div className="bg-gray-50 rounded-lg p-4">
 						<Clock className="w-5 h-5 text-green-500 mb-2" />
@@ -95,7 +106,7 @@ export default function MateriDetailPage() {
 						<div className="text-2xl font-bold text-gray-900">
 							{materi.kategori}
 						</div>
-						<div className="text-sm text-gray-600">Kategori</div>
+						<div className="text-sm text-gray-600">Category</div>
 					</div>
 				</div>
 
@@ -143,16 +154,16 @@ export default function MateriDetailPage() {
 					{isStarting ? (
 						<>
 							<Loader2 className="w-5 h-5 mr-2 animate-spin" />
-							Memulai...
+							Starting...
 						</>
 					) : (
-						'Mulai Latihan'
+						'Start Practice'
 					)}
 				</button>
 
 				{soalList.length === 0 && (
 					<p className="text-center text-red-600 mt-4">
-						Tidak ada soal tersedia untuk mode ini
+						No questions available for this mode
 					</p>
 				)}
 			</div>

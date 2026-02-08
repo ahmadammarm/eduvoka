@@ -21,8 +21,8 @@ export default function Pomodoro() {
 			setIsRunning(false);
 			// Sweet Alert ketika timer selesai
 			Swal.fire({
-				title: "Pomodoro Selesai!",
-				text: "Waktunya istirahat 😊",
+				title: "Pomodoro Finished!",
+				text: "Time to take a break 😊",
 				icon: "success",
 				confirmButtonText: "OK",
 				confirmButtonColor: "#10b981",
@@ -83,13 +83,12 @@ export default function Pomodoro() {
 							<Button
 								onClick={handleStart}
 								size="lg"
-								className={`px-6 py-5 text-base font-medium transition-all ${
-									isRunning
+								className={`px-6 py-5 text-base font-medium transition-all ${isRunning
 										? "bg-red-500 hover:bg-red-600"
 										: "bg-green-500 hover:bg-green-600"
-								}`}
+									}`}
 							>
-								{isRunning ? "⏸ Pause" : "▶ Mulai"}
+								{isRunning ? "⏸ Pause" : "▶ Start"}
 							</Button>
 							<Button
 								onClick={handleReset}
@@ -121,7 +120,7 @@ export default function Pomodoro() {
 
 							<div>
 								<label className="block text-xs font-medium text-white/70 mb-2">
-									Waktu (menit)
+									Time (minutes)
 								</label>
 								<Input
 									type="number"
@@ -158,7 +157,7 @@ export default function Pomodoro() {
 									htmlFor="fullscreen"
 									className="text-xs font-medium text-white/70 cursor-pointer"
 								>
-									⛶ Mode Layar Penuh
+									⛶ Fullscreen Mode
 								</label>
 							</div>
 						</div>

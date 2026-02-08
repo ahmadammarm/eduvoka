@@ -25,18 +25,18 @@ interface CardConfig {
 export default function OverviewCards({ stats }: { stats: OverviewStats }) {
     const cards: CardConfig[] = [
         {
-            label: "Total Sesi",
+            label: "Total Sessions",
             value: stats.totalSessions,
             icon: BookOpen,
             color: "text-blue-500",
             bgColor: "bg-blue-50 dark:bg-blue-950",
             sub: {
-                value: `Latihan & Materi`,
+                value: `Practice & Materials`,
                 positive: true,
             },
         },
         {
-            label: "Akurasi",
+            label: "Accuracy",
             value: `${stats.overallAccuracy}%`,
             icon: Target,
             color: "text-green-500",
@@ -44,30 +44,30 @@ export default function OverviewCards({ stats }: { stats: OverviewStats }) {
             sub:
                 stats.improvementRate !== 0
                     ? {
-                          value: `${stats.improvementRate > 0 ? "+" : ""}${stats.improvementRate}%`,
-                          positive: stats.improvementRate > 0,
-                      }
+                        value: `${stats.improvementRate > 0 ? "+" : ""}${stats.improvementRate}%`,
+                        positive: stats.improvementRate > 0,
+                    }
                     : undefined,
         },
         {
-            label: "Waktu Belajar",
+            label: "Study Time",
             value: formatStudyTime(stats.totalStudyMinutes),
             icon: Clock,
             color: "text-purple-500",
             bgColor: "bg-purple-50 dark:bg-purple-950",
             sub: {
-                value: `~${stats.avgSessionDuration} mnt/sesi`,
+                value: `~${stats.avgSessionDuration} min/session`,
                 positive: true,
             },
         },
         {
             label: "Streak",
-            value: `${stats.currentStreak} hari`,
+            value: `${stats.currentStreak} days`,
             icon: Flame,
             color: "text-orange-500",
             bgColor: "bg-orange-50 dark:bg-orange-950",
             sub: {
-                value: `Best: ${stats.bestStreak} hari`,
+                value: `Best: ${stats.bestStreak} days`,
                 positive: true,
             },
         },
@@ -115,8 +115,8 @@ export default function OverviewCards({ stats }: { stats: OverviewStats }) {
 }
 
 function formatStudyTime(minutes: number): string {
-    if (minutes < 60) return `${minutes} mnt`;
+    if (minutes < 60) return `${minutes} min`;
     const hours = Math.floor(minutes / 60);
     const remainingMinutes = minutes % 60;
-    return remainingMinutes > 0 ? `${hours}j ${remainingMinutes}m` : `${hours} jam`;
+    return remainingMinutes > 0 ? `${hours}h ${remainingMinutes}m` : `${hours} hrs`;
 }
