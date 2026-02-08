@@ -1,6 +1,7 @@
 ## [Unreleased]
 
 ### Added
+- Add analytics data visualization in dashboard page
 - Implement the AI-based discussion and learning velocity tracking system.
 - Add Study Capture Hook for tracking study sessions and user engagement.
 - Materi completion tracking per user per day implementation.
