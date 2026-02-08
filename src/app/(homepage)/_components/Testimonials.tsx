@@ -5,63 +5,63 @@ const testimonials = [
 		id: 1,
 		name: "Arjun Mehta",
 		school: "SMA Negeri 1 Ngawi",
-		body: "v0 has completely changed the way I build UIs. Generate, copy-paste, done. No more design stress.",
+		body: "The learning analytics dashboard showed me exactly which topics were dragging my score down. I improved my TPS by 30 points in two weeks.",
 		img: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face",
 	},
 	{
 		id: 2,
 		name: "Sara Lin",
 		school: "SMA Negeri 1 Ngawi",
-		body: "Honestly shocked at how smooth the v0 generated components are out of the box. Just works perfectly.",
+		body: "The Socratic AI tutor doesn't just give answers—it asks the right questions until I actually understand the concept. Total game changer.",
 		img: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&h=150&fit=crop&crop=face",
 	},
 	{
 		id: 3,
 		name: "Devon Carter",
 		school: "SMA Negeri 1 Ngawi",
-		body: "Our team launched a client site in 2 days using v0 components. Saved so much development time.",
+		body: "EDUVOKA detected I was burning out before I even realized it. The smart break suggestion literally saved my study streak.",
 		img: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face",
 	},
 	{
 		id: 4,
 		name: "Priya Shah",
 		school: "SMA Negeri 1 Ngawi",
-		body: "Generated a few components in v0 and everything blended perfectly with our codebase. Massive W.",
+		body: "My learning velocity score keeps climbing. Seeing real data on how fast I master topics is incredibly motivating.",
 		img: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&h=150&fit=crop&crop=face",
 	},
 	{
 		id: 5,
 		name: "Leo Martin",
 		school: "SMA Negeri 1 Ngawi",
-		body: "Found a beautiful hero section in v0, tweaked the prompt, and shipped in 15 minutes. Game changer.",
+		body: "The real-time data capture is insane. It tracks my answer changes, hesitation time, and patterns I never noticed on my own.",
 		img: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face",
 	},
 	{
 		id: 6,
 		name: "Chloe Winters",
 		school: "SMA Negeri 1 Ngawi",
-		body: "v0 helped us prototype multiple landing pages without writing CSS once. Pure magic.",
+		body: "I used to study for hours with no direction. Now EDUVOKA shows me exactly where to focus. My practice sessions are twice as effective.",
 		img: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&h=150&fit=crop&crop=face",
 	},
 	{
 		id: 7,
 		name: "Ayaan Malik",
 		school: "SMA Negeri 1 Ngawi",
-		body: "As a solo founder, v0 lets me move fast without sacrificing design quality. Essential tool.",
+		body: "The weakness clustering feature pinpointed my blind spots in Mathematical Reasoning. I went from guessing to actually solving problems.",
 		img: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face",
 	},
 	{
 		id: 8,
 		name: "Monica Reeves",
 		school: "SMA Negeri 1 Ngawi",
-		body: "Can't believe how polished the v0 generated components look. Clients are impressed every time.",
+		body: "As a teacher, I can finally see which students are struggling in real time. The analytics help me intervene before it's too late.",
 		img: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&h=150&fit=crop&crop=face",
 	},
 	{
 		id: 9,
 		name: "James Roy",
 		school: "SMA Negeri 1 Ngawi",
-		body: "v0 is a lifesaver when deadlines are tight. Generate a component, tweak, and deploy instantly.",
+		body: "EDUVOKA adapts to how I learn, not the other way around. The AI discussion feature helped me crack topics I'd been stuck on for months.",
 		img: "https://images.unsplash.com/photo-1507591064344-4c6ce005b128?w=150&h=150&fit=crop&crop=face",
 	},
 ];
@@ -128,12 +128,12 @@ export function TestimonialsSection() {
 						</button>
 					</div>
 					<h2 className="from-foreground/60 via-foreground to-foreground/60 dark:from-muted-foreground/55 dark:via-foreground dark:to-muted-foreground/55 mt-5 bg-gradient-to-r bg-clip-text text-center text-4xl font-semibold tracking-tighter text-transparent md:text-[54px] md:leading-[60px] __className_bb4e88 relative z-10">
-						Apa kata mereka tentang EDUVOKA?
+						What they say about EDUVOKA
 					</h2>
 
 					<p className="mt-5 relative z-10 text-center text-lg text-zinc-500">
-						Dengar langsung dari para pelajar dan pendidik yang telah merasakan
-						manfaat dari platform kami.
+						Hear directly from students and educators who have experienced
+						the impact of our platform.
 					</p>
 				</div>
 
@@ -174,7 +174,7 @@ export function TestimonialsSection() {
 						>
 							<path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"></path>
 						</svg>
-						Bagikan pengalamanmu
+						Share your experience
 					</button>
 				</div>
 			</div>
