@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
@@ -5,8 +6,19 @@ import { prisma } from '@/lib/prisma';
 import { calculateBurnout, validateBurnoutInput } from '@/lib/burnout-calc';
 import type { AnswerData } from '@/types/burnout';
 
+export function normalizeAnswers(jawaban: any[]): AnswerData[] {
+	return jawaban
+		.filter(j => j.answeredAt) // indikator interaksi nyata
+		.map(j => ({
+			timeSpent: j.timeSpent && j.timeSpent > 0 ? j.timeSpent : 1,
+			isCorrect: Boolean(j.isCorrect),
+			isSkipped: Boolean(j.isSkipped),
+			answeredAt: new Date(j.answeredAt)
+		}));
+}
+
 export async function GET(
-	req: NextRequest,
+	_req: NextRequest,
 	{ params }: { params: Promise<{ sessionId: string }> }
 ) {
 	try {
@@ -29,8 +41,7 @@ export async function GET(
 			include: {
 				jawaban: {
 					where: {
-						answeredAt: { not: null },
-						isSkipped: false // Exclude skipped questions from burnout calculation
+						answeredAt: { not: null }
 					},
 					select: {
 						timeSpent: true,
@@ -38,9 +49,7 @@ export async function GET(
 						isSkipped: true,
 						answeredAt: true
 					},
-					orderBy: {
-						answeredAt: 'asc'
-					}
+					orderBy: { answeredAt: 'asc' }
 				}
 			}
 		});
@@ -52,29 +61,30 @@ export async function GET(
 			);
 		}
 
-		// Transform to AnswerData format - filter only valid answers
-		const answers: AnswerData[] = latihanSession.jawaban
-			.filter(j => j.timeSpent && j.timeSpent > 0 && !j.isSkipped)
-			.map(j => ({
-				timeSpent: j.timeSpent!,
-				isCorrect: j.isCorrect ?? false,
-				isSkipped: j.isSkipped,
-				answeredAt: j.answeredAt!
-			}));
+		// Transform to AnswerData format
+		const answers = normalizeAnswers(latihanSession.jawaban);
+
+		console.log('[Burnout] Answer stats:', {
+			total: latihanSession.jawaban.length,
+			afterFilter: answers.length,
+			skipped: latihanSession.jawaban.filter(j => j.isSkipped).length,
+			zeroTime: latihanSession.jawaban.filter(j => j.timeSpent === 0).length,
+			nullTime: latihanSession.jawaban.filter(j => j.timeSpent == null).length,
+		});
 
 		// Validate input
 		const validation = validateBurnoutInput(answers);
+
 		if (!validation.valid) {
-			return NextResponse.json(
-				{
-					error: 'Insufficient data for burnout calculation',
-					details: validation.reason,
-					currentCount: answers.length,
-					requiredCount: 10,
-					canCalculate: false
-				},
-				{ status: 400 }
-			);
+			return NextResponse.json({
+				error: 'Insufficient data',
+				reason: validation.reason || 'Not enough data for burnout analysis',
+				canCalculate: false,
+				progress: {
+					current: answers.length,
+					required: 5
+				}
+			}, { status: 400 });
 		}
 
 		// Calculate burnout
@@ -84,7 +94,7 @@ export async function GET(
 			answers
 		});
 
-		// Save to database - check if sessionMetrics relation exists
+		// Save to database
 		try {
 			await prisma.sessionMetrics.upsert({
 				where: { sessionId },
@@ -100,36 +110,32 @@ export async function GET(
 				}
 			});
 		} catch (dbError) {
-			// Log error but don't fail the request
-			console.error('[Burnout Calculate] Failed to save metrics:', dbError);
+			console.error('[Burnout] Failed to save metrics:', dbError);
 		}
 
+		// Return result directly (tidak pakai wrapper data.data)
 		return NextResponse.json({
-			success: true,
-			data: result,
+			...result,
+			canCalculate: true,
 			meta: {
-				answersAnalyzed: answers.length,
-				sessionId,
-				calculatedAt: new Date().toISOString()
+				progress: {
+					current: answers.length,
+					required: 5
+				}
 			}
-		});
+		}, { status: 200 });
 
 	} catch (error) {
 		console.error('[Burnout Calculate] Error:', error);
 
-		if (error instanceof Error) {
-			return NextResponse.json(
-				{
-					error: error.message,
-					canCalculate: false
-				},
-				{ status: 400 }
-			);
-		}
-
-		return NextResponse.json(
-			{ error: 'Internal server error' },
-			{ status: 500 }
-		);
+		return NextResponse.json({
+			error: 'Failed to calculate burnout',
+			details: error instanceof Error ? error.message : 'Unknown error',
+			canCalculate: false,
+			progress: {
+				current: 0,
+				required: 5
+			}
+		}, { status: 500 });
 	}
 }

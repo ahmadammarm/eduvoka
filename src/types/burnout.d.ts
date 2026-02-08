@@ -1,4 +1,13 @@
 export type BurnoutLevel = 'NONE' | 'MILD' | 'MODERATE' | 'SEVERE';
+
+export interface BurnoutLevelConfig {
+	color: string;
+	textColor: string;
+	bgColor: string;
+	icon: string;
+	title: string;
+}
+
 export type NextAction = 'CONTINUE' | 'SWITCH_TOPIC' | 'STOP_SESSION' | 'REST';
 
 export interface AnswerData {
@@ -63,4 +72,17 @@ export interface BurnoutCalculationInput {
 export interface ValidationResult {
 	valid: boolean;
 	reason?: string;
+}
+
+export interface BurnoutApiResponse extends Partial<BurnoutCalculationResult> {
+	canCalculate?: boolean;
+	error?: string;
+	reason?: string;
+	details?: string;
+	meta?: {
+		progress: {
+			current: number;
+			required: number;
+		};
+	};
 }

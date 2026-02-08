@@ -20,7 +20,7 @@ import {
 	Award
 } from 'lucide-react';
 import Link from 'next/link';
-import type { BurnoutCalculationResult } from '@/types/burnout';
+import type { BurnoutApiResponse, BurnoutCalculationResult, BurnoutLevel, BurnoutLevelConfig } from '@/types/burnout';
 
 interface SessionResultData {
 	sessionId: string;
@@ -77,7 +77,7 @@ export default function ResultPage() {
 	const [mbaBoost, setMbaBoost] = useState<number>(0);
 	const [burnoutData, setBurnoutData] = useState<BurnoutCalculationResult | null>(null);
 	const [burnoutLoading, setBurnoutLoading] = useState(false);
-	const [burnoutError, setBurnoutError] = useState<string | null>(null);
+	const [burnoutError, setBurnoutError] = useState<string | null>(null);;
 
 	useEffect(() => {
 		// Extract mbaBoost from URL
@@ -156,27 +156,48 @@ export default function ResultPage() {
 
 			setBurnoutLoading(true);
 			setBurnoutError(null);
+			setBurnoutData(null);
 
 			try {
 				const response = await fetch(`/api/metrics/burnout/${sessionId}`);
+				const data: BurnoutApiResponse = await response.json();
 
-				if (response.ok) {
-					const data = await response.json();
-					setBurnoutData(data.data);
-				} else {
-					// Handle expected errors (insufficient data)
-					const errorData = await response.json();
-					if (response.status === 400) {
-						// Not enough data - this is OK, just don't show burnout card
-						console.info('[Result] Burnout data unavailable:', errorData.details);
-						setBurnoutError(errorData.details || 'Insufficient data for burnout analysis');
-					} else {
-						throw new Error(errorData.error || 'Failed to fetch burnout data');
-					}
+				// Check for errors
+				if (data.error) {
+					console.info('[Result] Burnout unavailable:', data.reason || data.error);
+					setBurnoutError(data.reason || data.error);
+					return;
 				}
+
+				// Check if can calculate
+				if (data.canCalculate === false) {
+					console.info('[Result] Cannot calculate burnout:', data.reason);
+					setBurnoutError(data.reason || 'Insufficient data');
+					return;
+				}
+
+				// Validate required fields exist
+				if (!data.burnoutLevel || !data.fatigueIndex || !data.components || !data.recommendations) {
+					console.error('[Result] Incomplete burnout data:', data);
+					setBurnoutError('Incomplete burnout data received');
+					return;
+				}
+
+				// Success - cast to full type
+				const burnoutResult: BurnoutCalculationResult = {
+					burnoutLevel: data.burnoutLevel,
+					fatigueIndex: data.fatigueIndex,
+					components: data.components,
+					recommendations: data.recommendations,
+					sessionStats: data.sessionStats!
+				};
+
+				console.log('[Result] Burnout data loaded:', burnoutResult);
+				setBurnoutData(burnoutResult);
+
 			} catch (err) {
 				console.error('[Result] Failed to fetch burnout:', err);
-				setBurnoutError(err instanceof Error ? err.message : 'Unknown error');
+				setBurnoutError(err instanceof Error ? err.message : 'Network error');
 			} finally {
 				setBurnoutLoading(false);
 			}
@@ -278,14 +299,24 @@ export default function ResultPage() {
 			);
 		}
 
-		// Jangan tampilkan card jika error atau tidak ada data
+		// Don't show card if error or no data
 		if (burnoutError || !burnoutData) {
 			return null;
 		}
 
 		const { burnoutLevel, fatigueIndex, components, recommendations } = burnoutData;
 
-		const levelConfig = {
+		// Type guard
+		const isValidBurnoutLevel = (level: string): level is BurnoutLevel => {
+			return ['NONE', 'MILD', 'MODERATE', 'SEVERE'].includes(level);
+		};
+
+		if (!isValidBurnoutLevel(burnoutLevel)) {
+			console.error('[BurnoutCard] Invalid burnout level:', burnoutLevel);
+			return null;
+		}
+
+		const levelConfig: Record<BurnoutLevel, BurnoutLevelConfig> = {
 			NONE: {
 				color: 'from-green-500 to-emerald-600',
 				textColor: 'text-green-600',
@@ -318,8 +349,18 @@ export default function ResultPage() {
 
 		const config = levelConfig[burnoutLevel];
 
+		const getBorderColor = () => {
+			switch (burnoutLevel) {
+				case 'NONE': return 'border-green-200';
+				case 'MILD': return 'border-yellow-200';
+				case 'MODERATE': return 'border-orange-200';
+				case 'SEVERE': return 'border-red-200';
+			}
+		};
+
 		return (
 			<div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-8 mb-6">
+				{/* Header */}
 				<div className="flex items-start justify-between mb-6">
 					<div>
 						<h3 className="text-2xl font-bold text-gray-900 mb-2 flex items-center gap-2">
@@ -339,7 +380,7 @@ export default function ResultPage() {
 				<div className="mb-8">
 					<div className="text-center mb-4">
 						<div className={`text-6xl font-bold ${config.textColor} mb-2`}>
-							{fatigueIndex.toFixed(1)}
+							{Math.round(fatigueIndex)}
 						</div>
 						<div className="text-gray-600 text-sm">Fatigue Index (0-100)</div>
 					</div>
@@ -365,7 +406,7 @@ export default function ResultPage() {
 					<div className="bg-gray-50 rounded-lg p-4">
 						<div className="text-xs text-gray-600 mb-1">Cognitive Load</div>
 						<div className="text-2xl font-bold text-gray-900">
-							{components.cognitiveLoad.value.toFixed(1)}%
+							{Math.round(components.cognitiveLoad.value)}%
 						</div>
 						<div className="text-xs text-gray-500 mt-1">
 							{components.cognitiveLoad.interpretation}
@@ -375,7 +416,7 @@ export default function ResultPage() {
 					<div className="bg-gray-50 rounded-lg p-4">
 						<div className="text-xs text-gray-600 mb-1">Decision Quality</div>
 						<div className="text-2xl font-bold text-gray-900">
-							{components.decisionQuality.value.toFixed(1)}%
+							{Math.round(components.decisionQuality.value)}%
 						</div>
 						<div className="text-xs text-gray-500 mt-1">
 							{components.decisionQuality.interpretation}
@@ -385,7 +426,7 @@ export default function ResultPage() {
 					<div className="bg-gray-50 rounded-lg p-4">
 						<div className="text-xs text-gray-600 mb-1">Engagement</div>
 						<div className="text-2xl font-bold text-gray-900">
-							{components.engagement.value.toFixed(1)}%
+							{Math.round(components.engagement.value)}%
 						</div>
 						<div className="text-xs text-gray-500 mt-1">
 							{components.engagement.interpretation}
@@ -395,7 +436,7 @@ export default function ResultPage() {
 					<div className="bg-gray-50 rounded-lg p-4">
 						<div className="text-xs text-gray-600 mb-1">Consistency</div>
 						<div className="text-2xl font-bold text-gray-900">
-							{components.consistency.value.toFixed(1)}%
+							{Math.round(components.consistency.value)}%
 						</div>
 						<div className="text-xs text-gray-500 mt-1">
 							{components.consistency.interpretation}
@@ -404,7 +445,7 @@ export default function ResultPage() {
 				</div>
 
 				{/* Recommendations */}
-				<div className={`${config.bgColor} border-2 border-${burnoutLevel === 'NONE' ? 'green' : burnoutLevel === 'MILD' ? 'yellow' : burnoutLevel === 'MODERATE' ? 'orange' : 'red'}-200 rounded-lg p-6`}>
+				<div className={`${config.bgColor} border-2 ${getBorderColor()} rounded-lg p-6`}>
 					<h4 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
 						💡 Rekomendasi
 					</h4>
@@ -413,11 +454,11 @@ export default function ResultPage() {
 					</p>
 
 					{recommendations.shouldRest && (
-						<div className="bg-white bg-opacity-70 rounded-lg p-4">
+						<div className="bg-white bg-opacity-70 rounded-lg p-4 mb-4">
 							<div className="flex items-center justify-between">
 								<div>
 									<p className="font-semibold text-gray-900">Saran Istirahat:</p>
-									<p className="text-2xl font-bold ${config.textColor}">
+									<p className={`text-2xl font-bold ${config.textColor}`}>
 										{recommendations.restDuration} menit
 									</p>
 								</div>
@@ -426,10 +467,9 @@ export default function ResultPage() {
 						</div>
 					)}
 
-					{/* Next Action Guide */}
 					<div className="mt-4 pt-4 border-t border-gray-300">
 						<p className="text-sm text-gray-700">
-							<strong>Next Step:</strong> {' '}
+							<strong>Next Step:</strong>{' '}
 							{recommendations.nextAction === 'CONTINUE' && 'Lanjutkan ke materi berikutnya atau coba tryout!'}
 							{recommendations.nextAction === 'REST' && 'Istirahat sebentar lalu lanjut latihan.'}
 							{recommendations.nextAction === 'SWITCH_TOPIC' && 'Ganti topik atau materi yang lebih ringan.'}
@@ -456,6 +496,8 @@ export default function ResultPage() {
 						{result.type === 'LATIHAN' ? 'Practice Mode' : 'Try Out Mode'}
 					</p>
 				</div>
+
+				<BurnoutCard />
 
 				{/* Score Card */}
 				<div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-8 mb-6">
@@ -577,8 +619,6 @@ export default function ResultPage() {
 						</div>
 					)}
 				</div>
-
-				<BurnoutCard />
 
 				{/* Learning Velocity Card (PREMIUM) */}
 				<div className="bg-gradient-to-r from-purple-600 to-indigo-700 rounded-2xl shadow-2xl p-8 mb-6 text-white">

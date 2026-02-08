@@ -11,21 +11,21 @@ import type {
 // ==================== VALIDATION ====================
 
 export function validateBurnoutInput(answers: AnswerData[]): ValidationResult {
-	// Minimal 10 soal untuk hitung burnout
-	if (answers.length < 10) {
+	// Minimal 5 soal untuk hitung burnout
+	if (answers.length < 5) {
 		return {
 			valid: false,
-			reason: `Butuh minimal 10 soal untuk analisis burnout. Saat ini baru ${answers.length} soal.`
+			reason: `Butuh minimal 5 soal untuk analisis burnout. Saat ini baru ${answers.length} soal.`
 		};
 	}
 
 	// Filter out soal yang diskip atau timeSpent = 0
 	const validAnswers = answers.filter(a => !a.isSkipped && a.timeSpent > 0);
 
-	if (validAnswers.length < 8) {
+	if (validAnswers.length < 5) {
 		return {
 			valid: false,
-			reason: `Terlalu banyak soal yang diskip (${answers.length - validAnswers.length} soal diskip). Butuh minimal 8 soal yang dijawab.`
+			reason: `Terlalu banyak soal yang diskip (${answers.length - validAnswers.length} soal diskip). Butuh minimal 5 soal yang dijawab.`
 		};
 	}
 

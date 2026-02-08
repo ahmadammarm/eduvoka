@@ -4,8 +4,9 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { calculateBurnout, validateBurnoutInput } from '@/lib/burnout-calc';
-import type { AnswerData, BurnoutLevel } from '@/types/burnout';
+import type { BurnoutLevel } from '@/types/burnout';
 import { SessionType } from '@/generated/prisma/enums';
+import { normalizeAnswers } from './[sessionId]/route';
 
 interface BatchCalculateRequest {
 	userId?: string;
@@ -103,12 +104,7 @@ export async function POST(req: NextRequest) {
 
 		for (const sess of sessions) {
 			try {
-				const answers: AnswerData[] = sess.jawaban.map(j => ({
-					timeSpent: j.timeSpent ?? 0,
-					isCorrect: j.isCorrect ?? false,
-					isSkipped: j.isSkipped,
-					answeredAt: j.answeredAt!
-				}));
+				const answers = normalizeAnswers(sess.jawaban);
 
 				const validation = validateBurnoutInput(answers);
 				if (!validation.valid) {
@@ -172,7 +168,7 @@ export async function POST(req: NextRequest) {
 			results,
 			errors,
 			summary: {
-				avgBurnoutIndex: Math.round(avgBurnoutIndex * 10) / 10,
+				avgBurnoutIndex: Math.round(avgBurnoutIndex * 10) / 5,
 				burnoutDistribution,
 				trend: 'STABLE' // TODO: Implement trend calculation
 			}

@@ -20,7 +20,7 @@ import { useBurnoutMetrics } from '@/hooks/use-burnout';
 import { BurnoutCalculationResult } from '@/types/burnout';
 
 
-const CHECK_BURNOUT_EVERY_N_QUESTIONS = 10; // Check setiap 10 soal
+const CHECK_BURNOUT_EVERY_N_QUESTIONS = 5; // Check setiap 5 soal
 
 
 export default function PracticePage() {
