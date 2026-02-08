@@ -1,6 +1,7 @@
 ## [Unreleased]
 
 ### Added
+- Improve landing page UI/UX design
 - Add time decay API 
 - Add analytics data visualization in dashboard page
 - Implement the AI-based discussion and learning velocity tracking system.

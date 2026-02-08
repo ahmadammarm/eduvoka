@@ -13,29 +13,29 @@ export function FAQSection() {
 
 	const faqs = [
 		{
-			question: "Apa itu EDUVOKA?",
+			question: "What is EDUVOKA?",
 			answer:
-				"EDUVOKA adalah platform e-learning adaptif yang memanfaatkan model VAK (Visual, Auditory, Kinesthetic) dan AI (Artificial Intelligence) untuk memberikan pengalaman belajar yang personal dan efektif bagi setiap individu.",
+				"EDUVOKA is an adaptive e-learning platform that uses learning analytics, real-time action data, and AI-powered Socratic tutoring to deliver a personalized and effective study experience for every student.",
 		},
 		{
-			question: "Bagaimana EDUVOKA menyesuaikan materi pembelajaran?",
+			question: "How does the Learning Analytics feature work?",
 			answer:
-				"EDUVOKA menyesuaikan materi pembelajaran dengan menganalisis gaya belajar pengguna berdasarkan model VAK dan menggunakan AI untuk mengadaptasi konten sesuai preferensi dan kebutuhan individu, sehingga meningkatkan efektivitas pembelajaran.",
+				"The platform continuously tracks your accuracy, time-per-question, error patterns, and weakness clusters across every subject. These insights are used to adapt your practice sessions so you always focus on the areas that matter most.",
 		},
 		{
-			question: "Blablabla?",
+			question: "What is the Socratic AI Tutor?",
 			answer:
-				"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+				"Instead of giving you direct answers, the AI tutor uses the PAPE method—Probe, Analyze, Persist, Evaluate—to ask guided questions that help you discover the solution on your own, building deeper understanding.",
 		},
 		{
-			question: "Blablabla?",
+			question: "How does EDUVOKA detect burnout?",
 			answer:
-				"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+				"Every click, answer change, and hesitation is captured in real time. The system analyzes these signals to detect cognitive overload and fatigue, then suggests smart breaks or adjusts session difficulty before burnout hits.",
 		},
 		{
-			question: "Blablabla?",
+			question: "What is the Learning Velocity score?",
 			answer:
-				"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+				"Learning Velocity is a composite score (0–100) that measures how quickly you truly master concepts. It combines your accuracy rate, response speed, consistency, and improvement trend—giving you a clear picture of real progress over time.",
 		},
 	];
 
@@ -66,9 +66,9 @@ export function FAQSection() {
 					transition={{ duration: 0.6, delay: 0.2 }}
 					viewport={{ once: true }}
 				>
-					Ada pertanyaan? kami punya{" "}
+					Got questions? We have{" "}
 					<span className="bg-gradient-to-b from-foreground via-rose-200 to-primary bg-clip-text text-transparent">
-						jawabannya
+						answers
 					</span>
 				</motion.h2>
 

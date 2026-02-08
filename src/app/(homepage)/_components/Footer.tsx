@@ -58,10 +58,9 @@ export function StickyFooter() {
 								EDUVOKA
 							</h2>
 							<p className="text-sm sm:text-base" style={{ color: "#121113" }}>
-								Platform pembelajaran yang membantu Anda memahami gaya belajar
-								unik Anda melalui VAK Quiz dan menyediakan pengalaman
-								pembelajaran yang dipersonalisasi untuk hasil yang lebih
-								optimal.
+							An adaptive e-learning platform powered by learning analytics,
+							real-time action data, and a Socratic AI tutor — helping
+							students learn smarter, avoid burnout, and track real progress.
 							</p>
 						</motion.div>
 
@@ -78,7 +77,7 @@ export function StickyFooter() {
 									className="font-semibold text-lg mb-3"
 									style={{ color: "#121113" }}
 								>
-									Navigasi
+									Navigation
 								</h3>
 								<ul className="space-y-2">
 									<li
@@ -129,7 +128,7 @@ export function StickyFooter() {
 									className="font-semibold text-lg mb-3"
 									style={{ color: "#121113" }}
 								>
-									Ikuti Kami
+									Follow Us
 								</h3>
 								<div className="flex gap-4">
 									<a
@@ -182,7 +181,7 @@ export function StickyFooter() {
 									className="font-semibold text-lg mb-3"
 									style={{ color: "#121113" }}
 								>
-									Kontak Kami
+									Contact Us
 								</h3>
 								<div className="space-y-2 text-sm sm:text-base">
 									<div className="flex items-start gap-2">
@@ -224,7 +223,7 @@ export function StickyFooter() {
 							animate={{ opacity: 1 }}
 							transition={{ duration: 0.6, delay: 0.5 }}
 						>
-							© 2024 EDUVOKA. All rights reserved.
+							© 2026 EDUVOKA. All rights reserved.
 						</motion.p>
 					</div>
 				</motion.div>

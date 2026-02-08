@@ -23,9 +23,9 @@ export function NewReleasePromo() {
 
 					<div className="relative z-10">
 						<div className="mt-8 text-center">
-							<h2 className="text-4xl font-bold text-white mb-6">Coba EDUVOKA Sekarang Juga!</h2>
+							<h2 className="text-4xl font-bold text-white mb-6">Try EDUVOKA Today!</h2>
 							<p className="text-white/60 mb-8">
-								Jelajahi fitur-fitur kami dan rasakan pengalaman belajar yang lebih personal dan efektif.
+								Explore our features and experience a smarter, more personalized way to learn.
 							</p>
 							<svg
 								width="100"

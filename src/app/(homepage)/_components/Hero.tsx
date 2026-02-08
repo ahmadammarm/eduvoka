@@ -33,7 +33,7 @@ export default function Hero() {
 								className="inline-flex items-center gap-2 px-4 py-2 text-sm"
 							>
 								<BookOpen size={12} />
-								Easy Learning
+								Adaptive Learning
 							</Badge>
 						</motion.div>
 
@@ -48,10 +48,8 @@ export default function Hero() {
 								id="main-title"
 								className="text-4xl font-bold tracking-tight text-foreground sm:text-6xl lg:text-7xl"
 							>
-								Platform E-Learning <br />
-								<em className="italic">Adaptif</em>,
-								<br />
-								VAK & AI
+								Adaptive E-Learning Platform <br />
+								<em className="italic">Learning Analytics & AI</em>,							
 							</h1>
 						</motion.div>
 
@@ -62,10 +60,7 @@ export default function Hero() {
 							transition={{ duration: 0.5, delay: 0.2 }}
 							className="mx-auto mb-12 max-w-2xl text-lg text-muted-foreground"
 						>
-							EDUVOKA adalah platform e-learning adaptif yang memanfaatkan model
-							VAK (Visual, Auditory, Kinesthetic) dan AI (Artificial
-							Intelligence) untuk memberikan pengalaman belajar yang personal
-							dan efektif bagi setiap individu.
+							EDUVOKA helps students learn more effectively with real‑time learning analytics, burnout detection, and an AI‑powered Socratic tutor.
 						</motion.p>
 
 						<motion.div
