@@ -1,6 +1,4 @@
-export * from "../../generated/prisma/index.js";
-import { PrismaClient } from "../../generated/prisma/index.js";
-
+import { PrismaClient } from "../generated/prisma/client";
 import { PrismaMariaDb } from "@prisma/adapter-mariadb";
 import mariadb from "mariadb";
 
@@ -45,8 +43,7 @@ export const prisma =
         adapter,
         log:
             process.env.NODE_ENV === "development"
-                // ? ["query", "warn", "error"]
-                ? ["error"]
+                ? ["query", "warn", "error"]
                 : ["error"],
         errorFormat: "pretty",
     });

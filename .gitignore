@@ -41,10 +41,9 @@ yarn-error.log*
 next-env.d.ts
 generated
 
-/generated/prisma
 
-/generated/prisma
 .env*.local
 
 # agent
 .agent
+/src/generated/prisma

@@ -7,6 +7,7 @@ CREATE TABLE `User` (
     `profileImage` VARCHAR(191) NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
+    `gayaBelajar` ENUM('VISUAL', 'AUDITORY', 'KINESTHETIC') NULL,
     `role` ENUM('USER', 'ADMIN') NOT NULL DEFAULT 'USER',
     `paketUser` ENUM('BASIC', 'LITE', 'ACTIVE', 'EDUVOKA') NOT NULL DEFAULT 'BASIC',
     `isSubscribed` BOOLEAN NOT NULL DEFAULT false,
@@ -93,12 +94,13 @@ CREATE TABLE `SoalLatihanSoal` (
 -- CreateTable
 CREATE TABLE `PilihanJawaban` (
     `id` VARCHAR(191) NOT NULL,
-    `soalUTBKId` VARCHAR(191) NOT NULL,
+    `soalUTBKId` VARCHAR(191) NULL,
     `label` VARCHAR(191) NOT NULL,
     `pilihan` VARCHAR(191) NOT NULL,
     `soalLatihanId` VARCHAR(191) NOT NULL DEFAULT '',
 
     INDEX `PilihanJawaban_soalLatihanId_idx`(`soalLatihanId`),
+    INDEX `PilihanJawaban_soalUTBKId_idx`(`soalUTBKId`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -320,8 +322,120 @@ CREATE TABLE `AIPembahasan` (
     `updatedAt` DATETIME(3) NOT NULL,
 
     UNIQUE INDEX `AIPembahasan_sessionId_key`(`sessionId`),
-    INDEX `AIPembahasan_sessionId_idx`(`sessionId`),
-    INDEX `AIPembahasan_createdAt_idx`(`createdAt`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `UtbkSession` (
+    `id` VARCHAR(191) NOT NULL,
+    `userId` VARCHAR(191) NOT NULL,
+    `type` ENUM('TPS', 'LITERASI', 'TRY_OUT', 'LATIHAN') NOT NULL,
+    `startedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `endedAt` DATETIME(3) NULL,
+    `score` INTEGER NULL,
+
+    INDEX `UtbkSession_userId_idx`(`userId`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `SoalUTBK` (
+    `id` VARCHAR(191) NOT NULL,
+    `tipe` ENUM('PU', 'PBM', 'PPU', 'PK', 'LITERASIBINDO', 'LITERASIBINGG') NOT NULL,
+    `tipeSesi` ENUM('TPS', 'LITERASI', 'TRY_OUT', 'LATIHAN') NOT NULL,
+    `content` TEXT NOT NULL,
+    `kunciJawaban` VARCHAR(191) NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `PembahasanSoalUTBK` (
+    `id` VARCHAR(191) NOT NULL,
+    `soalUTBKId` VARCHAR(191) NOT NULL,
+    `gayaBelajar` ENUM('VISUAL', 'AUDITORY', 'KINESTHETIC') NOT NULL,
+    `konten` TEXT NOT NULL,
+
+    INDEX `PembahasanSoalUTBK_soalUTBKId_idx`(`soalUTBKId`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `UtbkJawabanUser` (
+    `id` VARCHAR(191) NOT NULL,
+    `sessionId` VARCHAR(191) NOT NULL,
+    `soalUTBKId` VARCHAR(191) NOT NULL,
+    `pilihanId` VARCHAR(191) NOT NULL,
+    `isCorrect` BOOLEAN NOT NULL,
+    `answeredAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    INDEX `UtbkJawabanUser_sessionId_idx`(`sessionId`),
+    INDEX `UtbkJawabanUser_soalUTBKId_idx`(`soalUTBKId`),
+    UNIQUE INDEX `UtbkJawabanUser_sessionId_soalUTBKId_key`(`sessionId`, `soalUTBKId`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `SessionMetrics` (
+    `id` VARCHAR(191) NOT NULL,
+    `sessionId` VARCHAR(191) NOT NULL,
+    `velocityScore` DOUBLE NULL,
+    `timeEfficiency` DOUBLE NULL,
+    `consistency` DOUBLE NULL,
+    `improvement` DOUBLE NULL,
+    `burnoutLevel` VARCHAR(191) NULL,
+    `fatigueIndex` DOUBLE NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    UNIQUE INDEX `SessionMetrics_sessionId_key`(`sessionId`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `RawEventLog` (
+    `id` VARCHAR(191) NOT NULL,
+    `userId` VARCHAR(191) NOT NULL,
+    `eventType` VARCHAR(191) NOT NULL,
+    `payload` TEXT NOT NULL,
+    `timestamp` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `sessionRef` VARCHAR(191) NULL,
+    `synced` BOOLEAN NOT NULL DEFAULT true,
+
+    INDEX `RawEventLog_userId_eventType_idx`(`userId`, `eventType`),
+    INDEX `RawEventLog_userId_timestamp_idx`(`userId`, `timestamp`),
+    INDEX `RawEventLog_sessionRef_idx`(`sessionRef`),
+    INDEX `RawEventLog_eventType_timestamp_idx`(`eventType`, `timestamp`),
+    INDEX `RawEventLog_timestamp_idx`(`timestamp`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `StudySession` (
+    `id` VARCHAR(191) NOT NULL,
+    `userId` VARCHAR(191) NOT NULL,
+    `materiId` VARCHAR(191) NOT NULL,
+    `startedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `endedAt` DATETIME(3) NULL,
+    `totalDuration` INTEGER NOT NULL DEFAULT 0,
+    `idleDuration` INTEGER NOT NULL DEFAULT 0,
+    `scrollDepthMax` DOUBLE NOT NULL DEFAULT 0,
+    `scrollDepthAvg` DOUBLE NOT NULL DEFAULT 0,
+    `totalScrollEvents` INTEGER NOT NULL DEFAULT 0,
+    `totalVisibleTime` INTEGER NOT NULL DEFAULT 0,
+    `totalHiddenTime` INTEGER NOT NULL DEFAULT 0,
+    `visibilityChanges` INTEGER NOT NULL DEFAULT 0,
+    `isCompleted` BOOLEAN NOT NULL DEFAULT false,
+    `isAbandoned` BOOLEAN NOT NULL DEFAULT false,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    INDEX `StudySession_userId_materiId_idx`(`userId`, `materiId`),
+    INDEX `StudySession_userId_startedAt_idx`(`userId`, `startedAt`),
+    INDEX `StudySession_materiId_idx`(`materiId`),
+    INDEX `StudySession_startedAt_idx`(`startedAt`),
+    INDEX `StudySession_isCompleted_idx`(`isCompleted`),
+    INDEX `StudySession_userId_isCompleted_idx`(`userId`, `isCompleted`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -336,6 +450,9 @@ ALTER TABLE `SoalLatihanSoal` ADD CONSTRAINT `SoalLatihanSoal_materiId_fkey` FOR
 
 -- AddForeignKey
 ALTER TABLE `PilihanJawaban` ADD CONSTRAINT `PilihanJawaban_soalLatihanId_fkey` FOREIGN KEY (`soalLatihanId`) REFERENCES `SoalLatihanSoal`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `PilihanJawaban` ADD CONSTRAINT `PilihanJawaban_soalUTBKId_fkey` FOREIGN KEY (`soalUTBKId`) REFERENCES `SoalUTBK`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `PembahasanSoalLatihan` ADD CONSTRAINT `PembahasanSoalLatihan_soalLatihanId_fkey` FOREIGN KEY (`soalLatihanId`) REFERENCES `SoalLatihanSoal`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
@@ -375,3 +492,27 @@ ALTER TABLE `WeaknessArea` ADD CONSTRAINT `WeaknessArea_materiId_fkey` FOREIGN K
 
 -- AddForeignKey
 ALTER TABLE `UserInsight` ADD CONSTRAINT `UserInsight_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `UtbkSession` ADD CONSTRAINT `UtbkSession_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `PembahasanSoalUTBK` ADD CONSTRAINT `PembahasanSoalUTBK_soalUTBKId_fkey` FOREIGN KEY (`soalUTBKId`) REFERENCES `SoalUTBK`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `UtbkJawabanUser` ADD CONSTRAINT `UtbkJawabanUser_sessionId_fkey` FOREIGN KEY (`sessionId`) REFERENCES `UtbkSession`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `UtbkJawabanUser` ADD CONSTRAINT `UtbkJawabanUser_soalUTBKId_fkey` FOREIGN KEY (`soalUTBKId`) REFERENCES `SoalUTBK`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `SessionMetrics` ADD CONSTRAINT `SessionMetrics_sessionId_fkey` FOREIGN KEY (`sessionId`) REFERENCES `UtbkSession`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `RawEventLog` ADD CONSTRAINT `RawEventLog_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `StudySession` ADD CONSTRAINT `StudySession_materiId_fkey` FOREIGN KEY (`materiId`) REFERENCES `Materi`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `StudySession` ADD CONSTRAINT `StudySession_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
