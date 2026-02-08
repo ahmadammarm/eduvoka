@@ -15,7 +15,8 @@ import {
 	Loader2,
 	TrendingUp,
 	AlertCircle,
-	BookOpen
+	BookOpen,
+	Award
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -68,6 +69,18 @@ export default function ResultPage() {
 	const [result, setResult] = useState<SessionResultData | null>(null);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
+	const [velocity, setVelocity] = useState<number | null>(null);
+	const [velocityComponents, setVelocityComponents] = useState<any>(null);
+	const [velocityLoading, setVelocityLoading] = useState(false);
+	const [mbaBoost, setMbaBoost] = useState<number>(0);
+
+	useEffect(() => {
+		// Extract mbaBoost from URL
+		const mbaBoostParam = searchParams.get('mbaBoost');
+		if (mbaBoostParam) {
+			setMbaBoost(parseInt(mbaBoostParam, 10));
+		}
+	}, [searchParams]);
 
 	useEffect(() => {
 		if (!sessionId) {
@@ -101,6 +114,37 @@ export default function ResultPage() {
 		fetchResult();
 	}, [sessionId, materiId, router]);
 
+	// Fetch Learning Velocity
+	useEffect(() => {
+		const fetchVelocity = async () => {
+			if (!result || !sessionId) return;
+
+			setVelocityLoading(true);
+			try {
+				const response = await fetch('/api/metrics/velocity', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({
+						sessionId,
+						userId: result.userId
+					})
+				});
+
+				if (response.ok) {
+					const data = await response.json();
+					setVelocity(data.velocity);
+					setVelocityComponents(data.components);
+				}
+			} catch (err) {
+				console.error('Failed to fetch velocity:', err);
+			} finally {
+				setVelocityLoading(false);
+			}
+		};
+
+		fetchVelocity();
+	}, [result, sessionId]);
+
 	const formatTime = (seconds: number) => {
 		const mins = Math.floor(seconds / 60);
 		const secs = seconds % 60;
@@ -124,6 +168,30 @@ export default function ResultPage() {
 		if (score >= 60) return 'from-yellow-400 to-yellow-600';
 		return 'from-red-400 to-red-600';
 	};
+
+	// Behavioral Analysis (DTA vs MBA)
+	const analyzeBehavior = (answers: SessionResultData['answers'], mbaBoostCount: number) => {
+		const avgTimePerQ = answers.reduce((sum, a) => sum + (a.timeSpent || 0), 0) / answers.length;
+		const quickAnswers = answers.filter(a => (a.timeSpent || 0) < 30).length;
+		const totalAnswers = answers.length;
+
+		// DTA indicators: Quick, surface-level pattern matching
+		let dtaScore = (quickAnswers / totalAnswers) * 100;
+
+		// MBA boost from Socratic discussion reduces DTA, increases MBA
+		const mbaBoostPercent = (mbaBoostCount / totalAnswers) * 40; // 40% max boost
+		dtaScore = Math.max(0, dtaScore - mbaBoostPercent);
+		const mbaScore = 100 - dtaScore;
+
+		return {
+			dtaScore: Math.round(dtaScore),
+			mbaScore: Math.round(mbaScore),
+			dominantStyle: dtaScore > 60 ? 'DTA' : mbaScore > 60 ? 'MBA' : 'BALANCED' as const,
+			mbaBoostApplied: mbaBoostCount > 0
+		};
+	};
+
+	const behavior = result ? analyzeBehavior(result.answers, mbaBoost) : null;
 
 	if (loading) {
 		return (
@@ -294,6 +362,128 @@ export default function ResultPage() {
 						</div>
 					)}
 				</div>
+
+				{/* Learning Velocity Card (PREMIUM) */}
+				<div className="bg-gradient-to-r from-purple-600 to-indigo-700 rounded-2xl shadow-2xl p-8 mb-6 text-white">
+					<div className="flex items-start justify-between mb-6">
+						<div>
+							<h3 className="text-2xl font-bold mb-2">Learning Velocity</h3>
+							<p className="text-purple-100 text-sm">Your adaptive learning speed</p>
+						</div>
+						<TrendingUp className="w-12 h-12 text-purple-200" />
+					</div>
+
+					{velocityLoading ? (
+						<div className="flex items-center justify-center py-8">
+							<Loader2 className="w-8 h-8 animate-spin text-white" />
+						</div>
+					) : velocity !== null ? (
+						<>
+							<div className="text-center mb-8">
+								<div className="text-7xl font-bold mb-2">{velocity.toFixed(1)}%</div>
+								<div className="text-purple-200">Overall Velocity Score</div>
+							</div>
+
+							{velocityComponents && (
+								<div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+									<div className="bg-white/20 backdrop-blur rounded-lg p-4 text-center">
+										<div className="text-3xl font-bold">{(velocityComponents.accuracyScore * 100).toFixed(0)}%</div>
+										<div className="text-xs text-purple-100 mt-1">Accuracy</div>
+									</div>
+									<div className="bg-white/20 backdrop-blur rounded-lg p-4 text-center">
+										<div className="text-3xl font-bold">{(velocityComponents.difficultyScore * 100).toFixed(0)}%</div>
+										<div className="text-xs text-purple-100 mt-1">Difficulty</div>
+									</div>
+									<div className="bg-white/20 backdrop-blur rounded-lg p-4 text-center">
+										<div className="text-3xl font-bold">{(velocityComponents.timeEfficiency * 100).toFixed(0)}%</div>
+										<div className="text-xs text-purple-100 mt-1">Speed</div>
+									</div>
+									<div className="bg-white/20 backdrop-blur rounded-lg p-4 text-center">
+										<div className="text-3xl font-bold">{(velocityComponents.improvement * 100).toFixed(0)}%</div>
+										<div className="text-xs text-purple-100 mt-1">Growth</div>
+									</div>
+								</div>
+							)}
+						</>
+					) : (
+						<div className="text-center py-8">
+							<p className="text-purple-100">Velocity data unavailable</p>
+						</div>
+					)}
+				</div>
+
+				{/* Behavioral Map (DTA vs MBA) */}
+				{behavior && (
+					<div className="bg-white rounded-2xl shadow-xl p-8 mb-6 border border-gray-100">
+						<div className="flex items-center gap-3 mb-6">
+							<div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center">
+								<span className="text-2xl">🧠</span>
+							</div>
+							<div>
+								<h3 className="text-2xl font-bold text-gray-900">Learning Style Analysis</h3>
+								<p className="text-sm text-gray-600">Understanding how you approach problems</p>
+							</div>
+						</div>
+
+						{behavior.mbaBoostApplied && (
+							<div className="mb-6 p-3 bg-green-50 border border-green-200 rounded-lg">
+								<p className="text-sm text-green-800 flex items-center gap-2">
+									<Award className="w-4 h-4" />
+									<span className="font-semibold">MBA Boost Applied!</span> Your Socratic review discussions improved your conceptual thinking score.
+								</p>
+							</div>
+						)}
+
+						<div className="flex items-center justify-between mb-8">
+							<div className="text-center flex-1">
+								<div className="text-5xl mb-2">⚡</div>
+								<div className="text-2xl font-bold text-gray-900">DTA</div>
+								<div className="text-3xl font-bold text-blue-600 mb-1">{behavior.dtaScore}%</div>
+								<p className="text-xs text-gray-600">Direct Translation</p>
+								<p className="text-xs text-gray-500 mt-1">Procedural & Rule-based</p>
+							</div>
+
+							<div className="flex-1 px-8">
+								<div className="relative h-6 bg-gray-200 rounded-full overflow-hidden">
+									<div
+										className="absolute left-0 h-6 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full transition-all duration-500"
+										style={{ width: `${behavior.dtaScore}%` }}
+									/>
+									<div
+										className="absolute right-0 h-6 bg-gradient-to-r from-purple-600 to-purple-500 rounded-full transition-all duration-500"
+										style={{ width: `${behavior.mbaScore}%` }}
+									/>
+								</div>
+								<div className="text-center mt-2">
+									<span className={`text-sm font-bold ${behavior.dominantStyle === 'BALANCED' ? 'text-green-600' : 'text-gray-600'
+										}`}>
+										{behavior.dominantStyle === 'BALANCED' && '✓ '}
+										{behavior.dominantStyle}
+									</span>
+								</div>
+							</div>
+
+							<div className="text-center flex-1">
+								<div className="text-5xl mb-2">💡</div>
+								<div className="text-2xl font-bold text-gray-900">MBA</div>
+								<div className="text-3xl font-bold text-purple-600 mb-1">{behavior.mbaScore}%</div>
+								<p className="text-xs text-gray-600">Meaning-Based</p>
+								<p className="text-xs text-gray-500 mt-1">Conceptual & Reasoning</p>
+							</div>
+						</div>
+
+						<div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+							<p className="text-sm text-blue-900">
+								<span className="font-semibold">💡 Insight:</span>{' '}
+								{behavior.dominantStyle === 'DTA'
+									? 'You tend to use procedural approaches. Try spending more time understanding the WHY behind concepts, not just the HOW.'
+									: behavior.dominantStyle === 'MBA'
+										? 'You excel at conceptual thinking! Consider practicing pattern recognition to improve speed on time-critical tests.'
+										: '✅ Perfect balance! You combine quick pattern recognition with deep understanding—an ideal approach for UTBK.'}
+							</p>
+						</div>
+					</div>
+				)}
 
 				{/* Recommendations */}
 				<div className="bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl shadow-lg p-6 mb-6 text-white">

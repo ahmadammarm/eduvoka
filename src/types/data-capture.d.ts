@@ -52,8 +52,13 @@ export interface StudySessionState {
     startedAt: number;
     totalActiveTime: number;     // seconds
     totalIdleTime: number;       // seconds
+    totalHiddenTime: number;     // seconds
+    totalScrollEvents: number;   // count
+    visibilityChanges: number;   // count
     scrollDepthMax: number;      // 0-100
     scrollDepthCurrent: number;  // 0-100
+    scrollDepthSum: number;      // sum of all scroll depth readings (for avg calculation)
+    scrollDepthReadings: number; // count of scroll depth readings
     lastActivityAt: number;      // timestamp
 }
 
