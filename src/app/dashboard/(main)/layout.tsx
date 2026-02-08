@@ -4,6 +4,7 @@ import {
 	BreadcrumbList,
 	BreadcrumbPage,
 } from "@/components/ui/breadcrumb";
+import { ScientificMethodologyCard } from "../_components/ScientificMethodologyCard";
 
 export default function MainLayout({
 	children,
@@ -48,6 +49,10 @@ export default function MainLayout({
 
 			{/* analytics */}
 			{analytics}
+
+			<div className="pb-8">
+				<ScientificMethodologyCard />
+			</div>
 		</div>
 	);
 }

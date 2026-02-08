@@ -1,4 +1,4 @@
-import { Book } from 'lucide-react';
+import { Book, ArrowUpRight } from 'lucide-react';
 
 export const ScientificMethodologyCard = () => {
     return (
@@ -53,13 +53,36 @@ export const ScientificMethodologyCard = () => {
                 </div>
             </div>
 
-            <div className="mt-6 pt-6 border-t border-gray-200 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-500">
-                <p>
-                    <strong>Formula:</strong> Velocity = (Acc × 30%) + (Diff × 20%) + (Time × 20%) + (Consistency × 15%) + (Growth × 10%) + (Eng × 5%)
-                </p>
-                <div className="flex gap-2">
-                    <span className="px-2 py-1 bg-gray-200 rounded">CogSci v2.1</span>
-                    <span className="px-2 py-1 bg-gray-200 rounded">Adaptive Learning</span>
+            <div className="mt-6 pt-6 border-t border-gray-200">
+                <div className="flex items-start gap-2 mb-4">
+                    <div className="p-1 bg-green-100 rounded">
+                        <Book className="w-4 h-4 text-green-700" />
+                    </div>
+                    <div>
+                        <p className="text-xs font-semibold text-gray-900">Scientific Reference:</p>
+                        <a
+                            href="https://joiv.org/index.php/joiv/article/view/1361"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-xs text-blue-600 hover:underline flex items-center gap-1"
+                        >
+                            "Optimizing Educational Assessment: The Practicality of CAT with IRT Approach" (JOIV, 2023)
+                            <ArrowUpRight className="w-3 h-3" />
+                        </a>
+                        <p className="text-[10px] text-gray-500 mt-1">
+                            DOI: <a href="https://doi.org/10.30605/joiv.7.3.2023.3361" target="_blank" rel="noopener noreferrer" className="hover:underline">10.30605/joiv.7.3.2023.3361</a> | Open Access
+                        </p>
+                    </div>
+                </div>
+
+                <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-500">
+                    <p>
+                        <strong>Formula:</strong> Velocity = (Acc × 30%) + (Diff × 20%) + (Time × 20%) + (Consistency × 15%) + (Growth × 10%) + (Eng × 5%)
+                    </p>
+                    <div className="flex gap-2">
+                        <span className="px-2 py-1 bg-gray-200 rounded">CogSci v2.1</span>
+                        <span className="px-2 py-1 bg-gray-200 rounded">Adaptive Learning</span>
+                    </div>
                 </div>
             </div>
         </div>
