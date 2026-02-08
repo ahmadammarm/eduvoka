@@ -7,10 +7,10 @@ import {
 
 export default function MainLayout({
 	children,
-	leaderboard,
+	analytics,
 }: {
 	children: React.ReactNode;
-	leaderboard: React.ReactNode;
+	analytics: React.ReactNode;
 }) {
 	return (
 		<div className="flex flex-1 flex-col gap-4 px-4 pt-0">
@@ -28,7 +28,7 @@ export default function MainLayout({
 			</div>
 
 			{/* statistics */}
-			<div className="grid auto-rows-min gap-4 md:grid-cols-4">
+			{/* <div className="grid auto-rows-min gap-4 md:grid-cols-4">
 				<div className="bg-white dark:bg-stone-900 aspect-video rounded-xl flex items-center justify-center h-full">
 					Statistic
 				</div>
@@ -41,18 +41,18 @@ export default function MainLayout({
 				<div className="bg-white dark:bg-stone-900 aspect-video rounded-xl flex items-center justify-center h-full">
 					Statistic
 				</div>
-			</div>
+			</div> */}
+
+			{/* analytics */}
+			{analytics}
 
 			{/* main content + leaderboard */}
-			<div className="grid auto-rows-min gap-4 md:grid-cols-2 min-h-200">
+			{/* <div className="grid auto-rows-min gap-4 md:grid-cols-2 min-h-200">
 				{children}
-				{leaderboard}
-			</div>
-
-			{/* Analytics */}
-			<div className="bg-white dark:bg-stone-900 aspect-video rounded-xl flex items-center justify-center h-full">
-				Analytics
-			</div>
+				<div className="bg-white dark:bg-stone-900 rounded-xl flex items-center justify-center h-full">
+					Analytics
+				</div>
+			</div> */}
 		</div>
 	);
 }

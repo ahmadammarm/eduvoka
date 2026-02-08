@@ -40,16 +40,21 @@ const data = {
 				},
 				{
 					icon: Book,
-					title: "Try Out UTBK",
-					url: "/dashboard/utbk-tryout",
+					title: "Materi Belajar",
+					url: "/dashboard/materi",
 				},
 				{
 					icon: NotebookText,
+					title: "Latihan Soal UTBK",
+					url: "/dashboard/latihan-soal",
+				},
+				{
+					icon: FilePen,
 					title: "Generate Soal",
 					url: "/dashboard/generate-soal",
 				},
 				{
-					icon: FilePen,
+					icon: NotebookText,
 					title: "Evaluasi",
 					url: "/dashboard/evaluasi",
 				},
