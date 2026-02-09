@@ -10,7 +10,7 @@ export default async function AnalyticsContent() {
     const data = await getAnalyticsData();
 
     return (
-        <div className="bg-white dark:bg-stone-900 rounded-xl p-6 space-y-6">
+        <div className="bg-white dark:bg-stone-900 rounded-xl p-6 space-y-6 shadow-sm border">
 
             <OverviewCards stats={data.overview} />
 
