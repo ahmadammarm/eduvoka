@@ -4,6 +4,14 @@ import { useMateriList } from '@/hooks/use-latihan-soal';
 import { LatihanSoalType } from '@/types/latihan-soal';
 import Link from 'next/link';
 import { Book, ChevronRight, Loader2 } from 'lucide-react';
+import {
+	Breadcrumb,
+	BreadcrumbItem,
+	BreadcrumbLink,
+	BreadcrumbList,
+	BreadcrumbPage,
+	BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 
 const KATEGORI_LABELS: Record<LatihanSoalType, string> = {
     PU: 'General Reasoning',
@@ -45,24 +53,35 @@ export default function LatihanSoalPage() {
     }
 
     return (
-        <div className="container mx-auto px-4 py-8 max-w-6xl">
-            <div className="mb-8">
-                <h1 className="text-3xl font-bold text-gray-900 mb-2">
+        <div className="flex flex-1 flex-col gap-4 px-6 pt-2">
+            <Breadcrumb>
+				<BreadcrumbList>
+					<BreadcrumbItem>
+						<BreadcrumbLink href="/dashboard" className="text-gray-500 dark:text-gray-400 dark:hover:text-white">Dashboard</BreadcrumbLink>
+					</BreadcrumbItem>
+					<BreadcrumbSeparator />
+					<BreadcrumbItem>
+						<BreadcrumbPage className="text-black dark:text-white">Practice Questions</BreadcrumbPage>
+					</BreadcrumbItem>
+				</BreadcrumbList>
+			</Breadcrumb>
+            <div className='mb-2'>
+                <h1 className="md:text-3xl text-lg font-bold tracking-tight">
                     UTBK Practice Questions
                 </h1>
-                <p className="text-gray-600">
+                <p className="text-muted-foreground mt-2">
                     Select the material you want to study
                 </p>
             </div>
 
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {materiList.map((materi) => (
                     <Link
                         key={materi.id}
                         href={`/dashboard/latihan-soal/${materi.id}`}
                         className="block group"
                     >
-                        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
+                        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
                             <div className="flex items-start justify-between mb-4">
                                 <div
                                     className={`${KATEGORI_COLORS[materi.kategori]} w-12 h-12 rounded-lg flex items-center justify-center text-white`}

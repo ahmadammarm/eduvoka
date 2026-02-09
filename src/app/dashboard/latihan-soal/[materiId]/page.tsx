@@ -7,6 +7,14 @@ import { useSoalByMateri } from '@/hooks/use-latihan-soal';
 import { SessionType } from '@/types/latihan-soal';
 import { Book, Clock, Target, Loader2, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
+import {
+	Breadcrumb,
+	BreadcrumbItem,
+	BreadcrumbLink,
+	BreadcrumbList,
+	BreadcrumbPage,
+	BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 
 export default function MateriDetailPage() {
 	const params = useParams();
@@ -62,16 +70,38 @@ export default function MateriDetailPage() {
 	}
 
 	return (
-		<div className="container mx-auto px-4 py-8 max-w-4xl">
+		<div className="flex flex-1 flex-col gap-4 px-6 pt-2">
+			<Breadcrumb>
+				<BreadcrumbList>
+					<BreadcrumbItem>
+						<BreadcrumbLink href="/dashboard" className="text-gray-500 dark:text-gray-400 dark:hover:text-white">Dashboard</BreadcrumbLink>
+					</BreadcrumbItem>
+					<BreadcrumbSeparator />
+					<BreadcrumbItem>
+						<BreadcrumbLink href="/dashboard/latihan-soal" className="text-gray-500 dark:text-gray-400 dark:hover:text-white">Practice Questions</BreadcrumbLink>
+					</BreadcrumbItem>
+					<BreadcrumbSeparator />
+					<BreadcrumbItem>
+						<BreadcrumbPage className="text-black dark:text-white">{materi.nama}</BreadcrumbPage>
+					</BreadcrumbItem>
+				</BreadcrumbList>
+			</Breadcrumb>
+			<div className="flex items-center justify-between mb-2">
+				<div>
+					<h1 className="md:text-3xl text-lg font-bold tracking-tight">{materi.nama}</h1>					
+				</div>
+			</div>
+
+			<div className="container mx-auto px-4 max-w-4xl space-y-6">
 			<Link
 				href="/dashboard/latihan-soal"
-				className="inline-flex items-center text-blue-600 hover:text-blue-700 mb-6"
+				className="inline-flex items-center text-blue-600 hover:text-blue-700"
 			>
 				<ArrowLeft className="w-4 h-4 mr-2" />
 				Back to Material List
 			</Link>
 
-			<div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 mb-6">
+			<div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 mb-6">
 				<div className="flex items-start gap-4 mb-6">
 					<div className="bg-blue-500 w-16 h-16 rounded-lg flex items-center justify-center text-white flex-shrink-0">
 						<Book className="w-8 h-8" />
@@ -86,7 +116,7 @@ export default function MateriDetailPage() {
 					</div>
 				</div>
 
-				<div className="grid grid-cols-3 gap-4 mb-8">
+				<div className="grid grid-cols-2 gap-4 mb-8">
 					<div className="bg-gray-50 rounded-lg p-4">
 						<Target className="w-5 h-5 text-blue-500 mb-2" />
 						<div className="text-2xl font-bold text-gray-900">
@@ -166,6 +196,7 @@ export default function MateriDetailPage() {
 						No questions available for this mode
 					</p>
 				)}
+			</div>
 			</div>
 		</div>
 	);

@@ -3,6 +3,14 @@
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import {
+	Breadcrumb,
+	BreadcrumbItem,
+	BreadcrumbLink,
+	BreadcrumbList,
+	BreadcrumbPage,
+	BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
+import {
     ActivitySquare,
     Target,
     TrendingUp,
@@ -88,10 +96,10 @@ export default function LearningVelocityPage() {
         description: string;
         color: string;
     }) => (
-        <div className="bg-white rounded-xl p-6 border border-gray-200 hover:shadow-lg transition-shadow">
+        <div className="bg-white rounded-xl p-6 border border-gray-200 hover:shadow-md shadow-sm transition-shadow">
             <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center gap-3">
-                    <div className={`p-3 rounded-lg ${color} bg-opacity-10`}>
+                    <div className={`p-3 border rounded-full ${color} bg-opacity-10`}>
                         <Icon className={`w-6 h-6 ${color}`} />
                     </div>
                     <div>
@@ -125,9 +133,29 @@ export default function LearningVelocityPage() {
     const gradeInfo = velocityData ? getVelocityGrade(velocityData.velocity) : null;
 
     return (
-        <div className="max-w-7xl mx-auto p-6 space-y-6">
+        <div className="flex flex-1 flex-col gap-4 px-6 pt-2">
+            <Breadcrumb>
+				<BreadcrumbList>
+					<BreadcrumbItem>
+						<BreadcrumbLink href="/dashboard" className="text-gray-500 dark:text-gray-400 dark:hover:text-white">Dashboard</BreadcrumbLink>
+					</BreadcrumbItem>
+					<BreadcrumbSeparator />
+					<BreadcrumbItem>
+						<BreadcrumbPage className="text-black dark:text-white">Learning Velocity</BreadcrumbPage>
+					</BreadcrumbItem>
+				</BreadcrumbList>
+			</Breadcrumb>
+			<div className="flex items-center justify-between mb-2">
+				<div>
+					<h1 className="md:text-3xl text-lg font-bold tracking-tight">Learning Velocity</h1>
+					<p className="text-muted-foreground mt-2">
+						Track your learning effectiveness with precision metrics across 5 key dimensions
+					</p>
+				</div>
+			</div>
+
             {/* Header */}
-            <div className="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-2xl p-8 text-white shadow-xl">
+            {/* <div className="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-2xl p-8 text-white shadow-xl">
                 <div className="flex items-center gap-3 mb-4">
                     <ActivitySquare className="w-10 h-10" />
                     <h1 className="text-4xl font-bold">Learning Velocity</h1>
@@ -135,12 +163,14 @@ export default function LearningVelocityPage() {
                 <p className="text-indigo-100 text-lg">
                     Track your learning effectiveness with precision metrics across 5 key dimensions
                 </p>
-            </div>
+            </div> */}
 
             {/* Main Velocity Score */}
+            <div className='space-y-6'>
+
             {velocityData ? (
                 <>
-                    <div className={`bg-white rounded-2xl p-8 border-2 ${gradeInfo?.border} shadow-lg`}>
+                    <div className={`bg-white rounded-2xl p-8 border-2 ${gradeInfo?.border} shadow-sm`}>
                         <div className="flex items-center justify-between">
                             <div>
                                 <p className="text-gray-600 text-sm font-medium uppercase mb-2">Overall Learning Velocity</p>
@@ -272,6 +302,7 @@ export default function LearningVelocityPage() {
 
             {/* Scientific Methodology Information Card */}
             <ScientificMethodologyCard />
+            </div>
         </div>
     );
 }

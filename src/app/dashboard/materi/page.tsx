@@ -7,6 +7,14 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { BookOpen, Search, Plus, Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import {
+	Breadcrumb,
+	BreadcrumbItem,
+	BreadcrumbLink,
+	BreadcrumbList,
+	BreadcrumbPage,
+	BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 
 interface Materi {
 	id: string;
@@ -56,10 +64,21 @@ export default function MateriPage() {
 	}
 
 	return (
-		<div className="container mx-auto p-6 space-y-6">
-			<div className="flex items-center justify-between">
+		<div className="flex flex-1 flex-col gap-4 px-6 pt-2">
+			<Breadcrumb>
+				<BreadcrumbList>
+					<BreadcrumbItem>
+						<BreadcrumbLink href="/dashboard" className="text-gray-500 dark:text-gray-400 dark:hover:text-white">Dashboard</BreadcrumbLink>
+					</BreadcrumbItem>
+					<BreadcrumbSeparator />
+					<BreadcrumbItem>
+						<BreadcrumbPage className="text-black dark:text-white">Learning Material</BreadcrumbPage>
+					</BreadcrumbItem>
+				</BreadcrumbList>
+			</Breadcrumb>
+			<div className="flex items-center justify-between mb-2">
 				<div>
-					<h1 className="text-3xl font-bold tracking-tight">Learning Materials</h1>
+					<h1 className="md:text-3xl text-lg font-bold tracking-tight">Learning Materials</h1>
 					<p className="text-muted-foreground mt-2">
 						Manage and access your learning materials
 					</p>
@@ -70,19 +89,20 @@ export default function MateriPage() {
 				</Button>
 			</div>
 
-			<div className="relative">
+			<div className='space-y-6'>
+				<div className="relative">
 				<Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
 				<Input
 					placeholder="Search materials..."
 					value={searchQuery}
 					onChange={(e) => setSearchQuery(e.target.value)}
-					className="pl-10"
+					className="pl-10 h-12 shadow-sm rounded-xl border border-muted-foreground/10 focus:border-primary focus:ring-0 w-full"
 				/>
 			</div>
 
 			<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 				{filteredMateris.map((materi) => (
-					<Card key={materi.id} className="hover:shadow-lg transition-shadow">
+					<Card key={materi.id} className="hover:shadow-md shadow-sm rounded-xl transition-shadow">
 						<CardHeader>
 							<div className="flex items-start gap-3">
 								<div className="p-2 bg-primary/10 rounded-lg">
@@ -100,7 +120,7 @@ export default function MateriPage() {
 							<p className="text-sm text-muted-foreground line-clamp-3 mb-4">
 								{materi.deskripsi}
 							</p>
-							<Button variant="outline" className="w-full" onClick={handleDetailMateri.bind(null, materi.id)}>
+							<Button variant="outline" className="w-full shadow-none" onClick={handleDetailMateri.bind(null, materi.id)}>
 								View Details
 							</Button>
 						</CardContent>
@@ -117,6 +137,7 @@ export default function MateriPage() {
 					</p>
 				</div>
 			)}
+			</div>
 		</div>
 	);
 }
