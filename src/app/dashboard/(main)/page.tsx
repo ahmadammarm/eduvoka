@@ -7,9 +7,9 @@ import Link from "next/link";
 export default function Page() {
 	return (
 		<div className="space-y-8">
-			<div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+			<div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
 				{/* Hero Action Card */}
-				<Card className="col-span-full bg-gradient-to-r from-orange-500 to-amber-600 text-white border-none shadow-lg">
+				<Card className="col-span-full bg-gradient-to-r from-orange-500 to-amber-600 text-white border-none shadow-sm">
 					<CardHeader>
 						<CardTitle className="text-2xl md:text-3xl font-bold">
 							Welcome back, Scholar!
@@ -35,7 +35,7 @@ export default function Page() {
 				</Card>
 
 				{/* Quick Stats / Info Cards */}
-				<Card className="hover:shadow-md transition-shadow">
+				<Card className="hover:shadow-md transition-shadow shadow-sm">
 					<CardHeader className="pb-2">
 						<CardTitle className="text-lg font-medium">Learning Velocity</CardTitle>
 					</CardHeader>
@@ -48,7 +48,7 @@ export default function Page() {
 					</CardContent>
 				</Card>
 
-				<Card className="hover:shadow-md transition-shadow">
+				<Card className="hover:shadow-md shadow-sm transition-shadow">
 					<CardHeader className="pb-2">
 						<CardTitle className="text-lg font-medium">Daily Goal</CardTitle>
 					</CardHeader>
@@ -61,7 +61,7 @@ export default function Page() {
 					</CardContent>
 				</Card>
 
-				<Card className="hover:shadow-md transition-shadow md:col-span-2 lg:col-span-1">
+				<Card className="hover:shadow-md shadow-sm transition-shadow md:col-span-2 lg:col-span-1">
 					<CardHeader className="pb-2">
 						<CardTitle className="text-lg font-medium">Recommended Topic</CardTitle>
 					</CardHeader>

@@ -2,7 +2,7 @@ import { Book, ArrowUpRight } from 'lucide-react';
 
 export const ScientificMethodologyCard = () => {
     return (
-        <div className="bg-gray-50 rounded-2xl p-8 border border-gray-200 mt-8">
+        <div className="bg-gray-50 rounded-2xl p-8 border border-gray-200 shadow-sm">
             <div className="flex items-center gap-3 mb-6">
                 <div className="p-2 bg-indigo-100 rounded-lg">
                     <Book className="w-6 h-6 text-indigo-700" />
