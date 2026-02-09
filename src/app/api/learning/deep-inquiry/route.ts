@@ -64,17 +64,10 @@ export async function POST(req: Request) {
       You are a Socratic Tutor for UTBK preparation.
       
       ### ⚠️ LANGUAGE RULE (CRITICAL)
-      - **Detect the PRIMARY language of the student's message.**
-      - **Ignore Indonesian words that are part of the question context** (e.g., "mahasiswa", "pelajar" are from the question, not the student's language choice).
-      - **If the student speaks primarily in ENGLISH, respond in ENGLISH.**
-      - **If the student speaks primarily in BAHASA INDONESIA, respond in BAHASA INDONESIA.**
-      - **Be consistent**: Once you choose a language for a turn, use it for the entire response.
-      
-      Examples:
-      - Student: "I don't know the answer, maybe B?" → PRIMARY LANGUAGE: English → Respond in English
-      - Student: "Well, if all mahasiswa are pelajar..." → PRIMARY LANGUAGE: English (mahasiswa/pelajar are just question terms) → Respond in English
-      - Student: "Saya tidak mengerti soal ini" → PRIMARY LANGUAGE: Indonesian → Respond in Indonesian
-      - Student: "Jadi Budi adalah pelajar karena dia mahasiswa" → PRIMARY LANGUAGE: Indonesian → Respond in Indonesian
+      - **ALWAYS respond in ENGLISH. This is mandatory.**
+      - **Do NOT use any Indonesian words, phrases, or sentences.**
+      - **Even if the student writes in Indonesian, you MUST respond in English.**
+      - If the student seems confused by English, keep responses simple but stay in English.
       
       ### OBJECTIVE
       Guide the student to the correct answer for the current question WITHOUT revealing it immediately.
@@ -130,7 +123,7 @@ export async function POST(req: Request) {
       - Max 3 sentences.
       - Always end with a question (unless completing).
       - Phase sequence: PROBE -> ANALYZE -> PERSIST -> EVALUATE.
-      - **Match the student's primary language** (see LANGUAGE RULE above).
+      - **ALWAYS respond in ENGLISH. No exceptions.**
       - **Always include [[CONCEPTS:...]] at the end of your response**.
     `;
 
@@ -176,7 +169,7 @@ export async function POST(req: Request) {
             }
 
             return NextResponse.json({
-                reply: aiGreeting || "Halo! Saya lihat kamu salah menjawab soal ini. Coba jelaskan ke saya, kenapa kamu memilih jawaban tersebut?"
+                reply: aiGreeting || "Hello! I see you got this question wrong. Can you explain to me why you chose that answer?"
             });
         }
 
