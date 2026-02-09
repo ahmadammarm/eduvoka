@@ -499,17 +499,25 @@ export default function PracticePage() {
 			if (burnout && burnout.burnoutLevel !== 'NONE') {
 				showBurnoutWarning(burnout);
 			} else {
-				// Direct redirect
-				router.push(`/dashboard/latihan-soal/${materiId}/result?sessionId=${sessionId}`);
+				// Direct redirect to REVIEW (Socratic flow), not result
+				router.push(`/dashboard/latihan-soal/${materiId}/review?sessionId=${sessionId}`);
 			}
 
 		} catch (err) {
 			console.error('[handleFinish] Error:', err);
 
+			// Ignore "insufficient data" error and proceed to review
+			const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+			if (errorMessage.includes("minimal") || errorMessage.includes("Insufficient data")) {
+				console.warn("Ignoring burnout error (insufficient data), proceeding to review.");
+				router.push(`/dashboard/latihan-soal/${materiId}/review?sessionId=${sessionId}`);
+				return;
+			}
+
 			Swal.fire({
 				icon: 'error',
 				title: 'Gagal Menyelesaikan',
-				text: err instanceof Error ? err.message : 'Terjadi kesalahan. Silakan coba lagi.',
+				text: errorMessage,
 				confirmButtonColor: '#3b82f6',
 				footer: `<small>SessionId: ${sessionId}</small>`
 			});
