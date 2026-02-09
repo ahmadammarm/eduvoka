@@ -5,7 +5,7 @@ import { Role, PaketUser, LatihanSoalType, SessionType } from "../src/generated/
 // ==================== USER SEEDER ====================
 async function CreateUsers() {
 	console.log("👤 Seeding Users...");
-	
+
 	const users = [
 		{
 			id: "user-admin-001",
@@ -62,87 +62,87 @@ async function CreateUsers() {
 
 // ==================== MATERI SEEDER ====================
 async function CreateMateri() {
-	console.log("📚 Seeding Materi...");
-	
+	console.log("📚 Seeding Material Topics...");
+
 	const materiData = [
 		{
 			id: "materi-pu-001",
-			nama: "Penalaran Logis",
+			nama: "Logical Reasoning",
 			kategori: LatihanSoalType.PU,
 			deskripsi:
-				"Materi tentang penalaran logis, silogisme, dan analisis argumen. Pelajari cara berpikir sistematis dan menarik kesimpulan yang valid.",
+				"Topics on logical reasoning, syllogisms, and argument analysis. Learn to think systematically and draw valid conclusions.",
 			urutan: 1,
 		},
 		{
 			id: "materi-pu-002",
-			nama: "Penalaran Analitis",
+			nama: "Analytical Reasoning",
 			kategori: LatihanSoalType.PU,
 			deskripsi:
-				"Materi tentang analisis data, grafik, dan tabel untuk pengambilan keputusan.",
+				"Topics on data analysis, graphs, and tables for decision making.",
 			urutan: 2,
 		},
 		{
 			id: "materi-pbm-001",
-			nama: "Struktur Paragraf",
+			nama: "Paragraph Structure",
 			kategori: LatihanSoalType.PBM,
 			deskripsi:
-				"Materi tentang ide pokok, kalimat utama, dan pengembangan paragraf yang efektif.",
+				"Topics on main ideas, topic sentences, and effective paragraph development.",
 			urutan: 3,
 		},
 		{
 			id: "materi-pbm-002",
-			nama: "Teks Argumentasi",
+			nama: "Argumentative Text",
 			kategori: LatihanSoalType.PBM,
 			deskripsi:
-				"Materi tentang struktur argumentasi, premis, dan kesimpulan dalam teks.",
+				"Topics on argumentation structure, premises, and conclusions in texts.",
 			urutan: 4,
 		},
 		{
 			id: "materi-ppu-001",
-			nama: "Sejarah Indonesia",
+			nama: "History of Indonesia",
 			kategori: LatihanSoalType.PPU,
 			deskripsi:
-				"Materi tentang sejarah kemerdekaan dan perkembangan Indonesia dari masa ke masa.",
+				"Topics on the history of independence and the development of Indonesia over time.",
 			urutan: 5,
 		},
 		{
 			id: "materi-ppu-002",
-			nama: "Geografi Indonesia",
+			nama: "Geography of Indonesia",
 			kategori: LatihanSoalType.PPU,
 			deskripsi:
-				"Materi tentang kondisi geografis, iklim, dan sumber daya alam Indonesia.",
+				"Topics on geographical conditions, climate, and natural resources of Indonesia.",
 			urutan: 6,
 		},
 		{
 			id: "materi-pk-001",
-			nama: "Aljabar Dasar",
+			nama: "Basic Algebra",
 			kategori: LatihanSoalType.PK,
 			deskripsi:
-				"Materi tentang persamaan linear, kuadrat, dan sistem persamaan.",
+				"Topics on linear equations, quadratic equations, and systems of equations.",
 			urutan: 7,
 		},
 		{
 			id: "materi-pk-002",
-			nama: "Geometri",
+			nama: "Geometry",
 			kategori: LatihanSoalType.PK,
 			deskripsi:
-				"Materi tentang bangun datar, bangun ruang, dan perhitungan luas serta volume.",
+				"Topics on flat shapes, spatial shapes, and calculations of area and volume.",
 			urutan: 8,
 		},
 		{
 			id: "materi-litindo-001",
-			nama: "Pemahaman Kosakata",
+			nama: "Vocabulary Comprehension",
 			kategori: LatihanSoalType.LITERASIBINDO,
 			deskripsi:
-				"Materi tentang makna kata, sinonim, antonim, dan konteks penggunaan dalam Bahasa Indonesia.",
+				"Topics on word meanings, synonyms, antonyms, and context of use in Indonesian.",
 			urutan: 9,
 		},
 		{
 			id: "materi-litindo-002",
-			nama: "Bacaan Pemahaman",
+			nama: "Reading Comprehension",
 			kategori: LatihanSoalType.LITERASIBINDO,
 			deskripsi:
-				"Materi tentang teknik membaca cepat dan memahami isi bacaan secara komprehensif.",
+				"Topics on speed reading techniques and comprehensive understanding of reading content.",
 			urutan: 10,
 		},
 	];
@@ -157,32 +157,32 @@ async function CreateMateri() {
 			},
 			create: materi,
 		});
-		console.log(`  ✓ Materi: ${materi.nama}`);
+		console.log(`  ✓ Material: ${materi.nama}`);
 	}
 
-	console.log("✅ Materi seeded successfully\n");
+	console.log("✅ Topics seeded successfully\n");
 }
 
 // ==================== LATIHAN SOAL SEEDER ====================
 async function CreateLatihanSoal() {
 	console.log("📝 Seeding Latihan Soal...");
-	
-	// ========== PENALARAN LOGIS (15 soal) ==========
+
+	// ========== LOGICAL REASONING (15 questions) ==========
 	const soalPU = [
 		{
 			id: "latihan-pu-001",
 			materiId: "materi-pu-001",
 			tipe: LatihanSoalType.PU,
 			tipeSesi: SessionType.LATIHAN,
-			content: "Semua mahasiswa adalah pelajar. Budi adalah mahasiswa. Kesimpulannya adalah...",
+			content: "All university students are learners. Budi is a university student. The conclusion is...",
 			kunciJawaban: "A",
 			tingkatKesulitan: 2,
 			pilihan: [
-				["A", "Budi adalah pelajar"],
-				["B", "Budi bukan pelajar"],
-				["C", "Semua pelajar adalah mahasiswa"],
-				["D", "Tidak ada kesimpulan"],
-				["E", "Budi adalah dosen"],
+				["A", "Budi is a learner"],
+				["B", "Budi is not a learner"],
+				["C", "All learners are university students"],
+				["D", "No conclusion can be drawn"],
+				["E", "Budi is a lecturer"],
 			],
 		},
 		{
@@ -190,15 +190,15 @@ async function CreateLatihanSoal() {
 			materiId: "materi-pu-001",
 			tipe: LatihanSoalType.PU,
 			tipeSesi: SessionType.LATIHAN,
-			content: "Jika hari ini hujan, maka jalanan basah. Jalanan tidak basah. Maka...",
+			content: "If it rains today, the streets will be wet. The streets are not wet. Therefore...",
 			kunciJawaban: "B",
 			tingkatKesulitan: 3,
 			pilihan: [
-				["A", "Hari ini hujan"],
-				["B", "Hari ini tidak hujan"],
-				["C", "Jalanan kering"],
-				["D", "Besok hujan"],
-				["E", "Tidak dapat disimpulkan"],
+				["A", "It is raining today"],
+				["B", "It is not raining today"],
+				["C", "The streets are dry"],
+				["D", "It will rain tomorrow"],
+				["E", "Cannot be concluded"],
 			],
 		},
 		{
@@ -206,15 +206,15 @@ async function CreateLatihanSoal() {
 			materiId: "materi-pu-001",
 			tipe: LatihanSoalType.PU,
 			tipeSesi: SessionType.LATIHAN,
-			content: "Semua dokter adalah sarjana. Sebagian sarjana adalah PNS. Kesimpulannya...",
+			content: "All doctors are graduates. Some graduates are civil servants. The conclusion is...",
 			kunciJawaban: "C",
 			tingkatKesulitan: 3,
 			pilihan: [
-				["A", "Semua dokter adalah PNS"],
-				["B", "Semua PNS adalah dokter"],
-				["C", "Sebagian dokter mungkin PNS"],
-				["D", "Tidak ada dokter yang PNS"],
-				["E", "Semua sarjana adalah dokter"],
+				["A", "All doctors are civil servants"],
+				["B", "All civil servants are doctors"],
+				["C", "Some doctors may be civil servants"],
+				["D", "No doctor is a civil servant"],
+				["E", "All graduates are doctors"],
 			],
 		},
 		{
@@ -222,15 +222,15 @@ async function CreateLatihanSoal() {
 			materiId: "materi-pu-001",
 			tipe: LatihanSoalType.PU,
 			tipeSesi: SessionType.LATIHAN,
-			content: "Tidak ada siswa yang bodoh. Ani adalah siswa. Maka...",
+			content: "No student is unintelligent. Ani is a student. Therefore...",
 			kunciJawaban: "A",
 			tingkatKesulitan: 2,
 			pilihan: [
-				["A", "Ani tidak bodoh"],
-				["B", "Ani bodoh"],
-				["C", "Semua siswa pintar"],
-				["D", "Ani bukan siswa"],
-				["E", "Tidak dapat disimpulkan"],
+				["A", "Ani is not unintelligent"],
+				["B", "Ani is unintelligent"],
+				["C", "All students are smart"],
+				["D", "Ani is not a student"],
+				["E", "Cannot be concluded"],
 			],
 		},
 		{
@@ -238,7 +238,7 @@ async function CreateLatihanSoal() {
 			materiId: "materi-pu-001",
 			tipe: LatihanSoalType.PU,
 			tipeSesi: SessionType.LATIHAN,
-			content: "Jika A > B dan B > C, maka...",
+			content: "If A > B and B > C, then...",
 			kunciJawaban: "D",
 			tingkatKesulitan: 1,
 			pilihan: [
@@ -254,15 +254,15 @@ async function CreateLatihanSoal() {
 			materiId: "materi-pu-001",
 			tipe: LatihanSoalType.PU,
 			tipeSesi: SessionType.LATIHAN,
-			content: "Semua burung memiliki sayap. Pinguin memiliki sayap. Kesimpulannya...",
+			content: "All birds have wings. Penguins have wings. The conclusion is...",
 			kunciJawaban: "E",
 			tingkatKesulitan: 2,
 			pilihan: [
-				["A", "Pinguin adalah burung"],
-				["B", "Semua yang bersayap adalah burung"],
-				["C", "Pinguin bisa terbang"],
-				["D", "Burung tidak bisa berenang"],
-				["E", "Pinguin mungkin burung"],
+				["A", "Penguins are birds"],
+				["B", "Everything with wings is a bird"],
+				["C", "Penguins can fly"],
+				["D", "Birds cannot swim"],
+				["E", "Penguins might be birds"],
 			],
 		},
 		{
@@ -270,15 +270,15 @@ async function CreateLatihanSoal() {
 			materiId: "materi-pu-001",
 			tipe: LatihanSoalType.PU,
 			tipeSesi: SessionType.TRY_OUT,
-			content: "Jika rajin belajar, maka nilai bagus. Nilai tidak bagus. Maka...",
+			content: "If one studies hard, they will get good grades. The grades are not good. Therefore...",
 			kunciJawaban: "B",
 			tingkatKesulitan: 3,
 			pilihan: [
-				["A", "Rajin belajar"],
-				["B", "Tidak rajin belajar"],
-				["C", "Nilai bagus"],
-				["D", "Malas belajar"],
-				["E", "Tidak dapat disimpulkan"],
+				["A", "Studied hard"],
+				["B", "Did not study hard"],
+				["C", "Good grades"],
+				["D", "Is lazy to study"],
+				["E", "Cannot be concluded"],
 			],
 		},
 		{
@@ -286,15 +286,15 @@ async function CreateLatihanSoal() {
 			materiId: "materi-pu-001",
 			tipe: LatihanSoalType.PU,
 			tipeSesi: SessionType.TRY_OUT,
-			content: "Tidak ada ikan yang hidup di darat. Paus hidup di air. Kesimpulannya...",
+			content: "No fish lives on land. Whales live in the water. The conclusion is...",
 			kunciJawaban: "E",
 			tingkatKesulitan: 3,
 			pilihan: [
-				["A", "Paus adalah ikan"],
-				["B", "Paus bukan ikan"],
-				["C", "Semua yang di air adalah ikan"],
-				["D", "Ikan hanya hidup di air"],
-				["E", "Tidak dapat disimpulkan apakah paus ikan"],
+				["A", "Whales are fish"],
+				["B", "Whales are not fish"],
+				["C", "Everything in the water is a fish"],
+				["D", "Fish only live in the water"],
+				["E", "It cannot be concluded whether whales are fish"],
 			],
 		},
 		{
@@ -302,15 +302,15 @@ async function CreateLatihanSoal() {
 			materiId: "materi-pu-001",
 			tipe: LatihanSoalType.PU,
 			tipeSesi: SessionType.LATIHAN,
-			content: "Semua kucing adalah mamalia. Beberapa mamalia berkaki empat. Maka...",
+			content: "All cats are mammals. Some mammals are four-legged. Therefore...",
 			kunciJawaban: "C",
 			tingkatKesulitan: 2,
 			pilihan: [
-				["A", "Semua kucing berkaki empat"],
-				["B", "Semua mamalia adalah kucing"],
-				["C", "Beberapa kucing mungkin berkaki empat"],
-				["D", "Tidak ada kucing berkaki empat"],
-				["E", "Mamalia pasti kucing"],
+				["A", "All cats are four-legged"],
+				["B", "All mammals are cats"],
+				["C", "Some cats may be four-legged"],
+				["D", "No cat is four-legged"],
+				["E", "Mammals are definitely cats"],
 			],
 		},
 		{
@@ -318,7 +318,7 @@ async function CreateLatihanSoal() {
 			materiId: "materi-pu-001",
 			tipe: LatihanSoalType.PU,
 			tipeSesi: SessionType.LATIHAN,
-			content: "Jika X = Y dan Y = Z, maka...",
+			content: "If X = Y and Y = Z, then...",
 			kunciJawaban: "A",
 			tingkatKesulitan: 1,
 			pilihan: [
@@ -326,7 +326,7 @@ async function CreateLatihanSoal() {
 				["B", "X ≠ Z"],
 				["C", "X > Z"],
 				["D", "X < Z"],
-				["E", "Tidak dapat disimpulkan"],
+				["E", "Cannot be concluded"],
 			],
 		},
 		{
@@ -334,7 +334,7 @@ async function CreateLatihanSoal() {
 			materiId: "materi-pu-002",
 			tipe: LatihanSoalType.PU,
 			tipeSesi: SessionType.LATIHAN,
-			content: "Dalam sebuah barisan: 2, 4, 8, 16, ... Angka berikutnya adalah...",
+			content: "In a sequence: 2, 4, 8, 16, ... The next number is...",
 			kunciJawaban: "C",
 			tingkatKesulitan: 2,
 			pilihan: [
@@ -350,15 +350,15 @@ async function CreateLatihanSoal() {
 			materiId: "materi-pu-002",
 			tipe: LatihanSoalType.PU,
 			tipeSesi: SessionType.LATIHAN,
-			content: "Barisan: 5, 10, 20, 40, ... Pola yang digunakan adalah...",
+			content: "Sequence: 5, 10, 20, 40, ... The pattern used is...",
 			kunciJawaban: "A",
 			tingkatKesulitan: 2,
 			pilihan: [
-				["A", "Dikali 2"],
-				["B", "Ditambah 5"],
-				["C", "Dikuadratkan"],
-				["D", "Ditambah 10"],
-				["E", "Dikali 3"],
+				["A", "Multiplied by 2"],
+				["B", "Plus 5"],
+				["C", "Squared"],
+				["D", "Plus 10"],
+				["E", "Multiplied by 3"],
 			],
 		},
 		{
@@ -366,15 +366,15 @@ async function CreateLatihanSoal() {
 			materiId: "materi-pu-002",
 			tipe: LatihanSoalType.PU,
 			tipeSesi: SessionType.TRY_OUT,
-			content: "Jika semua A adalah B, dan semua B adalah C, maka...",
+			content: "If all A are B, and all B are C, then...",
 			kunciJawaban: "B",
 			tingkatKesulitan: 2,
 			pilihan: [
-				["A", "Beberapa A adalah C"],
-				["B", "Semua A adalah C"],
-				["C", "Tidak ada A yang C"],
-				["D", "Semua C adalah A"],
-				["E", "Tidak dapat disimpulkan"],
+				["A", "Some A are C"],
+				["B", "All A are C"],
+				["C", "No A is C"],
+				["D", "All C are A"],
+				["E", "Cannot be concluded"],
 			],
 		},
 		{
@@ -382,15 +382,15 @@ async function CreateLatihanSoal() {
 			materiId: "materi-pu-002",
 			tipe: LatihanSoalType.PU,
 			tipeSesi: SessionType.TRY_OUT,
-			content: "Dalam sebuah grafik, jika X meningkat maka Y menurun. Hubungan ini disebut...",
+			content: "In a graph, if X increases then Y decreases. This relationship is called...",
 			kunciJawaban: "D",
 			tingkatKesulitan: 3,
 			pilihan: [
-				["A", "Korelasi positif"],
-				["B", "Tidak berkorelasi"],
-				["C", "Kausalitas"],
-				["D", "Korelasi negatif"],
-				["E", "Korelasi linear"],
+				["A", "Positive correlation"],
+				["B", "Not correlated"],
+				["C", "Causality"],
+				["D", "Negative correlation"],
+				["E", "Linear correlation"],
 			],
 		},
 		{
@@ -398,7 +398,7 @@ async function CreateLatihanSoal() {
 			materiId: "materi-pu-002",
 			tipe: LatihanSoalType.PU,
 			tipeSesi: SessionType.TRY_OUT,
-			content: "Barisan: 1, 1, 2, 3, 5, 8, ... Angka berikutnya adalah...",
+			content: "Sequence: 1, 1, 2, 3, 5, 8, ... The next number is...",
 			kunciJawaban: "C",
 			tingkatKesulitan: 3,
 			pilihan: [
@@ -411,22 +411,22 @@ async function CreateLatihanSoal() {
 		},
 	];
 
-	// ========== STRUKTUR PARAGRAF & TEKS ARGUMENTASI (15 soal) ==========
+	// ========== PARAGRAPH STRUCTURE & ARGUMENTATIVE TEXT (15 questions) ==========
 	const soalPBM = [
 		{
 			id: "latihan-pbm-001",
 			materiId: "materi-pbm-001",
 			tipe: LatihanSoalType.PBM,
 			tipeSesi: SessionType.LATIHAN,
-			content: "Kalimat yang mengandung ide pokok biasanya disebut...",
+			content: "A sentence that contains the main idea is usually called...",
 			kunciJawaban: "A",
 			tingkatKesulitan: 1,
 			pilihan: [
-				["A", "Kalimat utama"],
-				["B", "Kalimat penjelas"],
-				["C", "Kalimat penutup"],
-				["D", "Kalimat transisi"],
-				["E", "Kalimat tanya"],
+				["A", "Topic sentence"],
+				["B", "Supporting sentence"],
+				["C", "Closing sentence"],
+				["D", "Transition sentence"],
+				["E", "Interrogative sentence"],
 			],
 		},
 		{
@@ -434,15 +434,15 @@ async function CreateLatihanSoal() {
 			materiId: "materi-pbm-001",
 			tipe: LatihanSoalType.PBM,
 			tipeSesi: SessionType.LATIHAN,
-			content: "Paragraf yang ide pokoknya terletak di awal paragraf disebut paragraf...",
+			content: "A paragraph that has its main idea at the beginning is called a/an...",
 			kunciJawaban: "B",
 			tingkatKesulitan: 2,
 			pilihan: [
-				["A", "Induktif"],
-				["B", "Deduktif"],
-				["C", "Campuran"],
-				["D", "Naratif"],
-				["E", "Deskriptif"],
+				["A", "Inductive paragraph"],
+				["B", "Deductive paragraph"],
+				["C", "Mixed paragraph"],
+				["D", "Narrative paragraph"],
+				["E", "Descriptive paragraph"],
 			],
 		},
 		{
@@ -450,15 +450,15 @@ async function CreateLatihanSoal() {
 			materiId: "materi-pbm-001",
 			tipe: LatihanSoalType.PBM,
 			tipeSesi: SessionType.LATIHAN,
-			content: "Fungsi kalimat penjelas dalam paragraf adalah...",
+			content: "The function of supporting sentences in a paragraph is to...",
 			kunciJawaban: "C",
 			tingkatKesulitan: 2,
 			pilihan: [
-				["A", "Membuka paragraf"],
-				["B", "Menutup paragraf"],
-				["C", "Mendukung ide pokok"],
-				["D", "Membuat kesimpulan"],
-				["E", "Membuat pertanyaan"],
+				["A", "Open the paragraph"],
+				["B", "Close the paragraph"],
+				["C", "Support the main idea"],
+				["D", "Draw a conclusion"],
+				["E", "Pose a question"],
 			],
 		},
 		{
@@ -466,15 +466,15 @@ async function CreateLatihanSoal() {
 			materiId: "materi-pbm-001",
 			tipe: LatihanSoalType.PBM,
 			tipeSesi: SessionType.LATIHAN,
-			content: "Paragraf yang ide pokoknya di akhir disebut paragraf...",
+			content: "A paragraph with the main idea at the end is called a/an...",
 			kunciJawaban: "A",
 			tingkatKesulitan: 2,
 			pilihan: [
-				["A", "Induktif"],
-				["B", "Deduktif"],
-				["C", "Campuran"],
-				["D", "Argumentatif"],
-				["E", "Persuasif"],
+				["A", "Inductive paragraph"],
+				["B", "Deductive paragraph"],
+				["C", "Mixed paragraph"],
+				["D", "Argumentative paragraph"],
+				["E", "Persuasive paragraph"],
 			],
 		},
 		{
@@ -482,15 +482,15 @@ async function CreateLatihanSoal() {
 			materiId: "materi-pbm-001",
 			tipe: LatihanSoalType.PBM,
 			tipeSesi: SessionType.LATIHAN,
-			content: "Ciri utama paragraf yang baik adalah...",
+			content: "The main characteristic of a good paragraph is...",
 			kunciJawaban: "D",
 			tingkatKesulitan: 2,
 			pilihan: [
-				["A", "Panjang"],
-				["B", "Banyak kata"],
-				["C", "Rumit"],
-				["D", "Koheren dan kohesif"],
-				["E", "Banyak istilah"],
+				["A", "Long length"],
+				["B", "High word count"],
+				["C", "Complexity"],
+				["D", "Coherence and cohesion"],
+				["E", "Frequent use of jargon"],
 			],
 		},
 		{
@@ -498,15 +498,15 @@ async function CreateLatihanSoal() {
 			materiId: "materi-pbm-001",
 			tipe: LatihanSoalType.PBM,
 			tipeSesi: SessionType.TRY_OUT,
-			content: "Paragraf yang ide pokoknya berada di awal dan akhir disebut...",
+			content: "A paragraph where the main idea is at the beginning and the end is called...",
 			kunciJawaban: "C",
 			tingkatKesulitan: 3,
 			pilihan: [
-				["A", "Induktif"],
-				["B", "Deduktif"],
-				["C", "Campuran"],
-				["D", "Naratif"],
-				["E", "Deskriptif"],
+				["A", "Inductive paragraph"],
+				["B", "Deductive paragraph"],
+				["C", "Mixed paragraph"],
+				["D", "Narrative paragraph"],
+				["E", "Descriptive paragraph"],
 			],
 		},
 		{
@@ -514,15 +514,15 @@ async function CreateLatihanSoal() {
 			materiId: "materi-pbm-001",
 			tipe: LatihanSoalType.PBM,
 			tipeSesi: SessionType.TRY_OUT,
-			content: "Konjungsi yang menunjukkan hubungan sebab-akibat adalah...",
+			content: "A conjunction that shows a cause-effect relationship is...",
 			kunciJawaban: "B",
 			tingkatKesulitan: 2,
 			pilihan: [
-				["A", "Tetapi"],
-				["B", "Karena"],
-				["C", "Dan"],
-				["D", "Atau"],
-				["E", "Namun"],
+				["A", "But"],
+				["B", "Because"],
+				["C", "And"],
+				["D", "Or"],
+				["E", "However"],
 			],
 		},
 		{
@@ -530,15 +530,15 @@ async function CreateLatihanSoal() {
 			materiId: "materi-pbm-002",
 			tipe: LatihanSoalType.PBM,
 			tipeSesi: SessionType.LATIHAN,
-			content: "Struktur teks argumentasi yang benar adalah...",
+			content: "The correct structure of an argumentative text is...",
 			kunciJawaban: "A",
 			tingkatKesulitan: 2,
 			pilihan: [
-				["A", "Tesis - Argumen - Penegasan ulang"],
-				["B", "Orientasi - Komplikasi - Resolusi"],
-				["C", "Pembuka - Isi - Penutup"],
-				["D", "Pernyataan - Data - Kesimpulan"],
-				["E", "Judul - Paragraf - Akhir"],
+				["A", "Thesis - Argument - Reiteration"],
+				["B", "Orientation - Complication - Resolution"],
+				["C", "Introduction - Body - Conclusion"],
+				["D", "Statement - Data - Conclusion"],
+				["E", "Title - Paragraph - End"],
 			],
 		},
 		{
@@ -546,15 +546,15 @@ async function CreateLatihanSoal() {
 			materiId: "materi-pbm-002",
 			tipe: LatihanSoalType.PBM,
 			tipeSesi: SessionType.LATIHAN,
-			content: "Tesis dalam teks argumentasi berfungsi sebagai...",
+			content: "A thesis in an argumentative text serves as...",
 			kunciJawaban: "C",
 			tingkatKesulitan: 2,
 			pilihan: [
-				["A", "Penutup"],
-				["B", "Data pendukung"],
-				["C", "Pernyataan pendapat"],
-				["D", "Kesimpulan"],
-				["E", "Daftar pustaka"],
+				["A", "Closing"],
+				["B", "Supporting data"],
+				["C", "Statement of opinion"],
+				["D", "Conclusion"],
+				["E", "Bibliography"],
 			],
 		},
 		{
@@ -562,15 +562,15 @@ async function CreateLatihanSoal() {
 			materiId: "materi-pbm-002",
 			tipe: LatihanSoalType.PBM,
 			tipeSesi: SessionType.LATIHAN,
-			content: "Argumen yang baik harus didukung oleh...",
+			content: "A good argument should be supported by...",
 			kunciJawaban: "D",
 			tingkatKesulitan: 2,
 			pilihan: [
-				["A", "Opini pribadi"],
-				["B", "Asumsi"],
+				["A", "Personal opinion"],
+				["B", "Assumptions"],
 				["C", "Gossip"],
-				["D", "Fakta dan data"],
-				["E", "Cerita"],
+				["D", "Facts and data"],
+				["E", "Stories"],
 			],
 		},
 		{
@@ -578,15 +578,15 @@ async function CreateLatihanSoal() {
 			materiId: "materi-pbm-002",
 			tipe: LatihanSoalType.PBM,
 			tipeSesi: SessionType.TRY_OUT,
-			content: "Ciri khas teks argumentasi adalah...",
+			content: "The characteristic feature of an argumentative text is...",
 			kunciJawaban: "B",
 			tingkatKesulitan: 3,
 			pilihan: [
-				["A", "Menghibur pembaca"],
-				["B", "Meyakinkan pembaca"],
-				["C", "Mendeskripsikan sesuatu"],
-				["D", "Menceritakan pengalaman"],
-				["E", "Memberikan instruksi"],
+				["A", "To entertain the reader"],
+				["B", "To convince the reader"],
+				["C", "To describe something"],
+				["D", "To tell an experience"],
+				["E", "To provide instructions"],
 			],
 		},
 		{
@@ -594,15 +594,15 @@ async function CreateLatihanSoal() {
 			materiId: "materi-pbm-002",
 			tipe: LatihanSoalType.PBM,
 			tipeSesi: SessionType.TRY_OUT,
-			content: "Penegasan ulang dalam teks argumentasi bertujuan untuk...",
+			content: "Reiteration in an argumentative text aims to...",
 			kunciJawaban: "A",
 			tingkatKesulitan: 3,
 			pilihan: [
-				["A", "Memperkuat pendapat"],
-				["B", "Membuka topik baru"],
-				["C", "Mengkritik lawan"],
-				["D", "Menghibur pembaca"],
-				["E", "Memberikan data tambahan"],
+				["A", "Strengthen the opinion"],
+				["B", "Introduce a new topic"],
+				["C", "Criticize the opponent"],
+				["D", "Entertain the reader"],
+				["E", "Provide additional data"],
 			],
 		},
 		{
@@ -610,15 +610,15 @@ async function CreateLatihanSoal() {
 			materiId: "materi-pbm-002",
 			tipe: LatihanSoalType.PBM,
 			tipeSesi: SessionType.LATIHAN,
-			content: "Kata yang menunjukkan pendapat dalam argumentasi adalah...",
+			content: "A word that indicates an opinion in an argument is...",
 			kunciJawaban: "C",
 			tingkatKesulitan: 2,
 			pilihan: [
-				["A", "Adalah"],
-				["B", "Terdapat"],
-				["C", "Menurut saya"],
-				["D", "Berdasarkan"],
-				["E", "Terbukti"],
+				["A", "Is"],
+				["B", "Exists"],
+				["C", "In my opinion"],
+				["D", "Based on"],
+				["E", "Proven"],
 			],
 		},
 		{
@@ -626,15 +626,15 @@ async function CreateLatihanSoal() {
 			materiId: "materi-pbm-002",
 			tipe: LatihanSoalType.PBM,
 			tipeSesi: SessionType.TRY_OUT,
-			content: "Konjungsi yang tepat untuk menyatakan pertentangan adalah...",
+			content: "Correct conjunction to express contrast is...",
 			kunciJawaban: "E",
 			tingkatKesulitan: 2,
 			pilihan: [
-				["A", "Lalu"],
-				["B", "Kemudian"],
-				["C", "Sehingga"],
-				["D", "Oleh karena itu"],
-				["E", "Namun"],
+				["A", "Then"],
+				["B", "Next"],
+				["C", "So that"],
+				["D", "Therefore"],
+				["E", "However"],
 			],
 		},
 		{
@@ -642,27 +642,27 @@ async function CreateLatihanSoal() {
 			materiId: "materi-pbm-002",
 			tipe: LatihanSoalType.PBM,
 			tipeSesi: SessionType.TRY_OUT,
-			content: "Bagian yang berisi penguatan argumen dengan data adalah...",
+			content: "The section containing the reinforcement of arguments with data is...",
 			kunciJawaban: "B",
 			tingkatKesulitan: 3,
 			pilihan: [
-				["A", "Tesis"],
-				["B", "Argumentasi"],
-				["C", "Orientasi"],
-				["D", "Abstrak"],
-				["E", "Koda"],
+				["A", "Thesis"],
+				["B", "Argumentation"],
+				["C", "Orientation"],
+				["D", "Abstract"],
+				["E", "Coda"],
 			],
 		},
 	];
 
-	// ========== SEJARAH & GEOGRAFI INDONESIA (15 soal) ==========
+	// ========== INDONESIAN HISTORY & GEOGRAPHY (15 questions) ==========
 	const soalPPU = [
 		{
 			id: "latihan-ppu-001",
 			materiId: "materi-ppu-001",
 			tipe: LatihanSoalType.PPU,
 			tipeSesi: SessionType.LATIHAN,
-			content: "Organisasi pergerakan nasional pertama di Indonesia adalah...",
+			content: "The first national movement organization in Indonesia was...",
 			kunciJawaban: "B",
 			tingkatKesulitan: 2,
 			pilihan: [
@@ -678,15 +678,15 @@ async function CreateLatihanSoal() {
 			materiId: "materi-ppu-001",
 			tipe: LatihanSoalType.PPU,
 			tipeSesi: SessionType.LATIHAN,
-			content: "Peristiwa Rengasdengklok terjadi pada tanggal...",
+			content: "The Rengasdengklok incident occurred on...",
 			kunciJawaban: "A",
 			tingkatKesulitan: 3,
 			pilihan: [
-				["A", "16 Agustus 1945"],
-				["B", "17 Agustus 1945"],
-				["C", "18 Agustus 1945"],
-				["D", "15 Agustus 1945"],
-				["E", "19 Agustus 1945"],
+				["A", "August 16, 1945"],
+				["B", "August 17, 1945"],
+				["C", "August 18, 1945"],
+				["D", "August 15, 1945"],
+				["E", "August 19, 1945"],
 			],
 		},
 		{
@@ -694,15 +694,15 @@ async function CreateLatihanSoal() {
 			materiId: "materi-ppu-001",
 			tipe: LatihanSoalType.PPU,
 			tipeSesi: SessionType.LATIHAN,
-			content: "Konferensi Meja Bundar (KMB) menghasilkan keputusan...",
+			content: "The Round Table Conference (KMB) resulted in the following decision...",
 			kunciJawaban: "C",
 			tingkatKesulitan: 3,
 			pilihan: [
-				["A", "Indonesia merdeka penuh"],
-				["B", "Belanda tetap berkuasa"],
-				["C", "Pengakuan kedaulatan Indonesia"],
-				["D", "Pembentukan federasi"],
-				["E", "Perang berlanjut"],
+				["A", "Full independence for Indonesia"],
+				["B", "The Netherlands remained in power"],
+				["C", "Recognition of Indonesian sovereignty"],
+				["D", "Formation of a federation"],
+				["E", "War continues"],
 			],
 		},
 		{
@@ -710,15 +710,15 @@ async function CreateLatihanSoal() {
 			materiId: "materi-ppu-001",
 			tipe: LatihanSoalType.PPU,
 			tipeSesi: SessionType.LATIHAN,
-			content: "Proklamasi kemerdekaan Indonesia dibacakan oleh...",
+			content: "The proclamation of Indonesian independence was read by...",
 			kunciJawaban: "A",
 			tingkatKesulitan: 1,
 			pilihan: [
 				["A", "Soekarno-Hatta"],
 				["B", "Soekarno-Sjahrir"],
 				["C", "Hatta-Sjahrir"],
-				["D", "Soekarno saja"],
-				["E", "Hatta saja"],
+				["D", "Soekarno only"],
+				["E", "Hatta only"],
 			],
 		},
 		{
@@ -726,7 +726,7 @@ async function CreateLatihanSoal() {
 			materiId: "materi-ppu-001",
 			tipe: LatihanSoalType.PPU,
 			tipeSesi: SessionType.LATIHAN,
-			content: "Sumpah Pemuda dideklarasikan pada tahun...",
+			content: "The Youth Pledge (Sumpah Pemuda) was declared in the year...",
 			kunciJawaban: "D",
 			tingkatKesulitan: 2,
 			pilihan: [
@@ -742,7 +742,7 @@ async function CreateLatihanSoal() {
 			materiId: "materi-ppu-001",
 			tipe: LatihanSoalType.PPU,
 			tipeSesi: SessionType.TRY_OUT,
-			content: "Agresi Militer Belanda I terjadi pada tahun...",
+			content: "Dutch Military Aggression I occurred in the year...",
 			kunciJawaban: "B",
 			tingkatKesulitan: 3,
 			pilihan: [
@@ -758,15 +758,15 @@ async function CreateLatihanSoal() {
 			materiId: "materi-ppu-001",
 			tipe: LatihanSoalType.PPU,
 			tipeSesi: SessionType.TRY_OUT,
-			content: "Perjanjian Linggarjati menghasilkan kesepakatan...",
+			content: "The Linggarjati Agreement resulted in the following agreement...",
 			kunciJawaban: "C",
 			tingkatKesulitan: 3,
 			pilihan: [
-				["A", "Belanda mengakui kemerdekaan penuh Indonesia"],
-				["B", "Indonesia menjadi negara federal"],
-				["C", "Belanda mengakui RI atas Jawa, Madura, Sumatra"],
-				["D", "Perang dihentikan total"],
-				["E", "Indonesia kembali dijajah"],
+				["A", "The Netherlands recognized full independence of Indonesia"],
+				["B", "Indonesia became a federal state"],
+				["C", "The Netherlands recognized RI authority over Java, Madura, Sumatra"],
+				["D", "War was completely halted"],
+				["E", "Indonesia was recolonized"],
 			],
 		},
 		{
@@ -774,15 +774,15 @@ async function CreateLatihanSoal() {
 			materiId: "materi-ppu-002",
 			tipe: LatihanSoalType.PPU,
 			tipeSesi: SessionType.LATIHAN,
-			content: "Indonesia terletak di antara dua benua, yaitu...",
+			content: "Indonesia is located between two continents, namely...",
 			kunciJawaban: "A",
 			tingkatKesulitan: 1,
 			pilihan: [
-				["A", "Asia dan Australia"],
-				["B", "Asia dan Afrika"],
-				["C", "Australia dan Amerika"],
-				["D", "Asia dan Eropa"],
-				["E", "Afrika dan Australia"],
+				["A", "Asia and Australia"],
+				["B", "Asia and Africa"],
+				["C", "Australia and America"],
+				["D", "Asia and Europe"],
+				["E", "Africa and Australia"],
 			],
 		},
 		{
@@ -790,15 +790,15 @@ async function CreateLatihanSoal() {
 			materiId: "materi-ppu-002",
 			tipe: LatihanSoalType.PPU,
 			tipeSesi: SessionType.LATIHAN,
-			content: "Gunung tertinggi di Indonesia adalah...",
+			content: "The highest mountain in Indonesia is...",
 			kunciJawaban: "C",
 			tingkatKesulitan: 2,
 			pilihan: [
-				["A", "Gunung Semeru"],
-				["B", "Gunung Rinjani"],
+				["A", "Mount Semeru"],
+				["B", "Mount Rinjani"],
 				["C", "Puncak Jaya"],
-				["D", "Gunung Kerinci"],
-				["E", "Gunung Merapi"],
+				["D", "Mount Kerinci"],
+				["E", "Mount Merapi"],
 			],
 		},
 		{
@@ -806,15 +806,15 @@ async function CreateLatihanSoal() {
 			materiId: "materi-ppu-002",
 			tipe: LatihanSoalType.PPU,
 			tipeSesi: SessionType.LATIHAN,
-			content: "Indonesia memiliki iklim...",
+			content: "Indonesia has a ... climate.",
 			kunciJawaban: "B",
 			tingkatKesulitan: 1,
 			pilihan: [
-				["A", "Subtropis"],
-				["B", "Tropis"],
-				["C", "Kutub"],
-				["D", "Sedang"],
-				["E", "Dingin"],
+				["A", "Subtropical"],
+				["B", "Tropical"],
+				["C", "Polar"],
+				["D", "Temperate"],
+				["E", "Cold"],
 			],
 		},
 		{
@@ -822,11 +822,11 @@ async function CreateLatihanSoal() {
 			materiId: "materi-ppu-002",
 			tipe: LatihanSoalType.PPU,
 			tipeSesi: SessionType.TRY_OUT,
-			content: "Pulau terbesar di Indonesia adalah...",
+			content: "The largest island in Indonesia is...",
 			kunciJawaban: "D",
 			tingkatKesulitan: 2,
 			pilihan: [
-				["A", "Jawa"],
+				["A", "Java"],
 				["B", "Sumatra"],
 				["C", "Sulawesi"],
 				["D", "Kalimantan"],
@@ -838,15 +838,15 @@ async function CreateLatihanSoal() {
 			materiId: "materi-ppu-002",
 			tipe: LatihanSoalType.PPU,
 			tipeSesi: SessionType.TRY_OUT,
-			content: "Indonesia terletak di antara dua samudra, yaitu...",
+			content: "Indonesia is located between two oceans, namely...",
 			kunciJawaban: "A",
 			tingkatKesulitan: 2,
 			pilihan: [
-				["A", "Pasifik dan Hindia"],
-				["B", "Atlantik dan Hindia"],
-				["C", "Pasifik dan Atlantik"],
-				["D", "Hindia dan Arktik"],
-				["E", "Pasifik dan Arktik"],
+				["A", "Pacific and Indian"],
+				["B", "Atlantic and Indian"],
+				["C", "Pacific and Atlantic"],
+				["D", "Indian and Arctic"],
+				["E", "Pacific and Arctic"],
 			],
 		},
 		{
@@ -854,14 +854,14 @@ async function CreateLatihanSoal() {
 			materiId: "materi-ppu-002",
 			tipe: LatihanSoalType.PPU,
 			tipeSesi: SessionType.LATIHAN,
-			content: "Indonesia dilalui oleh garis...",
+			content: "Indonesia is crossed by the ... line.",
 			kunciJawaban: "C",
 			tingkatKesulitan: 2,
 			pilihan: [
-				["A", "Lintang utara"],
-				["B", "Kutub selatan"],
-				["C", "Khatulistiwa"],
-				["D", "Bujur barat"],
+				["A", "North latitude"],
+				["B", "South pole"],
+				["C", "Equator"],
+				["D", "West longitude"],
 				["E", "Meridian"],
 			],
 		},
@@ -870,15 +870,15 @@ async function CreateLatihanSoal() {
 			materiId: "materi-ppu-002",
 			tipe: LatihanSoalType.PPU,
 			tipeSesi: SessionType.TRY_OUT,
-			content: "Hasil tambang utama Indonesia adalah...",
+			content: "The main mining products of Indonesia are...",
 			kunciJawaban: "E",
 			tingkatKesulitan: 2,
 			pilihan: [
-				["A", "Berlian"],
+				["A", "Diamond"],
 				["B", "Platinum"],
-				["C", "Perak"],
+				["C", "Silver"],
 				["D", "Uranium"],
-				["E", "Minyak bumi, gas, batubara"],
+				["E", "Petroleum, gas, coal"],
 			],
 		},
 		{
@@ -886,7 +886,7 @@ async function CreateLatihanSoal() {
 			materiId: "materi-ppu-002",
 			tipe: LatihanSoalType.PPU,
 			tipeSesi: SessionType.TRY_OUT,
-			content: "Indonesia memiliki ... zona waktu.",
+			content: "Indonesia has ... time zones.",
 			kunciJawaban: "B",
 			tingkatKesulitan: 2,
 			pilihan: [
@@ -899,14 +899,14 @@ async function CreateLatihanSoal() {
 		},
 	];
 
-	// ========== ALJABAR & GEOMETRI (15 soal) ==========
+	// ========== BASIC ALGEBRA & GEOMETRY (15 questions) ==========
 	const soalPK = [
 		{
 			id: "latihan-pk-001",
 			materiId: "materi-pk-001",
 			tipe: LatihanSoalType.PK,
 			tipeSesi: SessionType.LATIHAN,
-			content: "Jika 3x + 5 = 20, maka nilai x adalah...",
+			content: "If 3x + 5 = 20, then the value of x is...",
 			kunciJawaban: "C",
 			tingkatKesulitan: 2,
 			pilihan: [
@@ -922,7 +922,7 @@ async function CreateLatihanSoal() {
 			materiId: "materi-pk-001",
 			tipe: LatihanSoalType.PK,
 			tipeSesi: SessionType.LATIHAN,
-			content: "Hasil dari (x + 3)(x - 3) adalah...",
+			content: "The result of (x + 3)(x - 3) is...",
 			kunciJawaban: "B",
 			tingkatKesulitan: 2,
 			pilihan: [
@@ -938,7 +938,7 @@ async function CreateLatihanSoal() {
 			materiId: "materi-pk-001",
 			tipe: LatihanSoalType.PK,
 			tipeSesi: SessionType.LATIHAN,
-			content: "Jika 2x - 7 = 13, maka x = ...",
+			content: "If 2x - 7 = 13, then x = ...",
 			kunciJawaban: "D",
 			tingkatKesulitan: 2,
 			pilihan: [
@@ -954,7 +954,7 @@ async function CreateLatihanSoal() {
 			materiId: "materi-pk-001",
 			tipe: LatihanSoalType.PK,
 			tipeSesi: SessionType.LATIHAN,
-			content: "Hasil dari (x + 2)² adalah...",
+			content: "The result of (x + 2)² is...",
 			kunciJawaban: "A",
 			tingkatKesulitan: 2,
 			pilihan: [
@@ -970,15 +970,15 @@ async function CreateLatihanSoal() {
 			materiId: "materi-pk-001",
 			tipe: LatihanSoalType.PK,
 			tipeSesi: SessionType.TRY_OUT,
-			content: "Akar-akar dari persamaan x² - 5x + 6 = 0 adalah...",
+			content: "The roots of the equation x² - 5x + 6 = 0 are...",
 			kunciJawaban: "C",
 			tingkatKesulitan: 3,
 			pilihan: [
-				["A", "1 dan 6"],
-				["B", "1 dan 5"],
-				["C", "2 dan 3"],
-				["D", "3 dan 4"],
-				["E", "4 dan 5"],
+				["A", "1 and 6"],
+				["B", "1 and 5"],
+				["C", "2 and 3"],
+				["D", "3 and 4"],
+				["E", "4 and 5"],
 			],
 		},
 		{
@@ -986,7 +986,7 @@ async function CreateLatihanSoal() {
 			materiId: "materi-pk-001",
 			tipe: LatihanSoalType.PK,
 			tipeSesi: SessionType.TRY_OUT,
-			content: "Jika x + y = 10 dan x - y = 2, maka x = ...",
+			content: "If x + y = 10 and x - y = 2, then x = ...",
 			kunciJawaban: "D",
 			tingkatKesulitan: 3,
 			pilihan: [
@@ -1002,7 +1002,7 @@ async function CreateLatihanSoal() {
 			materiId: "materi-pk-001",
 			tipe: LatihanSoalType.PK,
 			tipeSesi: SessionType.LATIHAN,
-			content: "Bentuk sederhana dari 3x + 2x - x adalah...",
+			content: "The simplified form of 3x + 2x - x is...",
 			kunciJawaban: "B",
 			tingkatKesulitan: 1,
 			pilihan: [
@@ -1018,7 +1018,7 @@ async function CreateLatihanSoal() {
 			materiId: "materi-pk-002",
 			tipe: LatihanSoalType.PK,
 			tipeSesi: SessionType.LATIHAN,
-			content: "Luas persegi panjang dengan panjang 8 cm dan lebar 5 cm adalah...",
+			content: "The area of a rectangle with length 8 cm and width 5 cm is...",
 			kunciJawaban: "D",
 			tingkatKesulitan: 1,
 			pilihan: [
@@ -1034,7 +1034,7 @@ async function CreateLatihanSoal() {
 			materiId: "materi-pk-002",
 			tipe: LatihanSoalType.PK,
 			tipeSesi: SessionType.LATIHAN,
-			content: "Keliling lingkaran dengan jari-jari 7 cm (π = 22/7) adalah...",
+			content: "The circumference of a circle with radius 7 cm (π = 22/7) is...",
 			kunciJawaban: "C",
 			tingkatKesulitan: 2,
 			pilihan: [
@@ -1050,7 +1050,7 @@ async function CreateLatihanSoal() {
 			materiId: "materi-pk-002",
 			tipe: LatihanSoalType.PK,
 			tipeSesi: SessionType.LATIHAN,
-			content: "Volume kubus dengan sisi 4 cm adalah...",
+			content: "The volume of a cube with side 4 cm is...",
 			kunciJawaban: "B",
 			tingkatKesulitan: 2,
 			pilihan: [
@@ -1066,7 +1066,7 @@ async function CreateLatihanSoal() {
 			materiId: "materi-pk-002",
 			tipe: LatihanSoalType.PK,
 			tipeSesi: SessionType.TRY_OUT,
-			content: "Luas segitiga dengan alas 10 cm dan tinggi 6 cm adalah...",
+			content: "The area of a triangle with base 10 cm and height 6 cm is...",
 			kunciJawaban: "A",
 			tingkatKesulitan: 2,
 			pilihan: [
@@ -1082,7 +1082,7 @@ async function CreateLatihanSoal() {
 			materiId: "materi-pk-002",
 			tipe: LatihanSoalType.PK,
 			tipeSesi: SessionType.TRY_OUT,
-			content: "Pythagoras menyatakan bahwa untuk segitiga siku-siku berlaku...",
+			content: "Pythagoras states that for a right-angled triangle, the following applies...",
 			kunciJawaban: "C",
 			tingkatKesulitan: 2,
 			pilihan: [
@@ -1098,7 +1098,7 @@ async function CreateLatihanSoal() {
 			materiId: "materi-pk-002",
 			tipe: LatihanSoalType.PK,
 			tipeSesi: SessionType.LATIHAN,
-			content: "Jumlah sudut dalam segitiga adalah...",
+			content: "The sum of angles in a triangle is...",
 			kunciJawaban: "D",
 			tingkatKesulitan: 1,
 			pilihan: [
@@ -1114,7 +1114,7 @@ async function CreateLatihanSoal() {
 			materiId: "materi-pk-002",
 			tipe: LatihanSoalType.PK,
 			tipeSesi: SessionType.TRY_OUT,
-			content: "Volume tabung dengan jari-jari 7 cm dan tinggi 10 cm (π = 22/7) adalah...",
+			content: "The volume of a cylinder with radius 7 cm and height 10 cm (π = 22/7) is...",
 			kunciJawaban: "E",
 			tingkatKesulitan: 3,
 			pilihan: [
@@ -1130,7 +1130,7 @@ async function CreateLatihanSoal() {
 			materiId: "materi-pk-002",
 			tipe: LatihanSoalType.PK,
 			tipeSesi: SessionType.TRY_OUT,
-			content: "Luas permukaan balok dengan p = 5 cm, l = 4 cm, t = 3 cm adalah...",
+			content: "Surface area of a cuboid with l = 5 cm, w = 4 cm, h = 3 cm is...",
 			kunciJawaban: "B",
 			tingkatKesulitan: 3,
 			pilihan: [
@@ -1143,22 +1143,22 @@ async function CreateLatihanSoal() {
 		},
 	];
 
-	// ========== LITERASI BAHASA INDONESIA (15 soal) ==========
+	// ========== INDONESIAN LITERACY (15 questions) ==========
 	const soalLitIndo = [
 		{
 			id: "latihan-litindo-001",
 			materiId: "materi-litindo-001",
 			tipe: LatihanSoalType.LITERASIBINDO,
 			tipeSesi: SessionType.LATIHAN,
-			content: 'Sinonim dari kata "antusias" adalah...',
+			content: 'The synonym of the word "enthusiastic" is...',
 			kunciJawaban: "C",
 			tingkatKesulitan: 2,
 			pilihan: [
-				["A", "Malas"],
-				["B", "Ragu"],
-				["C", "Bersemangat"],
-				["D", "Takut"],
-				["E", "Sedih"],
+				["A", "Lazy"],
+				["B", "Hesitant"],
+				["C", "Passionate"],
+				["D", "Fearful"],
+				["E", "Sad"],
 			],
 		},
 		{
@@ -1166,15 +1166,15 @@ async function CreateLatihanSoal() {
 			materiId: "materi-litindo-001",
 			tipe: LatihanSoalType.LITERASIBINDO,
 			tipeSesi: SessionType.LATIHAN,
-			content: 'Antonim dari kata "optimis" adalah...',
+			content: 'The antonym of the word "optimistic" is...',
 			kunciJawaban: "B",
 			tingkatKesulitan: 2,
 			pilihan: [
-				["A", "Gembira"],
-				["B", "Pesimis"],
-				["C", "Senang"],
-				["D", "Bahagia"],
-				["E", "Ceria"],
+				["A", "Happy"],
+				["B", "Pessimistic"],
+				["C", "Glad"],
+				["D", "Joyful"],
+				["E", "Cheerful"],
 			],
 		},
 		{
@@ -1182,15 +1182,15 @@ async function CreateLatihanSoal() {
 			materiId: "materi-litindo-001",
 			tipe: LatihanSoalType.LITERASIBINDO,
 			tipeSesi: SessionType.LATIHAN,
-			content: 'Makna kata "empiris" adalah...',
+			content: 'The meaning of the word "empirical" is...',
 			kunciJawaban: "D",
 			tingkatKesulitan: 3,
 			pilihan: [
-				["A", "Berdasarkan teori"],
-				["B", "Berdasarkan asumsi"],
-				["C", "Berdasarkan opini"],
-				["D", "Berdasarkan pengalaman"],
-				["E", "Berdasarkan dongeng"],
+				["A", "Based on theory"],
+				["B", "Based on assumption"],
+				["C", "Based on opinion"],
+				["D", "Based on experience"],
+				["E", "Based on fairy tales"],
 			],
 		},
 		{
@@ -1198,15 +1198,15 @@ async function CreateLatihanSoal() {
 			materiId: "materi-litindo-001",
 			tipe: LatihanSoalType.LITERASIBINDO,
 			tipeSesi: SessionType.LATIHAN,
-			content: 'Sinonim dari kata "kompeten" adalah...',
+			content: 'The synonym of the word "competent" is...',
 			kunciJawaban: "A",
 			tingkatKesulitan: 2,
 			pilihan: [
-				["A", "Cakap"],
-				["B", "Bodoh"],
-				["C", "Lemah"],
-				["D", "Malas"],
-				["E", "Gagal"],
+				["A", "Capable"],
+				["B", "Unintelligent"],
+				["C", "Weak"],
+				["D", "Lazy"],
+				["E", "Failed"],
 			],
 		},
 		{
@@ -1214,15 +1214,15 @@ async function CreateLatihanSoal() {
 			materiId: "materi-litindo-001",
 			tipe: LatihanSoalType.LITERASIBINDO,
 			tipeSesi: SessionType.LATIHAN,
-			content: 'Antonim dari kata "modern" adalah...',
+			content: 'The antonym of the word "modern" is...',
 			kunciJawaban: "E",
 			tingkatKesulitan: 2,
 			pilihan: [
-				["A", "Baru"],
-				["B", "Canggih"],
-				["C", "Maju"],
-				["D", "Berkembang"],
-				["E", "Tradisional"],
+				["A", "New"],
+				["B", "Sophisticated"],
+				["C", "Advanced"],
+				["D", "Developing"],
+				["E", "Traditional"],
 			],
 		},
 		{
@@ -1230,15 +1230,15 @@ async function CreateLatihanSoal() {
 			materiId: "materi-litindo-001",
 			tipe: LatihanSoalType.LITERASIBINDO,
 			tipeSesi: SessionType.TRY_OUT,
-			content: 'Makna kata "paradoks" adalah...',
+			content: 'The meaning of the word "paradox" is...',
 			kunciJawaban: "C",
 			tingkatKesulitan: 3,
 			pilihan: [
-				["A", "Persamaan"],
-				["B", "Keselarasan"],
-				["C", "Pertentangan"],
-				["D", "Kebenaran"],
-				["E", "Kesederhanaan"],
+				["A", "Equation"],
+				["B", "Harmony"],
+				["C", "Contradiction"],
+				["D", "Truth"],
+				["E", "Simplicity"],
 			],
 		},
 		{
@@ -1246,15 +1246,15 @@ async function CreateLatihanSoal() {
 			materiId: "materi-litindo-001",
 			tipe: LatihanSoalType.LITERASIBINDO,
 			tipeSesi: SessionType.TRY_OUT,
-			content: 'Sinonim dari kata "skeptis" adalah...',
+			content: 'The synonym of the word "skeptical" is...',
 			kunciJawaban: "B",
 			tingkatKesulitan: 3,
 			pilihan: [
-				["A", "Yakin"],
-				["B", "Ragu"],
-				["C", "Percaya"],
-				["D", "Optimis"],
-				["E", "Antusias"],
+				["A", "Convinced"],
+				["B", "Doubtful"],
+				["C", "Trusting"],
+				["D", "Optimistic"],
+				["E", "Enthusiastic"],
 			],
 		},
 		{
@@ -1262,15 +1262,15 @@ async function CreateLatihanSoal() {
 			materiId: "materi-litindo-002",
 			tipe: LatihanSoalType.LITERASIBINDO,
 			tipeSesi: SessionType.LATIHAN,
-			content: "Ide pokok paragraf biasanya terdapat pada...",
+			content: "The main idea of a paragraph is usually found in the...",
 			kunciJawaban: "A",
 			tingkatKesulitan: 2,
 			pilihan: [
-				["A", "Kalimat utama"],
-				["B", "Kalimat penjelas"],
-				["C", "Kalimat terakhir"],
-				["D", "Semua kalimat"],
-				["E", "Kalimat tengah"],
+				["A", "Topic sentence"],
+				["B", "Supporting sentence"],
+				["C", "Final sentence"],
+				["D", "All sentences"],
+				["E", "Middle sentence"],
 			],
 		},
 		{
@@ -1278,7 +1278,7 @@ async function CreateLatihanSoal() {
 			materiId: "materi-litindo-002",
 			tipe: LatihanSoalType.LITERASIBINDO,
 			tipeSesi: SessionType.LATIHAN,
-			content: "Teknik membaca cepat disebut juga...",
+			content: "Rapid reading technique is also called...",
 			kunciJawaban: "C",
 			tingkatKesulitan: 2,
 			pilihan: [
@@ -1294,15 +1294,15 @@ async function CreateLatihanSoal() {
 			materiId: "materi-litindo-002",
 			tipe: LatihanSoalType.LITERASIBINDO,
 			tipeSesi: SessionType.LATIHAN,
-			content: "Tujuan membaca intensif adalah...",
+			content: "The purpose of intensive reading is to...",
 			kunciJawaban: "D",
 			tingkatKesulitan: 2,
 			pilihan: [
-				["A", "Mencari hiburan"],
-				["B", "Menghabiskan waktu"],
-				["C", "Melatih mata"],
-				["D", "Memahami detail isi"],
-				["E", "Membaca cepat"],
+				["A", "Seek entertainment"],
+				["B", "Pass time"],
+				["C", "Train eyes"],
+				["D", "Understand detailed content"],
+				["E", "Read quickly"],
 			],
 		},
 		{
@@ -1310,7 +1310,7 @@ async function CreateLatihanSoal() {
 			materiId: "materi-litindo-002",
 			tipe: LatihanSoalType.LITERASIBINDO,
 			tipeSesi: SessionType.TRY_OUT,
-			content: "Membaca dengan tujuan mencari informasi tertentu disebut...",
+			content: "Reading with the goal of finding specific information is called...",
 			kunciJawaban: "B",
 			tingkatKesulitan: 3,
 			pilihan: [
@@ -1326,15 +1326,15 @@ async function CreateLatihanSoal() {
 			materiId: "materi-litindo-002",
 			tipe: LatihanSoalType.LITERASIBINDO,
 			tipeSesi: SessionType.TRY_OUT,
-			content: "Langkah pertama dalam membaca pemahaman adalah...",
+			content: "The first step in reading comprehension is...",
 			kunciJawaban: "A",
 			tingkatKesulitan: 2,
 			pilihan: [
-				["A", "Membaca judul dan paragraf pertama"],
-				["B", "Membaca kesimpulan"],
-				["C", "Membaca semua detail"],
-				["D", "Mencatat semua kalimat"],
-				["E", "Menghapal isi"],
+				["A", "Read the title and first paragraph"],
+				["B", "Read the conclusion"],
+				["C", "Read all details"],
+				["D", "Note all sentences"],
+				["E", "Memorize the content"],
 			],
 		},
 		{
@@ -1342,15 +1342,15 @@ async function CreateLatihanSoal() {
 			materiId: "materi-litindo-002",
 			tipe: LatihanSoalType.LITERASIBINDO,
 			tipeSesi: SessionType.LATIHAN,
-			content: "Simpulan bacaan biasanya terdapat pada...",
+			content: "The conclusion of a text is usually found in the...",
 			kunciJawaban: "E",
 			tingkatKesulitan: 2,
 			pilihan: [
-				["A", "Judul"],
-				["B", "Paragraf pertama"],
-				["C", "Paragraf tengah"],
-				["D", "Kalimat pertama"],
-				["E", "Paragraf akhir"],
+				["A", "Title"],
+				["B", "First paragraph"],
+				["C", "Middle paragraph"],
+				["D", "First sentence"],
+				["E", "Final paragraph"],
 			],
 		},
 		{
@@ -1358,15 +1358,15 @@ async function CreateLatihanSoal() {
 			materiId: "materi-litindo-002",
 			tipe: LatihanSoalType.LITERASIBINDO,
 			tipeSesi: SessionType.TRY_OUT,
-			content: "Jenis bacaan yang menyajikan fakta disebut teks...",
+			content: "A type of reading that presents facts is called a/an ... text.",
 			kunciJawaban: "C",
 			tingkatKesulitan: 3,
 			pilihan: [
-				["A", "Fiksi"],
-				["B", "Narasi"],
-				["C", "Eksposisi"],
-				["D", "Deskripsi"],
-				["E", "Puisi"],
+				["A", "Fiction"],
+				["B", "Narration"],
+				["C", "Exposition"],
+				["D", "Description"],
+				["E", "Poetry"],
 			],
 		},
 		{
@@ -1374,15 +1374,15 @@ async function CreateLatihanSoal() {
 			materiId: "materi-litindo-002",
 			tipe: LatihanSoalType.LITERASIBINDO,
 			tipeSesi: SessionType.TRY_OUT,
-			content: "Untuk memahami bacaan dengan baik, pembaca perlu memiliki...",
+			content: "To understand a text well, a reader needs to have...",
 			kunciJawaban: "D",
 			tingkatKesulitan: 2,
 			pilihan: [
-				["A", "Waktu luang"],
-				["B", "Buku banyak"],
-				["C", "Tempat nyaman"],
-				["D", "Pengetahuan latar belakang"],
-				["E", "Kacamata"],
+				["A", "Spare time"],
+				["B", "Many books"],
+				["C", "Comfortable place"],
+				["D", "Background knowledge"],
+				["E", "Glasses"],
 			],
 		},
 	];
@@ -1395,15 +1395,15 @@ async function CreateLatihanSoal() {
 		...soalLitIndo,
 	];
 
-	console.log(`📊 Total soal to seed: ${allSoal.length}`);
+	console.log(`📊 Total questions to seed: ${allSoal.length}`);
 
 	for (let i = 0; i < allSoal.length; i++) {
 		const soal = allSoal[i];
-		
+
 		try {
 			console.log(`  [${i + 1}/${allSoal.length}] Seeding: ${soal.id}...`);
-			
-			// Upsert soal terlebih dahulu
+
+			// Upsert question first
 			await prisma.soalLatihanSoal.upsert({
 				where: { id: soal.id },
 				update: {
@@ -1422,7 +1422,7 @@ async function CreateLatihanSoal() {
 				},
 			});
 
-			// Seed pilihan jawaban secara terpisah
+			// Seed answer options separately
 			for (const [label, text] of soal.pilihan) {
 				await prisma.pilihanJawaban.upsert({
 					where: { id: `${soal.id}-${label}` },
@@ -1439,34 +1439,34 @@ async function CreateLatihanSoal() {
 				});
 			}
 
-			// Seed pembahasan secara terpisah
+			// Seed explanation separately
 			await prisma.pembahasanSoalLatihan.upsert({
-				where: { id: `${soal.id}-pembahasan` },
+				where: { soalLatihanId: soal.id },
 				update: {
 					konten: `<div class="pembahasan">
-						<h4>Pembahasan</h4>
-						<p>Jawaban yang benar adalah <strong>${soal.kunciJawaban}</strong>.</p>
-						<p>Penjelasan: ${soal.content}</p>
+						<h4>Explanation</h4>
+						<p>The correct answer is <strong>${soal.kunciJawaban}</strong>.</p>
+						<p>Explanation: ${soal.content}</p>
 					</div>`,
 				},
 				create: {
 					id: `${soal.id}-pembahasan`,
 					soalLatihanId: soal.id,
 					konten: `<div class="pembahasan">
-						<h4>Pembahasan</h4>
-						<p>Jawaban yang benar adalah <strong>${soal.kunciJawaban}</strong>.</p>
-						<p>Penjelasan: ${soal.content}</p>
+						<h4>Explanation</h4>
+						<p>The correct answer is <strong>${soal.kunciJawaban}</strong>.</p>
+						<p>Explanation: ${soal.content}</p>
 					</div>`,
 				},
 			});
-			
+
 		} catch (error) {
 			console.error(`    ❌ Error seeding soal ${soal.id}:`, error);
 			throw error;
 		}
 	}
 
-	console.log("✅ Latihan Soal seeded successfully\n");
+	console.log("✅ Practice Questions seeded successfully\n");
 }
 
 // ==================== MAIN SEEDER ====================
@@ -1480,10 +1480,10 @@ async function main() {
 	console.log("\n🎉 Seeding completed!");
 	console.log("📊 Summary:");
 	console.log("  • 4 Users");
-	console.log("  • 10 Materi (5 categories)");
-	console.log("  • 75 Soal (15 per materi)");
-	console.log("  • 375 Pilihan Jawaban (5 per soal)");
-	console.log("  • 75 Pembahasan (1 per soal)");
+	console.log("  • 10 Topics (5 categories)");
+	console.log("  • 75 Questions (15 per topic)");
+	console.log("  • 375 Answer Options (5 per question)");
+	console.log("  • 75 Explanations (1 per question)");
 }
 
 main()
