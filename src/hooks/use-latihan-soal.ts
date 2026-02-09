@@ -203,22 +203,38 @@ export function useLatihanSession() {
 	};
 
 	const completeSession = async (): Promise<SessionResult | null> => {
-		if (!sessionId) return null;
+	if (!sessionId) {
+		console.error('[completeSession] No sessionId');
+		return null;
+	}
 
-		try {
-			const response = await fetch(`/api/latihan-soal/session/${sessionId}/complete`, {
-				method: 'POST'
-			});
+	try {
+		console.log('[completeSession] Calling API with sessionId:', sessionId);
+		
+		const response = await fetch(`/api/latihan-soal/session/${sessionId}/complete`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		});
 
-			if (!response.ok) throw new Error('Failed to complete session');
+		console.log('[completeSession] Response status:', response.status);
 
-			const data = await response.json();
-			return data.data;
-		} catch (err) {
-			console.error('Error completing session:', err);
-			throw err;
+		if (!response.ok) {
+			const errorText = await response.text();
+			console.error('[completeSession] Error response:', errorText);
+			throw new Error(`Failed to complete session: ${response.status} ${errorText}`);
 		}
-	};
+
+		const data = await response.json();
+		console.log('[completeSession] Success:', data);
+		
+		return data.data;
+	} catch (err) {
+		console.error('[completeSession] Exception:', err);
+		throw err;
+	}
+};
 
 	const nextQuestion = () => setCurrentIndex(prev => prev + 1);
 	const previousQuestion = () => setCurrentIndex(prev => Math.max(0, prev - 1));

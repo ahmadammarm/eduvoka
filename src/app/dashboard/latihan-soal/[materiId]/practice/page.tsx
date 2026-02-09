@@ -422,7 +422,16 @@ export default function PracticePage() {
 	};
 
 	const handleFinish = async () => {
-		if (!sessionId) return;
+		if (!sessionId) {
+			console.error('[handleFinish] No sessionId');
+			Swal.fire({
+				icon: 'error',
+				title: 'Error',
+				text: 'Session ID tidak ditemukan',
+				confirmButtonColor: '#3b82f6'
+			});
+			return;
+		}
 
 		const result = await Swal.fire({
 			icon: 'question',
@@ -437,58 +446,84 @@ export default function PracticePage() {
 
 		if (!result.isConfirmed) return;
 
-		try {
-			const sessionResult = await completeSession();
-			if (!sessionResult) return;
+		// Show loading
+		Swal.fire({
+			title: 'Menyimpan...',
+			text: 'Mohon tunggu sebentar',
+			allowOutsideClick: false,
+			didOpen: () => {
+				Swal.showLoading();
+			}
+		});
 
+		try {
+			console.log('[handleFinish] Starting completion for sessionId:', sessionId);
+
+			// ✅ STEP 1: Complete session first
+			const sessionResult = await completeSession();
+
+			if (!sessionResult) {
+				throw new Error('Failed to get session result');
+			}
+
+			console.log('[handleFinish] Session completed:', sessionResult);
+
+			// ✅ STEP 2: Capture analytics
 			const correctCount = Array.from(progress.values()).filter(
 				(p) => p.answered && p.isCorrect
 			).length;
 
-			// Capture session complete
-			captureSessionComplete({
-				score: sessionResult.score ?? 0,
-				totalQuestions: soalList.length,
-				correctCount,
-				totalDurationSeconds: sessionResult.totalDuration ?? 0,
-			});
-
-			// ✅ FIX: Calculate burnout dengan error handling yang lebih baik
 			try {
-				const burnout = await calculateBurnout(sessionId);
-
-				if (burnout && burnout.burnoutLevel !== 'NONE') {
-					// Show burnout warning BEFORE redirect
-					showBurnoutWarning(burnout);
-				} else {
-					// Direct redirect if no burnout
-					router.push(`/dashboard/latihan-soal/${materiId}/review?sessionId=${sessionId}`);
-				}
-			} catch (burnoutError) {
-				// Jika burnout calculation gagal, tetap redirect
-				console.warn('[Practice] Burnout calculation failed at finish:', burnoutError);
-
-				// Optional: Show info to user
-				await Swal.fire({
-					icon: 'info',
-					title: 'Analisis Kelelahan Tidak Tersedia',
-					text: 'Data tidak cukup untuk analisis burnout. Lanjut ke review.',
-					timer: 2000,
-					showConfirmButton: false
+				await captureSessionComplete({
+					score: sessionResult.score ?? 0,
+					totalQuestions: soalList.length,
+					correctCount,
+					totalDurationSeconds: sessionResult.totalDuration ?? 0,
 				});
+			} catch (captureError) {
+				console.warn('[handleFinish] Capture failed (non-critical):', captureError);
+			}
 
-				router.push(`/dashboard/latihan-soal/${materiId}/review?sessionId=${sessionId}`);
+			// ✅ STEP 3: Calculate burnout (non-blocking, with timeout)
+			const burnoutPromise = Promise.race([
+				calculateBurnout(sessionId),
+				new Promise<null>((resolve) => setTimeout(() => resolve(null), 5000)) // 5s timeout
+			]);
+
+			const burnout = await burnoutPromise;
+
+			// Close loading
+			Swal.close();
+
+			// ✅ STEP 4: Show burnout warning or redirect
+			if (burnout && burnout.burnoutLevel !== 'NONE') {
+				showBurnoutWarning(burnout);
+			} else {
+				// Direct redirect
+				router.push(`/dashboard/latihan-soal/${materiId}/result?sessionId=${sessionId}`);
 			}
 
 		} catch (err) {
+			console.error('[handleFinish] Error:', err);
+
 			Swal.fire({
 				icon: 'error',
 				title: 'Gagal Menyelesaikan',
-				text: 'Gagal menyelesaikan sesi. Silakan coba lagi',
-				confirmButtonColor: '#3b82f6'
+				text: err instanceof Error ? err.message : 'Terjadi kesalahan. Silakan coba lagi.',
+				confirmButtonColor: '#3b82f6',
+				footer: `<small>SessionId: ${sessionId}</small>`
 			});
 		}
 	};
+
+	useEffect(() => {
+		console.log('📊 Current State:', {
+			sessionId,
+			currentIndex,
+			soalListLength: soalList.length,
+			progressSize: progress.size
+		});
+	}, [sessionId, currentIndex, soalList.length, progress]);
 
 	const formatTime = (seconds: number) => {
 		const mins = Math.floor(seconds / 60);

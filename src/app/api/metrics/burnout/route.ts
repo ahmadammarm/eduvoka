@@ -122,10 +122,12 @@ export async function POST(req: NextRequest) {
 				});
 
 				// Save metrics
+				// Update save metrics
 				await prisma.sessionMetrics.upsert({
 					where: { sessionId: sess.id },
 					create: {
 						sessionId: sess.id,
+						sessionType: 'LATIHAN', // ✅ Specify type
 						burnoutLevel: result.burnoutLevel,
 						fatigueIndex: result.fatigueIndex
 					},

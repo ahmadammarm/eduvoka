@@ -10,7 +10,7 @@ export function normalizeAnswers(jawaban: any[]): AnswerData[] {
 	return jawaban
 		.filter(j => j.answeredAt) // indikator interaksi nyata
 		.map(j => ({
-			timeSpent: j.timeSpent && j.timeSpent > 0 ? j.timeSpent : 1,
+			timeSpent: j.timeSpent || 0,
 			isCorrect: Boolean(j.isCorrect),
 			isSkipped: Boolean(j.isSkipped),
 			answeredAt: new Date(j.answeredAt)
@@ -100,8 +100,9 @@ export async function GET(
 				where: { sessionId },
 				create: {
 					sessionId,
+					sessionType: 'LATIHAN', // ✅ Specify type
 					burnoutLevel: result.burnoutLevel,
-					fatigueIndex: result.fatigueIndex,
+					fatigueIndex: result.fatigueIndex
 				},
 				update: {
 					burnoutLevel: result.burnoutLevel,

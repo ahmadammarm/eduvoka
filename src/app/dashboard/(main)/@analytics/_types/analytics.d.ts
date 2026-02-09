@@ -56,4 +56,17 @@ export interface AnalyticsData {
     subjectPerformance: SubjectPerformance[];
     recentSessions: RecentSession[];
     studyTimeDistribution: StudyTimeDistribution[];
+
+	burnoutTrend: BurnoutTrend;
+}
+
+export interface BurnoutTrend {
+	avgBurnoutIndex: number;
+	distribution: Record<BurnoutLevel, number>;
+	trend: 'IMPROVING' | 'WORSENING' | 'STABLE';
+	recentSessions: Array<{
+		date: string;
+		burnoutLevel: BurnoutLevel;
+		fatigueIndex: number;
+	}>;
 }

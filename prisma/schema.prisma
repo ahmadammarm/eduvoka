@@ -227,9 +227,11 @@ model LatihanSession {
     user    User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
     jawaban LatihanJawabanUser[]
 
-    sessionMetrics   SessionMetrics?  @relation(fields: [sessionMetricsId], references: [id])
-    sessionMetricsId String?
-    learningMetrics  LearningMetrics?
+    // ✅ One-to-one relation with SessionMetrics
+    sessionMetrics SessionMetrics?
+
+    // ✅ One-to-one relation with LearningMetrics
+    learningMetrics LearningMetrics?
 
     @@index([userId])
     @@index([startedAt])
@@ -472,7 +474,9 @@ model UtbkSession {
 
     user        User              @relation(fields: [userId], references: [id], onDelete: Cascade)
     jawabanUser UtbkJawabanUser[]
-    metrics     SessionMetrics?
+
+    // ✅ One-to-one relation with SessionMetrics
+    sessionMetrics SessionMetrics?
 
     @@index([userId])
 }
@@ -516,11 +520,14 @@ model UtbkJawabanUser {
     @@index([soalUTBKId])
 }
 
-// ==================== NEW: LEARNING VELOCITY METRICS ====================
 
+// ==================== NEW: LEARNING VELOCITY METRICS ====================
 model SessionMetrics {
-    id        String @id @default(cuid())
-    sessionId String @unique
+    id String @id @default(cuid())
+
+    // ✅ Polymorphic references
+    sessionId   String @unique
+    sessionType String // "UTBK" | "LATIHAN"
 
     // Velocity Metrics
     velocityScore  Float? // 0-100 indicating learning speed
@@ -535,9 +542,16 @@ model SessionMetrics {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    session         UtbkSession      @relation(fields: [sessionId], references: [id], onDelete: Cascade)
-    latihanSessions LatihanSession[]
+    // ✅ Explicit one-to-one relations (nullable)
+    utbkSession    UtbkSession?    @relation(fields: [sessionId], references: [id], onDelete: Cascade, map: "SessionMetrics_utbkSession_fkey")
+    latihanSession LatihanSession? @relation(fields: [sessionId], references: [id], onDelete: Cascade, map: "SessionMetrics_latihanSession_fkey")
+
+    @@index([sessionId])
+    @@index([sessionType])
+    @@index([burnoutLevel])
+    @@index([fatigueIndex])
 }
+
 
 // ==================== RAW EVENT LOG ====================
 

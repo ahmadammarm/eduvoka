@@ -364,11 +364,10 @@ export default function ResultPage() {
 				<div className="flex items-start justify-between mb-6">
 					<div>
 						<h3 className="text-2xl font-bold text-gray-900 mb-2 flex items-center gap-2">
-							<span>{config.icon}</span>
 							Analisis Kelelahan
 						</h3>
 						<p className="text-gray-600 text-sm">
-							Deteksi burnout menggunakan AI-powered analysis
+							Deteksi burnout berdasarkan pola belajar dan performa Anda
 						</p>
 					</div>
 					<div className={`px-4 py-2 rounded-full ${config.bgColor} ${config.textColor} font-bold text-sm`}>
@@ -447,7 +446,7 @@ export default function ResultPage() {
 				{/* Recommendations */}
 				<div className={`${config.bgColor} border-2 ${getBorderColor()} rounded-lg p-6`}>
 					<h4 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
-						💡 Rekomendasi
+						Rekomendasi
 					</h4>
 					<p className="text-gray-800 mb-4">
 						{recommendations.message}
@@ -496,8 +495,6 @@ export default function ResultPage() {
 						{result.type === 'LATIHAN' ? 'Practice Mode' : 'Try Out Mode'}
 					</p>
 				</div>
-
-				<BurnoutCard />
 
 				{/* Score Card */}
 				<div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-8 mb-6">
@@ -619,6 +616,8 @@ export default function ResultPage() {
 						</div>
 					)}
 				</div>
+
+				<BurnoutCard />
 
 				{/* Learning Velocity Card (PREMIUM) */}
 				<div className="bg-gradient-to-r from-purple-600 to-indigo-700 rounded-2xl shadow-2xl p-8 mb-6 text-white">

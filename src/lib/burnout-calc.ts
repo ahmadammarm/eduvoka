@@ -19,7 +19,7 @@ export function validateBurnoutInput(answers: AnswerData[]): ValidationResult {
 		};
 	}
 
-	// Filter out soal yang diskip atau timeSpent = 0
+	// Filter out soal yang diskip atau timeSpent <= 0
 	const validAnswers = answers.filter(a => !a.isSkipped && a.timeSpent > 0);
 
 	if (validAnswers.length < 5) {
@@ -34,14 +34,14 @@ export function validateBurnoutInput(answers: AnswerData[]): ValidationResult {
 	const median = getMedian(times);
 
 	// Jika median terlalu kecil, mungkin ada masalah tracking
-	if (median < 5) {
+	if (median < 3) {
 		return {
 			valid: false,
 			reason: 'Waktu pengerjaan terlalu singkat. Kemungkinan ada masalah tracking waktu.'
 		};
 	}
 
-	const outliers = times.filter(t => t > median * 5); // 5x median = outlier
+	const outliers = times.filter(t => t > median * 10); // 10x median = outlier
 
 	if (outliers.length > validAnswers.length * 0.3) {
 		return {
@@ -95,22 +95,34 @@ function calculateCFI(q1: QuartileStats, q3: QuartileStats): number {
 
 	const cfi = ((q3.avgTime - q1.avgTime) / q1.avgTime) * 100;
 
+	// ✅ FIX: Jika negatif (makin cepat), berarti TIDAK burnout
+	if (cfi < 0) return 0;
+
 	// Cap maksimal di 100%
-	return Math.max(0, Math.min(100, Math.round(cfi * 10) / 10));
+	return Math.min(100, Math.round(cfi * 10) / 10);
 }
 
 function calculateDQI(q1: QuartileStats, q3: QuartileStats): number {
 	// Decision Quality Index: penurunan akurasi
 	const dqi = q1.accuracy - q3.accuracy;
 
+	// ✅ FIX: Jika negatif (makin akurat), berarti TIDAK burnout
+	if (dqi < 0) return 0;
+
 	// Cap maksimal di 100%
-	return Math.max(0, Math.min(100, Math.round(dqi * 10) / 10));
+	return Math.min(100, Math.round(dqi * 10) / 10);
 }
 
 function calculateEDI(q3: QuartileStats, answers: AnswerData[]): number {
 	// Engagement Drop Index
 	const q3Answers = answers.slice(Math.floor(answers.length * 2 / 3));
-	const rapidAnswers = q3Answers.filter(a => !a.isSkipped && a.timeSpent < 10 && a.timeSpent > 0);
+
+	// ✅ FIX: Threshold rapid answer harus relatif terhadap median
+	const allTimes = answers.filter(a => !a.isSkipped && a.timeSpent > 0).map(a => a.timeSpent);
+	const medianTime = getMedian(allTimes);
+	const rapidThreshold = Math.max(5, medianTime * 0.3); // 30% dari median, minimal 5 detik
+
+	const rapidAnswers = q3Answers.filter(a => !a.isSkipped && a.timeSpent > 0 && a.timeSpent < rapidThreshold);
 	const rapidRate = q3Answers.length > 0
 		? (rapidAnswers.length / q3Answers.length) * 100
 		: 0;
@@ -163,27 +175,39 @@ export function calculateBurnout(input: BurnoutCalculationInput): BurnoutCalcula
 	const edi = calculateEDI(q3Stats, validAnswers);
 	const tpc = calculateTPC(validAnswers);
 
-	// Weights - disesuaikan untuk lebih sensitive
+	// ✅ FIX: SPECIAL CASE - Fast & Accurate Performance
+	const overallAccuracy = validAnswers.filter(a => a.isCorrect).length / validAnswers.length * 100;
+	const avgTime = validAnswers.reduce((sum, a) => sum + a.timeSpent, 0) / validAnswers.length;
+
+	// Jika user SANGAT cepat DAN akurat, override burnout jadi NONE
+	const isFastAndAccurate = avgTime < 30 && overallAccuracy >= 80 && cfi < 15 && dqi < 10;
+
+	// Weights
 	const weights = {
-		cfi: 0.35,  // Cognitive load paling penting
-		dqi: 0.30,  // Decision quality
-		edi: 0.20,  // Engagement
-		tpc: 0.15   // Consistency
+		cfi: 0.35,
+		dqi: 0.30,
+		edi: 0.20,
+		tpc: 0.15
 	};
 
 	// Composite score
-	const fatigueIndex = Math.round(
+	let fatigueIndex = Math.round(
 		(cfi * weights.cfi +
 			dqi * weights.dqi +
 			edi * weights.edi +
 			(100 - tpc) * weights.tpc) * 10
 	) / 10;
 
+	// ✅ Override for fast & accurate
+	if (isFastAndAccurate) {
+		fatigueIndex = Math.min(fatigueIndex, 15); // Cap at 15 (NONE)
+	}
+
 	// Determine burnout level - threshold disesuaikan
 	const burnoutLevel: BurnoutLevel =
-		fatigueIndex >= 50 ? 'SEVERE' :    // Lebih strict
-			fatigueIndex >= 35 ? 'MODERATE' :
-				fatigueIndex >= 20 ? 'MILD' :
+		fatigueIndex >= 60 ? 'SEVERE' :
+			fatigueIndex >= 40 ? 'MODERATE' :
+				fatigueIndex >= 25 ? 'MILD' :
 					'NONE';
 
 	// Generate recommendations
@@ -204,13 +228,17 @@ export function calculateBurnout(input: BurnoutCalculationInput): BurnoutCalcula
 				value: cfi,
 				weight: weights.cfi,
 				contribution: Math.round(cfi * weights.cfi * 10) / 10,
-				interpretation: `Perlambatan ${cfi.toFixed(1)}% dari awal ke akhir`
+				interpretation: cfi === 0
+					? 'Tidak ada perlambatan (bahkan mungkin makin cepat!)'
+					: `Perlambatan ${cfi.toFixed(1)}% dari awal ke akhir`
 			},
 			decisionQuality: {
 				value: dqi,
 				weight: weights.dqi,
 				contribution: Math.round(dqi * weights.dqi * 10) / 10,
-				interpretation: `Akurasi turun ${dqi.toFixed(1)}% dari Q1 ke Q3`
+				interpretation: dqi === 0
+					? 'Akurasi stabil atau bahkan meningkat'
+					: `Akurasi turun ${dqi.toFixed(1)}% dari Q1 ke Q3`
 			},
 			engagement: {
 				value: edi,
@@ -255,25 +283,25 @@ function generateRecommendations(
 		NONE: {
 			shouldRest: false,
 			restDuration: 0,
-			message: '🎯 Kondisi prima! Fokus dan energi masih sangat baik. Lanjutkan dengan performa terbaikmu!',
+			message: 'Kondisi prima! Fokus dan energi masih sangat baik. Lanjutkan dengan performa terbaikmu!',
 			nextAction: 'CONTINUE'
 		},
 		MILD: {
 			shouldRest: true,
 			restDuration: 5,
-			message: '💡 Mulai ada tanda-tanda kelelahan ringan. Istirahat 5 menit akan refresh fokusmu.',
+			message: 'Mulai ada tanda-tanda kelelahan ringan. Istirahat 5 menit akan refresh fokusmu.',
 			nextAction: 'REST'
 		},
 		MODERATE: {
 			shouldRest: true,
 			restDuration: 15,
-			message: '⚠️ Kelelahan cukup terdeteksi. Istirahat 10-15 menit atau ganti topik dulu untuk recovery.',
+			message: 'Kelelahan cukup terdeteksi. Istirahat 10-15 menit atau ganti topik dulu untuk recovery.',
 			nextAction: 'SWITCH_TOPIC'
 		},
 		SEVERE: {
 			shouldRest: true,
 			restDuration: 30,
-			message: '🛑 Burnout terdeteksi! Otakmu butuh istirahat serius. Better stop dan lanjut besok setelah tidur cukup.',
+			message: 'Burnout terdeteksi! Otakmu butuh istirahat serius. Better stop dan lanjut besok setelah tidur cukup.',
 			nextAction: 'STOP_SESSION'
 		}
 	};

@@ -25,12 +25,13 @@ export function useBurnoutMetrics(): UseBurnoutMetricsReturn {
 
 			if (!response.ok) {
 				const errorData = await response.json();
-				throw new Error(errorData.error || 'Failed to calculate burnout');
+				throw new Error(errorData.reason || errorData.error || 'Failed to calculate burnout');
 			}
 
 			const result = await response.json();
-			setBurnoutData(result.data);
-			return result.data;
+
+			setBurnoutData(result);
+			return result;
 
 		} catch (err) {
 			const errorMessage = err instanceof Error ? err.message : 'Unknown error';
