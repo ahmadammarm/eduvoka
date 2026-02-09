@@ -276,7 +276,7 @@ export default function LearningVelocityPage() {
                                 <p className="text-gray-600">Start a practice session to see your metrics in action</p>
                             </div>
                             <Link
-                                href="/dashboard/latihan-soal"
+                                href="/dashboard/practice-questions"
                                 className="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg flex items-center gap-2 transition-colors"
                             >
                                 Start Practice
@@ -291,7 +291,7 @@ export default function LearningVelocityPage() {
                     <h3 className="text-xl font-bold text-gray-900 mb-2">No Velocity Data Yet</h3>
                     <p className="text-gray-600 mb-6">Complete your first practice session to see your learning velocity metrics</p>
                     <Link
-                        href="/dashboard/latihan-soal"
+                        href="/dashboard/practice-questions"
                         className="inline-flex items-center gap-2 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg transition-colors"
                     >
                         Start Your First Session

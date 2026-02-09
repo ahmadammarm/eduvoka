@@ -66,7 +66,7 @@ export default function MateriDetailPage() {
 	const handleMarkComplete = async () => {
 		// End study session before navigating away
 		await endStudy();
-		router.push('/dashboard/materi');
+		router.push('/dashboard/study-materials');
 	};
 
 	const handleNavigateToLatihan = async () => {
@@ -102,7 +102,7 @@ export default function MateriDetailPage() {
 			<div className="flex flex-col items-center justify-center min-h-screen">
 				<p className="text-gray-600 mb-4">Material not found</p>
 				<button
-					onClick={() => router.push('/dashboard/materi')}
+					onClick={() => router.push('/dashboard/study-materials')}
 					className="text-blue-600 hover:underline"
 				>
 					Back to study materials
@@ -120,7 +120,7 @@ export default function MateriDetailPage() {
                         <button
                             onClick={async () => {
                                 await endStudy();
-                                router.push('/dashboard/materi');
+                                router.push('/dashboard/study-materials');
                             }}
                             className="flex items-center text-gray-600 hover:text-gray-900"
                         >

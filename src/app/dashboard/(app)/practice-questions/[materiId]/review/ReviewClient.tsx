@@ -78,7 +78,7 @@ export default function ReviewClient({ reviewData }: ReviewClientProps) {
     useEffect(() => {
         if (questionsToReview.length === 0) {
             // Perfect score - skip review and go directly to results
-            router.push(`/dashboard/latihan-soal/${reviewData.materiId}/result?sessionId=${reviewData.sessionId}`);
+            router.push(`/dashboard/practice-questions/${reviewData.materiId}/result?sessionId=${reviewData.sessionId}`);
         }
     }, [questionsToReview.length, reviewData.materiId, reviewData.sessionId, router]);
 
@@ -100,7 +100,7 @@ export default function ReviewClient({ reviewData }: ReviewClientProps) {
     };
 
     const handleSkipToResults = () => {
-        router.push(`/dashboard/latihan-soal/${reviewData.materiId}/result?sessionId=${reviewData.sessionId}`);
+        router.push(`/dashboard/practice-questions/${reviewData.materiId}/result?sessionId=${reviewData.sessionId}`);
     };
 
     const handleMarkAsUnderstood = () => {

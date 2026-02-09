@@ -41,12 +41,12 @@ const data = {
 				{
 					icon: Book,
 					title: "Study Materials",
-					url: "/dashboard/materi",
+					url: "/dashboard/study-materials",
 				},
 				{
 					icon: NotebookText,
 					title: "Practice Questions",
-					url: "/dashboard/latihan-soal",
+					url: "/dashboard/practice-questions",
 				},
 				{
 					icon: ActivitySquare,

@@ -805,7 +805,7 @@ export default function ResultPage() {
 					</Link>
 
 					<Link
-						href="/dashboard/latihan-soal"
+						href="/dashboard/practice-questions"
 						className="flex items-center justify-center gap-2 bg-white hover:bg-gray-50 text-gray-700 font-semibold py-4 px-6 rounded-lg border-2 border-gray-300 transition-colors"
 					>
 						<ArrowRight className="w-5 h-5" />

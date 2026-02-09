@@ -31,7 +31,7 @@ const KATEGORI_COLORS: Record<LatihanSoalType, string> = {
     LITERASIBINGG: 'bg-indigo-500'
 };
 
-export default function LatihanSoalPage() {
+export default function PracticeQuestionsPage() {
     const { materiList, loading, error } = useMateriList();
 
     if (loading) {

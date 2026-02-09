@@ -353,7 +353,7 @@ export default function PracticePage() {
 		const config = levelConfig[burnout.burnoutLevel as keyof typeof levelConfig];
 		if (!config) {
 			// NONE level, langsung redirect
-			router.push(`/dashboard/latihan-soal/${materiId}/review?sessionId=${sessionId}`);
+			router.push(`/dashboard/practice-questions/${materiId}/review?sessionId=${sessionId}`);
 			return;
 		}
 
@@ -413,7 +413,7 @@ export default function PracticePage() {
 			allowOutsideClick: false
 		}).then((result) => {
 			if (result.isConfirmed) {
-				router.push(`/dashboard/latihan-soal/${materiId}/review?sessionId=${sessionId}`);
+				router.push(`/dashboard/practice-questions/${materiId}/review?sessionId=${sessionId}`);
 			} else if (result.isDismissed) {
 				// User chose to rest
 				router.push('/dashboard');
@@ -500,7 +500,7 @@ export default function PracticePage() {
 				showBurnoutWarning(burnout);
 			} else {
 				// Direct redirect to REVIEW (Socratic flow), not result
-				router.push(`/dashboard/latihan-soal/${materiId}/review?sessionId=${sessionId}`);
+				router.push(`/dashboard/practice-questions/${materiId}/review?sessionId=${sessionId}`);
 			}
 
 		} catch (err) {
@@ -510,7 +510,7 @@ export default function PracticePage() {
 			const errorMessage = err instanceof Error ? err.message : 'Unknown error';
 			if (errorMessage.includes("minimal") || errorMessage.includes("Insufficient data")) {
 				console.warn("Ignoring burnout error (insufficient data), proceeding to review.");
-				router.push(`/dashboard/latihan-soal/${materiId}/review?sessionId=${sessionId}`);
+				router.push(`/dashboard/practice-questions/${materiId}/review?sessionId=${sessionId}`);
 				return;
 			}
 

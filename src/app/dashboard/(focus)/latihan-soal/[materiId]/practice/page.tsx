@@ -353,7 +353,7 @@ export default function PracticePage() {
 		const config = levelConfig[burnout.burnoutLevel as keyof typeof levelConfig];
 		if (!config) {
 			// NONE level, langsung redirect
-			router.push(`/dashboard/latihan-soal/${materiId}/review?sessionId=${sessionId}`);
+			router.push(`/dashboard/practice-questions/${materiId}/review?sessionId=${sessionId}`);
 			return;
 		}
 
@@ -500,7 +500,7 @@ export default function PracticePage() {
 				showBurnoutWarning(burnout);
 			} else {
 				// Direct redirect
-				router.push(`/dashboard/latihan-soal/${materiId}/result?sessionId=${sessionId}`);
+				router.push(`/dashboard/practice-questions/${materiId}/result?sessionId=${sessionId}`);
 			}
 
 		} catch (err) {
