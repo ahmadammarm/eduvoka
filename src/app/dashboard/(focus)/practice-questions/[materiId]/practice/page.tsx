@@ -271,12 +271,12 @@ export default function PracticePage() {
 					MILD: {
 						icon: 'info' as const,
 						color: '#10b981',
-						title: '💡 Istirahat Sebentar?'
+						title: '💡 Need a Break?'
 					},
 					MODERATE: {
 						icon: 'warning' as const,
 						color: '#f59e0b',
-						title: '⚠️ Mulai Lelah Nih'
+						title: '⚠️ Getting Tired?'
 					},
 					SEVERE: {
 						icon: 'error' as const,
@@ -288,7 +288,7 @@ export default function PracticePage() {
 				const config = levelConfig[burnoutLevel as keyof typeof levelConfig];
 				if (!config) return; // NONE level
 
-				// Show SweetAlert2 dengan auto-close untuk MILD
+				// Show SweetAlert2 with auto-close for MILD
 				const result = await Swal.fire({
 					icon: config.icon,
 					title: config.title,
@@ -302,24 +302,24 @@ export default function PracticePage() {
 						</div>
 						
 						<div class="bg-blue-50 p-3 rounded-xl">
-							<p class="text-sm font-semibold text-gray-700 mb-1">💡 Rekomendasi</p>
+							<p class="text-sm font-semibold text-gray-700 mb-1">💡 Recommendation</p>
 							<p class="text-sm text-gray-800">${recommendations.message}</p>
 						</div>
 
 						${recommendations.shouldRest ? `
 							<div class="bg-green-50 p-3 rounded-xl">
-								<p class="text-sm font-semibold text-gray-700 mb-1">⏱️ Saran Istirahat</p>
-								<p class="text-sm text-gray-800">${recommendations.restDuration} menit</p>
+								<p class="text-sm font-semibold text-gray-700 mb-1">⏱️ Suggested Rest</p>
+								<p class="text-sm text-gray-800">${recommendations.restDuration} minutes</p>
 							</div>
 						` : ''}
 					</div>
 				`,
 					showCancelButton: true,
-					confirmButtonText: recommendations.shouldRest ? `Istirahat ${recommendations.restDuration} Menit` : 'OK',
-					cancelButtonText: 'Lanjut Latihan',
+					confirmButtonText: recommendations.shouldRest ? `Rest ${recommendations.restDuration} Minutes` : 'OK',
+					cancelButtonText: 'Continue Practice',
 					confirmButtonColor: config.color,
 					cancelButtonColor: '#6b7280',
-					// Auto-close untuk MILD setelah 10 detik
+					// Auto-close for MILD after 10 seconds
 					timer: burnoutLevel === 'MILD' ? 10000 : undefined,
 					timerProgressBar: true
 				});
@@ -329,8 +329,8 @@ export default function PracticePage() {
 					// Optional: Implement rest timer or pause session
 					await Swal.fire({
 						icon: 'success',
-						title: 'Selamat Istirahat!',
-						text: `Set timer ${recommendations.restDuration} menit dan kembali saat siap.`,
+						title: 'Enjoy your break!',
+						text: `Set a timer for ${recommendations.restDuration} minutes and come back when ready.`,
 						timer: 3000,
 						showConfirmButton: false
 					});
@@ -359,7 +359,7 @@ export default function PracticePage() {
 
 		Swal.fire({
 			icon: config.icon,
-			title: 'Analisis Kelelahan',
+			title: 'Fatigue Analysis',
 			html: `
 			<div class="text-left space-y-4">
 				<div class="bg-gray-50 p-4 rounded-xl">
@@ -370,20 +370,20 @@ export default function PracticePage() {
 				</div>
 				
 				<div class="bg-blue-50 p-4 rounded-xl">
-					<p class="text-sm font-semibold text-gray-700 mb-2">💡 Rekomendasi</p>
+					<p class="text-sm font-semibold text-gray-700 mb-2">💡 Recommendation</p>
 					<p class="text-gray-800">${burnout.recommendations.message}</p>
 				</div>
 
 				${burnout.recommendations.shouldRest ? `
 					<div class="bg-green-50 p-4 rounded-xl">
-						<p class="text-sm font-semibold text-gray-700 mb-2">⏱️ Waktu Istirahat</p>
-						<p class="text-gray-800">${burnout.recommendations.restDuration} menit</p>
+						<p class="text-sm font-semibold text-gray-700 mb-2">⏱️ Rest Duration</p>
+						<p class="text-gray-800">${burnout.recommendations.restDuration} minutes</p>
 					</div>
 				` : ''}
 				
 				<!-- Breakdown Components -->
 				<div class="bg-gray-50 p-4 rounded-xl">
-					<p class="text-sm font-semibold text-gray-700 mb-3">📊 Detail Analisis</p>
+					<p class="text-sm font-semibold text-gray-700 mb-3">📊 Analysis Detail</p>
 					<div class="space-y-2 text-sm">
 						<div class="flex justify-between">
 							<span class="text-gray-600">Cognitive Load:</span>
@@ -405,10 +405,10 @@ export default function PracticePage() {
 				</div>
 			</div>
 		`,
-			confirmButtonText: 'Lanjut ke Review',
+			confirmButtonText: 'Proceed to Review',
 			confirmButtonColor: '#3b82f6',
 			showCancelButton: burnout.burnoutLevel === 'SEVERE',
-			cancelButtonText: 'Istirahat Dulu',
+			cancelButtonText: 'Take a Break',
 			cancelButtonColor: '#6b7280',
 			allowOutsideClick: false
 		}).then((result) => {
@@ -427,7 +427,7 @@ export default function PracticePage() {
 			Swal.fire({
 				icon: 'error',
 				title: 'Error',
-				text: 'Session ID tidak ditemukan',
+				text: 'Session ID not found',
 				confirmButtonColor: '#3b82f6'
 			});
 			return;
@@ -435,21 +435,21 @@ export default function PracticePage() {
 
 		const result = await Swal.fire({
 			icon: 'question',
-			title: 'Selesaikan Latihan?',
-			text: 'Yakin ingin menyelesaikan latihan ini?',
+			title: 'Finish Practice?',
+			text: 'Are you sure you want to finish this session?',
 			showCancelButton: true,
 			confirmButtonColor: '#3b82f6',
 			cancelButtonColor: '#6b7280',
-			confirmButtonText: 'Ya, Selesaikan',
-			cancelButtonText: 'Batal'
+			confirmButtonText: 'Yes, Finish',
+			cancelButtonText: 'Cancel'
 		});
 
 		if (!result.isConfirmed) return;
 
 		// Show loading
 		Swal.fire({
-			title: 'Menyimpan...',
-			text: 'Mohon tunggu sebentar',
+			title: 'Saving...',
+			text: 'Please wait a moment',
 			allowOutsideClick: false,
 			didOpen: () => {
 				Swal.showLoading();

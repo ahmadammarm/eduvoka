@@ -91,7 +91,7 @@ export default function ConceptMap({ nodes, isVisible }: ConceptMapProps) {
     };
 
     return (
-        <div className="bg-gradient-to-br from-slate-50 to-blue-50 rounded-xl p-4 border border-slate-200 shadow-sm">
+        <div className="bg-gradient-to-br from-slate-50 to-blue-50 rounded-xl p-4 border border-slate-200 shadow-sm max-h-48 overflow-y-auto">
             <div className="flex items-center gap-2 mb-4">
                 <div className="p-1.5 bg-blue-100 rounded-lg">
                     <Network className="w-4 h-4 text-blue-600" />

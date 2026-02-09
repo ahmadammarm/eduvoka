@@ -219,9 +219,9 @@ export default function ResultPage() {
 	};
 
 	const getScoreLabel = (score: number) => {
-		if (score >= 80) return 'Luar Biasa!';
-		if (score >= 60) return 'Bagus!';
-		return 'Terus Berlatih!';
+		if (score >= 80) return 'Outstanding!';
+		if (score >= 60) return 'Good Job!';
+		return 'Keep Practicing!';
 	};
 
 	const getScoreBgColor = (score: number) => {
@@ -322,21 +322,21 @@ export default function ResultPage() {
 				textColor: 'text-green-600',
 				bgColor: 'bg-green-50',
 				icon: '🎯',
-				title: 'Kondisi Prima!'
+				title: 'Prime Condition!'
 			},
 			MILD: {
 				color: 'from-yellow-500 to-amber-600',
 				textColor: 'text-yellow-600',
 				bgColor: 'bg-yellow-50',
 				icon: '💡',
-				title: 'Sedikit Lelah'
+				title: 'Slightly Tired'
 			},
 			MODERATE: {
 				color: 'from-orange-500 to-red-500',
 				textColor: 'text-orange-600',
 				bgColor: 'bg-orange-50',
 				icon: '⚠️',
-				title: 'Cukup Lelah'
+				title: 'Moderately Tired'
 			},
 			SEVERE: {
 				color: 'from-red-500 to-rose-700',
@@ -364,10 +364,10 @@ export default function ResultPage() {
 				<div className="flex items-start justify-between mb-6">
 					<div>
 						<h3 className="text-2xl font-bold text-gray-900 mb-2 flex items-center gap-2">
-							Analisis Kelelahan
+							Fatigue Analysis
 						</h3>
 						<p className="text-gray-600 text-sm">
-							Deteksi burnout berdasarkan pola belajar dan performa Anda
+							Burnout detection based on your learning patterns and performance
 						</p>
 					</div>
 					<div className={`px-4 py-2 rounded-full ${config.bgColor} ${config.textColor} font-bold text-sm`}>
@@ -446,7 +446,7 @@ export default function ResultPage() {
 				{/* Recommendations */}
 				<div className={`${config.bgColor} border-2 ${getBorderColor()} rounded-lg p-6`}>
 					<h4 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
-						Rekomendasi
+						Recommendation
 					</h4>
 					<p className="text-gray-800 mb-4">
 						{recommendations.message}
@@ -456,9 +456,9 @@ export default function ResultPage() {
 						<div className="bg-white bg-opacity-70 rounded-lg p-4 mb-4">
 							<div className="flex items-center justify-between">
 								<div>
-									<p className="font-semibold text-gray-900">Saran Istirahat:</p>
+									<p className="font-semibold text-gray-900">Suggested Rest:</p>
 									<p className={`text-2xl font-bold ${config.textColor}`}>
-										{recommendations.restDuration} menit
+										{recommendations.restDuration} minutes
 									</p>
 								</div>
 								<div className="text-4xl">⏱️</div>
@@ -469,10 +469,10 @@ export default function ResultPage() {
 					<div className="mt-4 pt-4 border-t border-gray-300">
 						<p className="text-sm text-gray-700">
 							<strong>Next Step:</strong>{' '}
-							{recommendations.nextAction === 'CONTINUE' && 'Lanjutkan ke materi berikutnya atau coba tryout!'}
-							{recommendations.nextAction === 'REST' && 'Istirahat sebentar lalu lanjut latihan.'}
-							{recommendations.nextAction === 'SWITCH_TOPIC' && 'Ganti topik atau materi yang lebih ringan.'}
-							{recommendations.nextAction === 'STOP_SESSION' && 'Hentikan latihan dan lanjut besok setelah istirahat cukup.'}
+							{recommendations.nextAction === 'CONTINUE' && 'Continue to next material or try a simulation!'}
+							{recommendations.nextAction === 'REST' && 'Rest for a moment then continue practicing.'}
+							{recommendations.nextAction === 'SWITCH_TOPIC' && 'Switch to a lighter topic or material.'}
+							{recommendations.nextAction === 'STOP_SESSION' && 'Stop practice and continue tomorrow after enough rest.'}
 						</p>
 					</div>
 				</div>

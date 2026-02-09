@@ -36,11 +36,33 @@ export default function SocraticChat({
     const [currentPhase, setCurrentPhase] = useState<'PROBE' | 'ANALYZE' | 'PERSIST' | 'EVALUATE'>('PROBE');
     const [masteryScore, setMasteryScore] = useState<number | null>(null);
     const [conceptNodes, setConceptNodes] = useState<ConceptNode[]>([]);
-    const [showConceptMap, setShowConceptMap] = useState(true);
+    const [showConceptMap, setShowConceptMap] = useState(false); // Default to collapsed for more chat space
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    };
+
+    // Helper to strip metadata tokens from AI replies for display
+    const stripMetadataTokens = (content: string): string => {
+        // Remove [[CONCEPTS:{...}]] blocks (use [\s\S] for dot-all compatibility)
+        let cleaned = content.replace(/\[\[CONCEPTS:\{[\s\S]*?\}\]\]/g, '');
+        // Remove [[COMPLETED|SCORE:XX]] tokens
+        cleaned = cleaned.replace(/\[\[COMPLETED\|SCORE:\d+\]\]/g, '');
+        return cleaned.trim();
+    };
+
+    // Helper to extract concept map data from raw reply
+    const extractConceptMap = (rawReply: string): { main?: string; current?: string; explored?: string[]; upcoming?: string[] } | null => {
+        const match = rawReply.match(/\[\[CONCEPTS:(\{[\s\S]*?\})\]\]/);
+        if (match && match[1]) {
+            try {
+                return JSON.parse(match[1]);
+            } catch {
+                return null;
+            }
+        }
+        return null;
     };
 
     useEffect(() => {
@@ -69,17 +91,42 @@ export default function SocraticChat({
                 });
 
                 const data = await response.json();
+                const rawReply = data.reply || data.error || 'Hello! Let\'s discuss this problem together.';
+                const cleanedReply = stripMetadataTokens(rawReply);
                 const aiGreeting: Message = {
                     role: 'ai',
-                    content: data.reply || data.error || 'Halo! Mari kita bahas soal ini bersama-sama.'
+                    content: cleanedReply
                 };
                 setMessages([aiGreeting]);
+
+                // Parse concept map from initial response
+                const inlineConceptMap = extractConceptMap(rawReply);
+                if (inlineConceptMap || data.conceptMap) {
+                    const conceptData = data.conceptMap || inlineConceptMap;
+                    if (conceptData) {
+                        const { main, current, explored, upcoming } = conceptData;
+                        const initialNodes: ConceptNode[] = [];
+                        if (main) initialNodes.push({ id: 'main', label: main, status: 'explored' as const });
+                        if (explored && Array.isArray(explored)) {
+                            explored.forEach((concept: string, idx: number) => {
+                                initialNodes.push({ id: `explored-${idx}`, label: concept, status: 'explored' as const, parentId: 'main' });
+                            });
+                        }
+                        if (current) initialNodes.push({ id: 'current', label: current, status: 'current' as const, parentId: 'main' });
+                        if (upcoming && Array.isArray(upcoming)) {
+                            upcoming.forEach((concept: string, idx: number) => {
+                                initialNodes.push({ id: `upcoming-${idx}`, label: concept, status: 'upcoming' as const, parentId: 'current' });
+                            });
+                        }
+                        setConceptNodes(initialNodes);
+                    }
+                }
             } catch (error) {
                 console.error('Error sending initial question:', error);
                 // Fallback greeting if API fails
                 const fallbackGreeting: Message = {
                     role: 'ai',
-                    content: 'Halo! Saya lihat kamu salah menjawab soal ini. Coba jelaskan ke saya, kenapa kamu memilih jawaban tersebut?'
+                    content: 'Hello! I see you got this question wrong. Can you explain why you chose that answer?'
                 };
                 setMessages([fallbackGreeting]);
             } finally {
@@ -130,11 +177,16 @@ export default function SocraticChat({
             });
 
             const data = await response.json();
+            const rawReply = data.reply || data.error || 'No response received';
+            const cleanedReply = stripMetadataTokens(rawReply);
             const aiMsg: Message = {
                 role: 'ai',
-                content: data.reply || data.error || 'No response received'
+                content: cleanedReply
             };
             setMessages(prev => [...prev, aiMsg]);
+
+            // Also parse inline concept map from reply if API didn't provide structured data
+            const inlineConceptMap = extractConceptMap(rawReply);
 
             // Handle completion signal from AI
             if (data.isCompleted && onConceptMastered) {
@@ -161,51 +213,54 @@ export default function SocraticChat({
                 else setCurrentPhase('EVALUATE');
             }
 
-            // Update concept map from API response
-            if (data.conceptMap) {
-                const { main, current, explored, upcoming } = data.conceptMap;
-                const newNodes: ConceptNode[] = [];
+            // Update concept map from API response or inline extraction
+            if (data.conceptMap || inlineConceptMap) {
+                const conceptData = data.conceptMap || inlineConceptMap;
+                if (conceptData) {
+                    const { main, current, explored, upcoming } = conceptData;
+                    const newNodes: ConceptNode[] = [];
 
-                // Add main topic node
-                if (main) {
-                    newNodes.push({ id: 'main', label: main, status: 'explored' as const });
-                }
+                    // Add main topic node
+                    if (main) {
+                        newNodes.push({ id: 'main', label: main, status: 'explored' as const });
+                    }
 
-                // Add explored nodes
-                if (explored && Array.isArray(explored)) {
-                    explored.forEach((concept: string, idx: number) => {
+                    // Add explored nodes
+                    if (explored && Array.isArray(explored)) {
+                        explored.forEach((concept: string, idx: number) => {
+                            newNodes.push({
+                                id: `explored-${idx}`,
+                                label: concept,
+                                status: 'explored' as const,
+                                parentId: 'main'
+                            });
+                        });
+                    }
+
+                    // Add current node
+                    if (current) {
                         newNodes.push({
-                            id: `explored-${idx}`,
-                            label: concept,
-                            status: 'explored' as const,
+                            id: 'current',
+                            label: current,
+                            status: 'current' as const,
                             parentId: 'main'
                         });
-                    });
-                }
+                    }
 
-                // Add current node
-                if (current) {
-                    newNodes.push({
-                        id: 'current',
-                        label: current,
-                        status: 'current' as const,
-                        parentId: 'main'
-                    });
-                }
-
-                // Add upcoming nodes
-                if (upcoming && Array.isArray(upcoming)) {
-                    upcoming.forEach((concept: string, idx: number) => {
-                        newNodes.push({
-                            id: `upcoming-${idx}`,
-                            label: concept,
-                            status: 'upcoming' as const,
-                            parentId: 'current'
+                    // Add upcoming nodes
+                    if (upcoming && Array.isArray(upcoming)) {
+                        upcoming.forEach((concept: string, idx: number) => {
+                            newNodes.push({
+                                id: `upcoming-${idx}`,
+                                label: concept,
+                                status: 'upcoming' as const,
+                                parentId: 'current'
+                            });
                         });
-                    });
-                }
+                    }
 
-                setConceptNodes(newNodes);
+                    setConceptNodes(newNodes);
+                }
             }
 
             // Trigger frustration callback if detected
@@ -244,7 +299,7 @@ export default function SocraticChat({
             )}
 
             {/* Header with Socratic Method Indicator */}
-            <div className="border-b border-gray-200 p-4 bg-gradient-to-r from-orange-50 to-amber-50 space-y-3">
+            <div className="border-b border-gray-200 p-3 bg-gradient-to-r from-orange-50 to-amber-50 space-y-2">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                         <Bot className="w-5 h-5 text-orange-600" />
