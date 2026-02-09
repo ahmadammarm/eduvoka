@@ -94,7 +94,7 @@ export default function PracticePage() {
 					text: 'Please try again',
 					confirmButtonColor: '#3b82f6'
 				});
-				router.push(`/latihan-soal/${materiId}`);
+				router.push(`/practice-questions/${materiId}`);
 			} finally {
 				setIsInitializing(false);
 			}
@@ -294,20 +294,20 @@ export default function PracticePage() {
 					title: config.title,
 					html: `
 					<div class="text-left space-y-3">
-						<div class="bg-gray-50 p-3 rounded-lg">
+						<div class="bg-gray-50 p-3 rounded-xl">
 							<p class="text-sm text-gray-600 mb-1">Fatigue Index</p>
 							<p class="text-2xl font-bold" style="color: ${config.color}">
 								${fatigueIndex.toFixed(1)} / 100
 							</p>
 						</div>
 						
-						<div class="bg-blue-50 p-3 rounded-lg">
+						<div class="bg-blue-50 p-3 rounded-xl">
 							<p class="text-sm font-semibold text-gray-700 mb-1">💡 Recommendation</p>
 							<p class="text-sm text-gray-800">${recommendations.message}</p>
 						</div>
 
 						${recommendations.shouldRest ? `
-							<div class="bg-green-50 p-3 rounded-lg">
+							<div class="bg-green-50 p-3 rounded-xl">
 								<p class="text-sm font-semibold text-gray-700 mb-1">⏱️ Suggested Rest</p>
 								<p class="text-sm text-gray-800">${recommendations.restDuration} minutes</p>
 							</div>
@@ -353,7 +353,7 @@ export default function PracticePage() {
 		const config = levelConfig[burnout.burnoutLevel as keyof typeof levelConfig];
 		if (!config) {
 			// NONE level, langsung redirect
-			router.push(`/dashboard/latihan-soal/${materiId}/review?sessionId=${sessionId}`);
+			router.push(`/dashboard/practice-questions/${materiId}/review?sessionId=${sessionId}`);
 			return;
 		}
 
@@ -362,27 +362,27 @@ export default function PracticePage() {
 			title: 'Fatigue Analysis',
 			html: `
 			<div class="text-left space-y-4">
-				<div class="bg-gray-50 p-4 rounded-lg">
+				<div class="bg-gray-50 p-4 rounded-xl">
 					<p class="text-sm text-gray-600 mb-2">Fatigue Index</p>
 					<p class="text-3xl font-bold" style="color: ${config.color}">
 						${burnout.fatigueIndex.toFixed(1)} / 100
 					</p>
 				</div>
 				
-				<div class="bg-blue-50 p-4 rounded-lg">
+				<div class="bg-blue-50 p-4 rounded-xl">
 					<p class="text-sm font-semibold text-gray-700 mb-2">💡 Recommendation</p>
 					<p class="text-gray-800">${burnout.recommendations.message}</p>
 				</div>
 
 				${burnout.recommendations.shouldRest ? `
-					<div class="bg-green-50 p-4 rounded-lg">
+					<div class="bg-green-50 p-4 rounded-xl">
 						<p class="text-sm font-semibold text-gray-700 mb-2">⏱️ Rest Duration</p>
 						<p class="text-gray-800">${burnout.recommendations.restDuration} minutes</p>
 					</div>
 				` : ''}
 				
 				<!-- Breakdown Components -->
-				<div class="bg-gray-50 p-4 rounded-lg">
+				<div class="bg-gray-50 p-4 rounded-xl">
 					<p class="text-sm font-semibold text-gray-700 mb-3">📊 Analysis Detail</p>
 					<div class="space-y-2 text-sm">
 						<div class="flex justify-between">
@@ -413,7 +413,7 @@ export default function PracticePage() {
 			allowOutsideClick: false
 		}).then((result) => {
 			if (result.isConfirmed) {
-				router.push(`/dashboard/latihan-soal/${materiId}/review?sessionId=${sessionId}`);
+				router.push(`/dashboard/practice-questions/${materiId}/review?sessionId=${sessionId}`);
 			} else if (result.isDismissed) {
 				// User chose to rest
 				router.push('/dashboard');
@@ -499,25 +499,17 @@ export default function PracticePage() {
 			if (burnout && burnout.burnoutLevel !== 'NONE') {
 				showBurnoutWarning(burnout);
 			} else {
-				// Direct redirect to REVIEW (Socratic flow), not result
-				router.push(`/dashboard/latihan-soal/${materiId}/review?sessionId=${sessionId}`);
+				// Direct redirect
+				router.push(`/dashboard/practice-questions/${materiId}/result?sessionId=${sessionId}`);
 			}
 
 		} catch (err) {
 			console.error('[handleFinish] Error:', err);
 
-			// Ignore "insufficient data" error and proceed to review
-			const errorMessage = err instanceof Error ? err.message : 'Unknown error';
-			if (errorMessage.includes("minimal") || errorMessage.includes("Insufficient data")) {
-				console.warn("Ignoring burnout error (insufficient data), proceeding to review.");
-				router.push(`/dashboard/latihan-soal/${materiId}/review?sessionId=${sessionId}`);
-				return;
-			}
-
 			Swal.fire({
 				icon: 'error',
 				title: 'Gagal Menyelesaikan',
-				text: errorMessage,
+				text: err instanceof Error ? err.message : 'Terjadi kesalahan. Silakan coba lagi.',
 				confirmButtonColor: '#3b82f6',
 				footer: `<small>SessionId: ${sessionId}</small>`
 			});
@@ -556,9 +548,9 @@ export default function PracticePage() {
 
 	if (!loading && soalList.length === 0) {
 		return (
-			<div className="container mx-auto px-4 py-8">
+			<div className="container mx-auto py-8">
 				<div className="max-w-md mx-auto">
-					<div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 text-center">
+					<div className="bg-yellow-50 border border-yellow-200 rounded-xl p-6 text-center">
 						<AlertCircle className="w-12 h-12 text-yellow-600 mx-auto mb-4" />
 						<h2 className="text-xl font-semibold text-gray-900 mb-2">
 							No Questions Available
@@ -567,8 +559,8 @@ export default function PracticePage() {
 							No questions for this mode yet. Please select another mode or return to materials.
 						</p>
 						<button
-							onClick={() => router.push(`/dashboard/latihan-soal/${materiId}`)}
-							className="px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+							onClick={() => router.push(`/dashboard/practice-questions/${materiId}`)}
+							className="px-6 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition-colors"
 						>
 							Back to Materials
 						</button>
@@ -581,10 +573,10 @@ export default function PracticePage() {
 	if (!currentSoal) {
 		return (
 			<div className="container mx-auto px-4 py-8">
-				<div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-800">
+				<div className="bg-red-50 border border-red-200 rounded-xl p-4 text-red-800">
 					<p>Error: Question not found</p>
 					<button
-						onClick={() => router.push(`/dashboard/latihan-soal/${materiId}`)}
+						onClick={() => router.push(`/dashboard/practice-questions/${materiId}`)}
 						className="mt-4 px-4 py-2 bg-red-600 text-white rounded"
 					>
 						Go Back
@@ -595,10 +587,10 @@ export default function PracticePage() {
 	}
 
 	return (
-		<div className="min-h-screen bg-gray-50">
+		<div>
 			{/* Header */}
 			<div className="bg-white border-b border-gray-200 sticky top-0 z-10">
-				<div className="container mx-auto px-4 py-4">
+				<div className="container mx-auto max-w-4xl py-4">
 					<div className="flex items-center justify-between mb-4">
 						<div>
 							<h1 className="text-xl font-semibold text-gray-900">
@@ -629,9 +621,9 @@ export default function PracticePage() {
 			</div>
 
 			{/* Content */}
-			<div className="container mx-auto px-4 py-8 max-w-4xl">
+			<div className="container mx-auto max-w-4xl py-8 mt-8">
 				{/* Question Navigation */}
-				<div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6">
+				<div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-6">
 					<div className="flex flex-wrap gap-2">
 						{soalList.map((soal, idx) => {
 							const soalProgress = progress.get(soal.id);
@@ -639,7 +631,7 @@ export default function PracticePage() {
 								<button
 									key={soal.id}
 									onClick={() => goToQuestion(idx)}
-									className={`w-10 h-10 rounded-lg font-semibold transition-all ${idx === currentIndex
+									className={`w-10 h-10 rounded-xl font-semibold transition-all ${idx === currentIndex
 										? 'bg-blue-600 text-white'
 										: soalProgress?.answered
 											? soalProgress.isCorrect
@@ -656,7 +648,7 @@ export default function PracticePage() {
 				</div>
 
 				{/* Question */}
-				<div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+				<div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
 					<div className="mb-6">
 						<div className="flex items-center justify-between mb-4">
 							<span className="text-sm font-medium text-gray-500">
@@ -707,7 +699,7 @@ export default function PracticePage() {
 										if (!showResult) handleSelectPilihan(pilihan.id); // ✅ FIX: Gunakan handleSelectPilihan
 									}}
 									disabled={showResult}
-									className={`w-full text-left p-4 rounded-lg border-2 transition-all ${isCorrectAnswer
+									className={`w-full text-left p-4 shadow-none rounded-lg border-2 transition-all ${isCorrectAnswer
 										? 'border-green-500 bg-green-50'
 										: isWrongSelected
 											? 'border-red-500 bg-red-50'
@@ -753,7 +745,7 @@ export default function PracticePage() {
 					<button
 						onClick={previousQuestion}
 						disabled={currentIndex === 0}
-						className="flex items-center gap-2 px-6 py-3 rounded-lg border-2 border-gray-300 text-gray-700 font-semibold hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+						className="flex items-center gap-2 px-6 py-3 rounded-xl border-2 border-gray-300 text-gray-700 font-semibold hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
 					>
 						<ChevronLeft className="w-5 h-5" />
 						Sebelumnya
@@ -766,7 +758,7 @@ export default function PracticePage() {
 								<button
 									onClick={handleSkip}
 									disabled={isSubmitting}
-									className="flex items-center gap-2 px-6 py-3 rounded-lg border-2 border-gray-300 text-gray-700 font-semibold hover:bg-gray-50 disabled:opacity-50 transition-colors"
+									className="flex items-center gap-2 px-6 py-3 rounded-xl border-2 border-gray-300 text-gray-700 font-semibold hover:bg-gray-50 disabled:opacity-50 transition-colors"
 								>
 									<Flag className="w-5 h-5" />
 									Lewati
@@ -774,7 +766,7 @@ export default function PracticePage() {
 								<button
 									onClick={handleSubmitAnswer}
 									disabled={!selectedPilihan || isSubmitting}
-									className="px-6 py-3 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+									className="px-6 py-3 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
 								>
 									{isSubmitting ? 'Menyimpan...' : 'Submit Jawaban'}
 								</button>
@@ -784,7 +776,7 @@ export default function PracticePage() {
 
 					<button
 						onClick={handleNext}
-						className="flex items-center gap-2 px-6 py-3 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 transition-colors"
+						className="flex items-center gap-2 px-6 py-3 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700 transition-colors"
 					>
 						{isLastQuestion ? 'Selesai' : 'Selanjutnya'}
 						<ChevronRight className="w-5 h-5" />

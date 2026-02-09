@@ -31,7 +31,7 @@ const KATEGORI_COLORS: Record<LatihanSoalType, string> = {
     LITERASIBINGG: 'bg-indigo-500'
 };
 
-export default function LatihanSoalPage() {
+export default function PracticeQuestionsPage() {
     const { materiList, loading, error } = useMateriList();
 
     if (loading) {
@@ -78,7 +78,7 @@ export default function LatihanSoalPage() {
                 {materiList.map((materi) => (
                     <Link
                         key={materi.id}
-                        href={`/dashboard/latihan-soal/${materi.id}`}
+                        href={`/dashboard/practice-questions/${materi.id}`}
                         className="block group"
                     >
                         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">

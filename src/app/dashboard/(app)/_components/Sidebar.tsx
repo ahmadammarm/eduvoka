@@ -41,12 +41,12 @@ const data = {
 				{
 					icon: Book,
 					title: "Study Materials",
-					url: "/dashboard/materi",
+					url: "/dashboard/study-materials",
 				},
 				{
 					icon: NotebookText,
 					title: "Practice Questions",
-					url: "/dashboard/latihan-soal",
+					url: "/dashboard/practice-questions",
 				},
 				{
 					icon: ActivitySquare,
@@ -88,7 +88,7 @@ export function DashboardSidebar(props: React.ComponentProps<typeof Sidebar>) {
 					<SidebarMenuItem className="flex items-center gap-4 p-2 bg-primary/10 rounded-lg">
 						<div className="bg-white flex size-8 items-center justify-center rounded-full">
 							<Image
-								src="/assets/images/logo-eduvoka.png"
+								src="/assets/images/eduvoka-logo.png"
 								alt="Eduvoka"
 								width={24}
 								height={24}

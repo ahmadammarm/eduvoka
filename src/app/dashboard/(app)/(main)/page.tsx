@@ -80,13 +80,13 @@ export default async function Page() {
 						</CardDescription>
 					</CardHeader>
 					<CardContent className="flex flex-col sm:flex-row gap-4">
-						<Link href="/dashboard/latihan-soal">
+						<Link href="/dashboard/practice-questions">
 							<Button size="lg" variant="secondary" className="w-full sm:w-auto font-bold text-orange-700 hover:text-orange-800 bg-white hover:bg-orange-50">
 								<BrainCircuit className="w-5 h-5 mr-2" />
 								Start Diagnostic Test
 							</Button>
 						</Link>
-						<Link href="/dashboard/materi">
+						<Link href="/dashboard/study-materials">
 							<Button size="lg" variant="outline" className="w-full sm:w-auto bg-orange-700/50 border-orange-400 text-white hover:bg-orange-700 hover:text-white hover:border-orange-300">
 								<BookOpen className="w-5 h-5 mr-2" />
 								Resume Materials
@@ -157,7 +157,7 @@ export default async function Page() {
 						<p className="text-xs text-muted-foreground mt-1 mb-4">
 							{hasData ? 'Based on your performance' : 'Start here to begin your journey'}
 						</p>
-						<Link href="/dashboard/materi">
+						<Link href="/dashboard/study-materials">
 							<Button size="sm" variant="ghost" className="p-0 h-auto text-blue-600 hover:text-blue-800">
 								Start Lesson <ArrowRight className="w-4 h-4 ml-1" />
 							</Button>

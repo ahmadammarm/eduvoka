@@ -39,7 +39,7 @@ export default function MateriDetailPage() {
 		setIsStarting(true);
 		try {
 			// Navigate to practice page with mode parameter
-			router.push(`/dashboard/latihan-soal/${materiId}/practice?mode=${selectedMode}`);
+			router.push(`/dashboard/practice-questions/${materiId}/practice?mode=${selectedMode}`);
 		} catch (err) {
 			Swal.fire({
 				icon: 'error',
@@ -70,7 +70,7 @@ export default function MateriDetailPage() {
 	}
 
 	return (
-		<div className="flex flex-1 flex-col gap-4 px-6 pt-2">
+		<div className="flex flex-1 flex-col gap-4 pt-2">
 			<Breadcrumb>
 				<BreadcrumbList>
 					<BreadcrumbItem>
@@ -78,7 +78,7 @@ export default function MateriDetailPage() {
 					</BreadcrumbItem>
 					<BreadcrumbSeparator />
 					<BreadcrumbItem>
-						<BreadcrumbLink href="/dashboard/latihan-soal" className="text-gray-500 dark:text-gray-400 dark:hover:text-white">Practice Questions</BreadcrumbLink>
+						<BreadcrumbLink href="/dashboard/practice-questions" className="text-gray-500 dark:text-gray-400 dark:hover:text-white">Practice Questions</BreadcrumbLink>
 					</BreadcrumbItem>
 					<BreadcrumbSeparator />
 					<BreadcrumbItem>
@@ -92,9 +92,9 @@ export default function MateriDetailPage() {
 				</div>
 			</div>
 
-			<div className="container mx-auto px-4 max-w-4xl space-y-6">
+			<div className="container mx-auto max-w-4xl space-y-6">
 			<Link
-				href="/dashboard/latihan-soal"
+				href="/dashboard/practice-questions"
 				className="inline-flex items-center text-blue-600 hover:text-blue-700"
 			>
 				<ArrowLeft className="w-4 h-4 mr-2" />

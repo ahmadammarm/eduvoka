@@ -89,7 +89,7 @@ export default function ResultPage() {
 
 	useEffect(() => {
 		if (!sessionId) {
-			router.push(`/dashboard/latihan-soal/${materiId}`);
+			router.push(`/dashboard/practice-questions/${materiId}`);
 			return;
 		}
 
@@ -98,7 +98,7 @@ export default function ResultPage() {
 				setLoading(true);
 				setError(null);
 
-				const response = await fetch(`/api/latihan-soal/session/${sessionId}/result`);
+				const response = await fetch(`/api/practice-questions/session/${sessionId}/result`);
 
 				if (!response.ok) {
 					throw new Error('Failed to fetch result');
@@ -276,7 +276,7 @@ export default function ResultPage() {
 							{error || 'An error occurred while loading practice results'}
 						</p>
 						<Link
-							href={`/dashboard/latihan-soal/${materiId}`}
+							href={`/dashboard/practice-questions/${materiId}`}
 							className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors"
 						>
 							Back to Materials
@@ -359,7 +359,7 @@ export default function ResultPage() {
 		};
 
 		return (
-			<div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-8 mb-6">
+			<div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 mb-6">
 				{/* Header */}
 				<div className="flex items-start justify-between mb-6">
 					<div>
@@ -481,8 +481,8 @@ export default function ResultPage() {
 	};
 
 	return (
-		<div className="min-h-screen bg-gradient-to-b from-blue-50 to-white py-12">
-			<div className="container mx-auto px-4 max-w-4xl">
+		<div className="bg-gradient-to-b from-blue-50 to-white py-12 rounded-xl px-20">
+			<div className="container mx-auto max-w-4xl">
 				{/* Header with Trophy */}
 				<div className="text-center mb-8">
 					<div className={`inline-flex items-center justify-center w-24 h-24 bg-gradient-to-br ${getScoreBgColor(result.score)} rounded-full mb-4 shadow-lg`}>
@@ -797,7 +797,7 @@ export default function ResultPage() {
 				{/* Action Buttons */}
 				<div className="grid grid-cols-1 md:grid-cols-3 gap-4">
 					<Link
-						href={`/dashboard/latihan-soal/${materiId}`}
+						href={`/dashboard/practice-questions/${materiId}`}
 						className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 px-6 rounded-lg transition-colors"
 					>
 						<RotateCcw className="w-5 h-5" />
@@ -805,7 +805,7 @@ export default function ResultPage() {
 					</Link>
 
 					<Link
-						href="/dashboard/latihan-soal"
+						href="/dashboard/practice-questions"
 						className="flex items-center justify-center gap-2 bg-white hover:bg-gray-50 text-gray-700 font-semibold py-4 px-6 rounded-lg border-2 border-gray-300 transition-colors"
 					>
 						<ArrowRight className="w-5 h-5" />

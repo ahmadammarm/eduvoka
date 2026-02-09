@@ -1,6 +1,7 @@
 ## [Unreleased]
 
 ### Added
+- Change materi page and latihan soal page layout to focus mode layout.
 - UI layout improvements in learning velocity page, latihan soal page, etc.
 - Make some adjustments in CI/CD workflow, burnout calculation, and sidebar for better user experience.
 - Improve landing page UI/UX design
