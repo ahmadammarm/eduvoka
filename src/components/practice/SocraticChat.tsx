@@ -1,7 +1,10 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { Send, Bot, User as UserIcon, Lightbulb, Loader2, Award } from 'lucide-react';
+import { Send, Bot, User as UserIcon, Lightbulb, Award, ChevronDown, ChevronUp } from 'lucide-react';
+import ThinkingVisualization from './ThinkingVisualization';
+import SocraticMethodIndicator from './SocraticMethodIndicator';
+import ConceptMap, { ConceptNode } from './ConceptMap';
 
 interface Message {
     role: 'user' | 'ai';
@@ -30,8 +33,10 @@ export default function SocraticChat({
     const [messages, setMessages] = useState<Message[]>([]);
     const [input, setInput] = useState('');
     const [loading, setLoading] = useState(false);
-    const [currentPhase, setCurrentPhase] = useState<string>('PROBE');
+    const [currentPhase, setCurrentPhase] = useState<'PROBE' | 'ANALYZE' | 'PERSIST' | 'EVALUATE'>('PROBE');
     const [masteryScore, setMasteryScore] = useState<number | null>(null);
+    const [conceptNodes, setConceptNodes] = useState<ConceptNode[]>([]);
+    const [showConceptMap, setShowConceptMap] = useState(true);
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
     const scrollToBottom = () => {
@@ -156,6 +161,53 @@ export default function SocraticChat({
                 else setCurrentPhase('EVALUATE');
             }
 
+            // Update concept map from API response
+            if (data.conceptMap) {
+                const { main, current, explored, upcoming } = data.conceptMap;
+                const newNodes: ConceptNode[] = [];
+
+                // Add main topic node
+                if (main) {
+                    newNodes.push({ id: 'main', label: main, status: 'explored' as const });
+                }
+
+                // Add explored nodes
+                if (explored && Array.isArray(explored)) {
+                    explored.forEach((concept: string, idx: number) => {
+                        newNodes.push({
+                            id: `explored-${idx}`,
+                            label: concept,
+                            status: 'explored' as const,
+                            parentId: 'main'
+                        });
+                    });
+                }
+
+                // Add current node
+                if (current) {
+                    newNodes.push({
+                        id: 'current',
+                        label: current,
+                        status: 'current' as const,
+                        parentId: 'main'
+                    });
+                }
+
+                // Add upcoming nodes
+                if (upcoming && Array.isArray(upcoming)) {
+                    upcoming.forEach((concept: string, idx: number) => {
+                        newNodes.push({
+                            id: `upcoming-${idx}`,
+                            label: concept,
+                            status: 'upcoming' as const,
+                            parentId: 'current'
+                        });
+                    });
+                }
+
+                setConceptNodes(newNodes);
+            }
+
             // Trigger frustration callback if detected
             if (isFrustrated && onFrustrationDetected) {
                 onFrustrationDetected();
@@ -191,22 +243,29 @@ export default function SocraticChat({
                 </div>
             )}
 
-            {/* Header */}
-            <div className="border-b border-gray-200 p-4 bg-gradient-to-r from-orange-50 to-amber-50">
+            {/* Header with Socratic Method Indicator */}
+            <div className="border-b border-gray-200 p-4 bg-gradient-to-r from-orange-50 to-amber-50 space-y-3">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                         <Bot className="w-5 h-5 text-orange-600" />
                         <h3 className="font-bold text-gray-900">Socratic Tutor</h3>
                     </div>
-                    <div className="flex items-center gap-2">
-                        <span className="text-xs bg-orange-100 text-orange-700 px-2 py-1 rounded-full">
-                            {currentPhase}
-                        </span>
-                    </div>
+                    <button
+                        onClick={() => setShowConceptMap(!showConceptMap)}
+                        className="flex items-center gap-1 text-xs text-gray-500 hover:text-gray-700 transition-colors"
+                    >
+                        {showConceptMap ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                        Concept Map
+                    </button>
                 </div>
-                <p className="text-xs text-gray-600 mt-1">
-                    Ask questions to understand the problem better
-                </p>
+
+                {/* Socratic Method Progress */}
+                <SocraticMethodIndicator currentPhase={currentPhase} />
+
+                {/* Collapsible Concept Map */}
+                {showConceptMap && conceptNodes.length > 0 && (
+                    <ConceptMap nodes={conceptNodes} isVisible={showConceptMap} />
+                )}
             </div>
 
             {/* Messages */}
@@ -248,21 +307,8 @@ export default function SocraticChat({
                         </div>
                     ))
                 )}
-                {loading && (
-                    <div className="flex gap-2 justify-start">
-                        <div className="flex-shrink-0 mt-1">
-                            <div className="w-7 h-7 rounded-full bg-orange-100 flex items-center justify-center">
-                                <Bot className="w-4 h-4 text-orange-600 animate-pulse" />
-                            </div>
-                        </div>
-                        <div className="bg-gray-100 rounded-lg p-3">
-                            <div className="flex gap-1 items-center">
-                                <Loader2 className="w-4 h-4 animate-spin text-orange-600" />
-                                <span className="text-xs text-gray-600 ml-2">Thinking...</span>
-                            </div>
-                        </div>
-                    </div>
-                )}
+                {/* Thinking Animation */}
+                <ThinkingVisualization isActive={loading} />
                 <div ref={messagesEndRef} />
             </div>
 

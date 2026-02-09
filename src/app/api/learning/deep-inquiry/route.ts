@@ -117,11 +117,21 @@ export async function POST(req: Request) {
       ### ADAPTATION
       - ${styleInstruction}
       
+      ### CONCEPT MAP (CRITICAL FOR VISUALIZATION)
+      - At the END of your response, append a JSON block for concept tracking.
+      - Format: [[CONCEPTS:{"main":"Main Topic","current":"Current Concept","explored":["Concept1","Concept2"],"upcoming":["Next1"]}]]
+      - "main" = The overarching topic of the question
+      - "current" = The specific concept you are currently probing
+      - "explored" = Concepts the student has shown understanding of
+      - "upcoming" = Concepts you plan to explore next
+      - This helps visualize the learning path for the student.
+      
       ### RULES
       - Max 3 sentences.
       - Always end with a question (unless completing).
       - Phase sequence: PROBE -> ANALYZE -> PERSIST -> EVALUATE.
       - **Match the student's primary language** (see LANGUAGE RULE above).
+      - **Always include [[CONCEPTS:...]] at the end of your response**.
     `;
 
         let chatHistory = history ? history.map((h: any) => ({
@@ -232,6 +242,21 @@ export async function POST(req: Request) {
             console.log(`✅ Completion token detected. Score: ${score}`);
         }
 
+        // Parse Concept Map data
+        let conceptMap = null;
+        const conceptRegex = /\[\[CONCEPTS:(.*?)\]\]/;
+        const conceptMatch = response.match(conceptRegex);
+
+        if (conceptMatch && conceptMatch[1]) {
+            try {
+                conceptMap = JSON.parse(conceptMatch[1]);
+                response = response.replace(conceptRegex, "").trim();
+                console.log(`🗺️ Concept map extracted:`, conceptMap);
+            } catch (parseError) {
+                console.warn("Failed to parse concept map JSON:", parseError);
+            }
+        }
+
         // Log the final response
         console.log("Final response length:", response.length);
         console.log("Final response:", response);
@@ -247,7 +272,8 @@ export async function POST(req: Request) {
         return NextResponse.json({
             reply: response,
             isCompleted: isCompleted,
-            score: score
+            score: score,
+            conceptMap: conceptMap
         });
 
     } catch (error) {
