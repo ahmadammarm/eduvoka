@@ -18,8 +18,8 @@ export default function SocraticMethodIndicator({ currentPhase }: SocraticMethod
     const currentPhaseData = phases[currentIndex];
 
     return (
-        <div className="bg-gradient-to-r from-indigo-50 via-purple-50 to-pink-50 rounded-xl p-4 border border-indigo-100 shadow-sm">
-            <div className="flex items-center gap-2 mb-3">
+        <div className="bg-gradient-to-r from-indigo-50 via-purple-50 to-pink-50 rounded-xl p-3 border border-indigo-100 shadow-sm">
+            <div className="flex items-center gap-2 mb-2">
                 <div className="p-1.5 bg-indigo-100 rounded-lg">
                     <GraduationCap className="w-4 h-4 text-indigo-600" />
                 </div>
@@ -29,44 +29,38 @@ export default function SocraticMethodIndicator({ currentPhase }: SocraticMethod
                 </div>
             </div>
 
-            {/* Progress Bar */}
-            <div className="flex items-center gap-1 mb-2">
+            {/* Progress Bar with Aligned Labels */}
+            <div className="flex items-center justify-between mb-2">
                 {phases.map((phase, idx) => (
-                    <div key={phase.id} className="flex-1 flex items-center">
+                    <div key={phase.id} className="flex flex-col items-center relative" style={{ flex: idx < phases.length - 1 ? 1 : 0 }}>
                         {/* Node */}
                         <div
-                            className={`w-3 h-3 rounded-full flex-shrink-0 transition-all duration-500 ${idx < currentIndex
-                                    ? 'bg-indigo-500 shadow-md'
-                                    : idx === currentIndex
-                                        ? 'bg-indigo-500 ring-4 ring-indigo-200 animate-pulse shadow-lg'
-                                        : 'bg-gray-300'
+                            className={`w-3 h-3 rounded-full flex-shrink-0 transition-all duration-500 z-10 ${idx < currentIndex
+                                ? 'bg-indigo-500 shadow-md'
+                                : idx === currentIndex
+                                    ? 'bg-indigo-500 ring-4 ring-indigo-200 animate-pulse shadow-lg'
+                                    : 'bg-gray-300'
                                 }`}
                         />
-                        {/* Connector Line */}
+                        {/* Connector Line (to the right) */}
                         {idx < phases.length - 1 && (
                             <div
-                                className={`flex-1 h-0.5 transition-all duration-500 ${idx < currentIndex ? 'bg-indigo-500' : 'bg-gray-200'
+                                className={`absolute top-1.5 left-1/2 w-full h-0.5 transition-all duration-500 ${idx < currentIndex ? 'bg-indigo-500' : 'bg-gray-200'
                                     }`}
                             />
                         )}
-                    </div>
-                ))}
-            </div>
-
-            {/* Phase Labels */}
-            <div className="flex justify-between text-[10px]">
-                {phases.map((phase, idx) => (
-                    <span
-                        key={phase.id}
-                        className={`font-medium transition-colors duration-300 ${idx === currentIndex
+                        {/* Label */}
+                        <span
+                            className={`mt-2 text-[10px] font-medium transition-colors duration-300 ${idx === currentIndex
                                 ? 'text-indigo-700 font-bold'
                                 : idx < currentIndex
                                     ? 'text-indigo-500'
                                     : 'text-gray-400'
-                            }`}
-                    >
-                        {phase.label}
-                    </span>
+                                }`}
+                        >
+                            {phase.label}
+                        </span>
+                    </div>
                 ))}
             </div>
 

@@ -39,7 +39,7 @@ export const ScientificMethodologyCard = () => {
                             <span className="text-indigo-600">03.</span> Coefficient of Variation (CV)
                         </h4>
                         <p className="text-sm text-gray-600 leading-relaxed">
-                            "Material Engagement" tracks the consistency of your cognitive flow using the Coefficient of Variation ($$CV = \sigma / \mu$$). Lower variance indicates stable, reliable performance rather than erratic, lucky guesses.
+                            &quot;Material Engagement&quot; tracks the consistency of your cognitive flow using the Coefficient of Variation (<code className="bg-gray-200 px-1 rounded text-xs">CV = σ / μ</code>). Lower variance indicates stable, reliable performance rather than erratic, lucky guesses.
                         </p>
                     </div>
                     <div>
@@ -76,8 +76,11 @@ export const ScientificMethodologyCard = () => {
                 </div>
 
                 <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-500">
-                    <p>
-                        <strong>Formula:</strong> Velocity = (Acc × 30%) + (Diff × 20%) + (Time × 20%) + (Consistency × 15%) + (Growth × 10%) + (Eng × 5%)
+                    <p className="flex flex-wrap items-center gap-1">
+                        <strong>Formula:</strong>
+                        <code className="bg-gray-200 px-2 py-0.5 rounded text-[11px] font-mono">
+                            Velocity = (Acc × 30%) + (Diff × 20%) + (Time × 20%) + (Cons × 15%) + (Growth × 10%) + (Eng × 5%)
+                        </code>
                     </p>
                     <div className="flex gap-2">
                         <span className="px-2 py-1 bg-gray-200 rounded">CogSci v2.1</span>
