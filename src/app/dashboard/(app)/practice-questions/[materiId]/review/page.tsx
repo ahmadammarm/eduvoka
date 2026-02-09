@@ -19,7 +19,7 @@ export default async function ReviewPage({ params, searchParams }: ReviewPagePro
     const { sessionId } = await searchParams;
 
     if (!sessionId) {
-        redirect(`/dashboard/latihan-soal/${materiId}`);
+        redirect(`/dashboard/practice-questions/${materiId}`);
     }
 
     // Fetch session result

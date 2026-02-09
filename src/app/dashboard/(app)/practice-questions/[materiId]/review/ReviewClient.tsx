@@ -113,7 +113,7 @@ export default function ReviewClient({ reviewData }: ReviewClientProps) {
     const handleNext = () => {
         if (isLastReviewQuestion) {
             // Review completed, go to results
-            router.push(`/dashboard/latihan-soal/${reviewData.materiId}/result?sessionId=${reviewData.sessionId}&mbaBoost=${understoodQuestions.size}`);
+            router.push(`/dashboard/practice-questions/${reviewData.materiId}/result?sessionId=${reviewData.sessionId}&mbaBoost=${understoodQuestions.size}`);
         } else {
             setCurrentReviewIndex(prev => prev + 1);
             setCurrentPhase('PROBE'); // Reset phase for next question

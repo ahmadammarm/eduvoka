@@ -78,7 +78,7 @@ export default function PracticeQuestionsPage() {
                 {materiList.map((materi) => (
                     <Link
                         key={materi.id}
-                        href={`/dashboard/latihan-soal/${materi.id}`}
+                        href={`/dashboard/practice-questions/${materi.id}`}
                         className="block group"
                     >
                         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">

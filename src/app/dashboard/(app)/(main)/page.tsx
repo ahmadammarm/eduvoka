@@ -68,7 +68,7 @@ export default function Page() {
 					<CardContent>
 						<div className="font-semibold text-indigo-700">Penalaran Umum: Logika Deduktif</div>
 						<p className="text-xs text-muted-foreground mt-1 mb-4">Based on your recent quiz performance</p>
-						<Link href="/dashboard/materi">
+						<Link href="/dashboard/study-materials">
 							<Button size="sm" variant="ghost" className="p-0 h-auto text-blue-600 hover:text-blue-800">
 								Start Lesson <ArrowRight className="w-4 h-4 ml-1" />
 							</Button>

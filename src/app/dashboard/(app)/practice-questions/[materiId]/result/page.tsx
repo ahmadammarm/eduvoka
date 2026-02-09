@@ -89,7 +89,7 @@ export default function ResultPage() {
 
 	useEffect(() => {
 		if (!sessionId) {
-			router.push(`/dashboard/latihan-soal/${materiId}`);
+			router.push(`/dashboard/practice-questions/${materiId}`);
 			return;
 		}
 
@@ -98,7 +98,7 @@ export default function ResultPage() {
 				setLoading(true);
 				setError(null);
 
-				const response = await fetch(`/api/latihan-soal/session/${sessionId}/result`);
+				const response = await fetch(`/api/practice-questions/session/${sessionId}/result`);
 
 				if (!response.ok) {
 					throw new Error('Failed to fetch result');
@@ -276,7 +276,7 @@ export default function ResultPage() {
 							{error || 'An error occurred while loading practice results'}
 						</p>
 						<Link
-							href={`/dashboard/latihan-soal/${materiId}`}
+							href={`/dashboard/practice-questions/${materiId}`}
 							className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors"
 						>
 							Back to Materials
@@ -797,7 +797,7 @@ export default function ResultPage() {
 				{/* Action Buttons */}
 				<div className="grid grid-cols-1 md:grid-cols-3 gap-4">
 					<Link
-						href={`/dashboard/latihan-soal/${materiId}`}
+						href={`/dashboard/practice-questions/${materiId}`}
 						className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 px-6 rounded-lg transition-colors"
 					>
 						<RotateCcw className="w-5 h-5" />

@@ -72,7 +72,7 @@ export default function MateriDetailPage() {
 	const handleNavigateToLatihan = async () => {
 		// End study session before navigating
 		await endStudy();
-		router.push(`/dashboard/latihan-soal/${materiId}`);
+		router.push(`/dashboard/practice-questions/${materiId}`);
 	};
 
 	const formatTime = (seconds: number) => {

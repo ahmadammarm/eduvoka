@@ -52,7 +52,7 @@ export default function MateriPage() {
 	);
 
 	const handleDetailMateri = (materiId: string) => {
-		router.push(`/dashboard/materi/${materiId}`);
+		router.push(`/dashboard/study-materials/${materiId}`);
 	};
 
 	if (loading) {
