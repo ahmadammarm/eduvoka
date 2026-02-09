@@ -1,102 +1,92 @@
-import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from 'next/server';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
+import { prisma } from '@/lib/prisma';
 
 export async function POST(
-	req: NextRequest,
+	_req: NextRequest,
 	{ params }: { params: Promise<{ sessionId: string }> }
 ) {
 	try {
-		const session = await auth();
-		if (!session?.user) {
+		const session = await getServerSession(authOptions);
+		if (!session?.user?.id) {
 			return NextResponse.json(
-				{ error: "Unauthorized" },
+				{ error: 'Unauthorized' },
 				{ status: 401 }
 			);
 		}
 
 		const { sessionId } = await params;
 
-		// Get session dengan jawaban
+		console.log('[Complete Session] SessionId:', sessionId);
+
+		// Verify session ownership
 		const latihanSession = await prisma.latihanSession.findFirst({
 			where: {
 				id: sessionId,
 				userId: session.user.id
 			},
 			include: {
-				jawaban: true
+				jawaban: {
+					where: { isSkipped: false },
+					select: {
+						isCorrect: true,
+						timeSpent: true
+					}
+				}
 			}
 		});
 
 		if (!latihanSession) {
 			return NextResponse.json(
-				{ error: 'Session not found' },
+				{ error: 'Session not found or unauthorized' },
 				{ status: 404 }
 			);
 		}
 
-		console.log('Session found:', {
-			sessionId: latihanSession.id,
-			materiId: latihanSession.materiId,
-			type: latihanSession.type,
-			totalJawaban: latihanSession.jawaban.length
-		});
+		// Check if already completed
+		if (latihanSession.endedAt) {
+			console.log('[Complete Session] Already completed:', latihanSession.endedAt);
 
-		// Get total soal - HANYA jika materiId ada
-		let totalSoalCount = latihanSession.jawaban.length;
-		
-		if (latihanSession.materiId) {
-			totalSoalCount = await prisma.soalLatihanSoal.count({
-				where: {
-					materiId: latihanSession.materiId,
-					tipeSesi: latihanSession.type
+			// Return existing data
+			return NextResponse.json({
+				success: true,
+				data: {
+					sessionId: latihanSession.id,
+					score: latihanSession.score,
+					totalDuration: latihanSession.totalDuration,
+					accuracyRate: latihanSession.accuracyRate,
+					completionRate: latihanSession.completionRate
 				}
 			});
 		}
 
-		console.log('Total soal available:', totalSoalCount);
+		// Calculate metrics
+		const totalQuestions = await prisma.latihanJawabanUser.count({
+			where: { sessionId }
+		});
 
-		// Hitung analytics
-		const totalAnswered = latihanSession.jawaban.length;
-		const answeredQuestions = latihanSession.jawaban.filter(j => !j.isSkipped).length;
-		const skippedQuestions = latihanSession.jawaban.filter(j => j.isSkipped).length;
-		const correctAnswers = latihanSession.jawaban.filter(j => j.isCorrect === true).length;
-		const wrongAnswers = answeredQuestions - correctAnswers;
+		const answeredQuestions = latihanSession.jawaban.length;
+		const correctAnswers = latihanSession.jawaban.filter(j => j.isCorrect).length;
 
-		const totalQuestions = totalSoalCount > 0 ? totalSoalCount : totalAnswered;
-
-		// Score dari yang dijawab (tidak termasuk skip)
-		const score = answeredQuestions > 0 
-			? Math.round((correctAnswers / answeredQuestions) * 100) 
-			: 0;
-
-		const accuracyRate = answeredQuestions > 0 
-			? Math.round((correctAnswers / answeredQuestions) * 100) 
+		const accuracyRate = answeredQuestions > 0
+			? (correctAnswers / answeredQuestions) * 100
 			: 0;
 
 		const completionRate = totalQuestions > 0
-			? Math.round((answeredQuestions / totalQuestions) * 100)
+			? (answeredQuestions / totalQuestions) * 100
 			: 0;
 
-		const totalTimeSpent = latihanSession.jawaban.reduce(
-			(sum, j) => sum + (j.timeSpent || 0), 
+		const score = Math.round(accuracyRate);
+
+		const totalDuration = latihanSession.jawaban.reduce(
+			(sum, j) => sum + (j.timeSpent || 0),
 			0
 		);
-		
-		const averageTimePerQ = answeredQuestions > 0 
-			? Math.round(totalTimeSpent / answeredQuestions) 
-			: 0;
 
-		console.log('Analytics calculated:', {
-			totalQuestions,
-			answeredQuestions,
-			correctAnswers,
-			score,
-			accuracyRate,
-			completionRate,
-			totalTimeSpent,
-			averageTimePerQ
-		});
+		const averageTimePerQ = answeredQuestions > 0
+			? totalDuration / answeredQuestions
+			: 0;
 
 		// Update session
 		const updatedSession = await prisma.latihanSession.update({
@@ -104,11 +94,18 @@ export async function POST(
 			data: {
 				endedAt: new Date(),
 				score,
-				totalDuration: totalTimeSpent,
+				totalDuration,
 				averageTimePerQ,
 				accuracyRate,
 				completionRate
 			}
+		});
+
+		console.log('[Complete Session] Updated:', {
+			sessionId,
+			score,
+			totalDuration,
+			accuracyRate
 		});
 
 		return NextResponse.json({
@@ -116,24 +113,17 @@ export async function POST(
 			data: {
 				sessionId: updatedSession.id,
 				score: updatedSession.score,
-				totalQuestions,
-				totalAnswered,
-				answeredQuestions,
-				correctAnswers,
-				wrongAnswers,
-				skippedQuestions,
-				accuracyRate: updatedSession.accuracyRate,
-				completionRate: updatedSession.completionRate,
 				totalDuration: updatedSession.totalDuration,
-				averageTimePerQ: updatedSession.averageTimePerQ
+				accuracyRate: updatedSession.accuracyRate,
+				completionRate: updatedSession.completionRate
 			}
 		});
 
 	} catch (error) {
-		console.error('Error completing session:', error);
+		console.error('[Complete Session] Error:', error);
 		return NextResponse.json(
-			{ 
-				error: 'Failed to complete session',
+			{
+				error: 'Internal server error',
 				details: error instanceof Error ? error.message : 'Unknown error'
 			},
 			{ status: 500 }

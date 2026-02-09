@@ -55,26 +55,26 @@ const data = {
 				},
 			],
 		},
-		{
-			title: "Other",
-			items: [
-				{
-					icon: CreditCard,
-					title: "Subscriptions",
-					url: "/dashboard/subscriptions",
-				},
-				{
-					icon: CircleQuestionMark,
-					title: "Help Center",
-					url: "/dashboard/help",
-				},
-				{
-					icon: Settings,
-					title: "Settings",
-					url: "/dashboard/settings",
-				},
-			],
-		},
+		// {
+		// 	title: "Other",
+		// 	items: [
+		// 		{
+		// 			icon: CreditCard,
+		// 			title: "Subscriptions",
+		// 			url: "/dashboard/subscriptions",
+		// 		},
+		// 		{
+		// 			icon: CircleQuestionMark,
+		// 			title: "Help Center",
+		// 			url: "/dashboard/help",
+		// 		},
+		// 		{
+		// 			icon: Settings,
+		// 			title: "Settings",
+		// 			url: "/dashboard/settings",
+		// 		},
+		// 	],
+		// },
 	],
 };
 
@@ -145,7 +145,7 @@ export function DashboardSidebar(props: React.ComponentProps<typeof Sidebar>) {
 				</SidebarGroup>
 			</SidebarContent>
 
-			<SidebarFooter>
+			{/* <SidebarFooter>
 				<div className="rounded-md bg-linear-to-br from-primary/90 to-primary/80 p-4 text-white">
 					<div className="mb-3 flex items-center gap-2">
 						<div className="rounded-full bg-white/20 p-1.5">
@@ -160,7 +160,7 @@ export function DashboardSidebar(props: React.ComponentProps<typeof Sidebar>) {
 						Upgrade Now
 					</Button>
 				</div>
-			</SidebarFooter>
+			</SidebarFooter> */}
 		</Sidebar>
 	);
 }

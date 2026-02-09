@@ -1,6 +1,7 @@
 ## [Unreleased]
 
 ### Added
+- Make some adjustments in CI/CD workflow, burnout calculation, and sidebar for better user experience.
 - Improve landing page UI/UX design
 - Add time decay API 
 - Add analytics data visualization in dashboard page

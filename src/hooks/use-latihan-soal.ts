@@ -52,14 +52,23 @@ export function useSoalByMateri(materiId: string | null, tipeSesi?: SessionType)
 			if (tipeSesi) params.append('tipeSesi', tipeSesi);
 
 			const url = `/api/latihan-soal/${materiId}?${params.toString()}`;
+			console.log('🌐 Fetching soal from:', url); // ✅ Debug
+
 			const response = await fetch(url);
 
 			if (!response.ok) throw new Error('Failed to fetch soal');
 
 			const data = await response.json();
+
+			// ✅ DEBUG: Log raw response
+			console.log('📦 Raw API Response:', data);
+			console.log('📝 Soal data:', data.data.soal);
+			console.log('🎯 First soal pilihanJawaban:', data.data.soal[0]?.pilihanJawaban);
+
 			setSoalList(data.data.soal || []);
 			setMateri(data.data.materi || null);
 		} catch (err) {
+			console.error('❌ Error fetching soal:', err); // ✅ Debug
 			setError(err instanceof Error ? err.message : 'Unknown error');
 		} finally {
 			setLoading(false);
@@ -194,22 +203,38 @@ export function useLatihanSession() {
 	};
 
 	const completeSession = async (): Promise<SessionResult | null> => {
-		if (!sessionId) return null;
+	if (!sessionId) {
+		console.error('[completeSession] No sessionId');
+		return null;
+	}
 
-		try {
-			const response = await fetch(`/api/latihan-soal/session/${sessionId}/complete`, {
-				method: 'POST'
-			});
+	try {
+		console.log('[completeSession] Calling API with sessionId:', sessionId);
+		
+		const response = await fetch(`/api/latihan-soal/session/${sessionId}/complete`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		});
 
-			if (!response.ok) throw new Error('Failed to complete session');
+		console.log('[completeSession] Response status:', response.status);
 
-			const data = await response.json();
-			return data.data;
-		} catch (err) {
-			console.error('Error completing session:', err);
-			throw err;
+		if (!response.ok) {
+			const errorText = await response.text();
+			console.error('[completeSession] Error response:', errorText);
+			throw new Error(`Failed to complete session: ${response.status} ${errorText}`);
 		}
-	};
+
+		const data = await response.json();
+		console.log('[completeSession] Success:', data);
+		
+		return data.data;
+	} catch (err) {
+		console.error('[completeSession] Exception:', err);
+		throw err;
+	}
+};
 
 	const nextQuestion = () => setCurrentIndex(prev => prev + 1);
 	const previousQuestion = () => setCurrentIndex(prev => Math.max(0, prev - 1));
