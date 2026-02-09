@@ -103,7 +103,7 @@ export default function QuestionReviewCard({
                                     {isUserAnswer && (
                                         <div className="flex items-center gap-3 mt-2">
                                             <span className="text-xs font-medium text-red-700 bg-red-100 px-2 py-1 rounded">
-                                                Jawaban Kamu
+                                                Your Answer
                                             </span>
                                         </div>
                                     )}

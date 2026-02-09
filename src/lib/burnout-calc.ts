@@ -11,21 +11,21 @@ import type {
 // ==================== VALIDATION ====================
 
 export function validateBurnoutInput(answers: AnswerData[]): ValidationResult {
-	// Minimal 3 soal untuk hitung burnout (Hackathon Mode: lowered from 5)
+	// Minimum 3 questions to calculate burnout (Hackathon Mode: lowered from 5)
 	if (answers.length < 3) {
 		return {
 			valid: false,
-			reason: `Butuh minimal 3 soal untuk analisis burnout. Saat ini baru ${answers.length} soal.`
+			reason: `Need at least 3 questions for burnout analysis. Currently only ${answers.length} answered.`
 		};
 	}
 
-	// Filter out soal yang diskip atau timeSpent <= 0
+	// Filter out skipped questions or timeSpent <= 0
 	const validAnswers = answers.filter(a => !a.isSkipped && a.timeSpent > 0);
 
 	if (validAnswers.length < 3) {
 		return {
 			valid: false,
-			reason: `Terlalu banyak soal yang diskip (${answers.length - validAnswers.length} soal diskip). Butuh minimal 3 soal yang dijawab.`
+			reason: `Too many skipped questions (${answers.length - validAnswers.length} skipped). Need at least 3 answered questions.`
 		};
 	}
 
@@ -37,7 +37,7 @@ export function validateBurnoutInput(answers: AnswerData[]): ValidationResult {
 	if (median < 3) {
 		return {
 			valid: false,
-			reason: 'Waktu pengerjaan terlalu singkat. Kemungkinan ada masalah tracking waktu.'
+			reason: 'Time spent is too short. Possible tracking issue.'
 		};
 	}
 
@@ -46,7 +46,7 @@ export function validateBurnoutInput(answers: AnswerData[]): ValidationResult {
 	if (outliers.length > validAnswers.length * 0.3) {
 		return {
 			valid: false,
-			reason: `Terlalu banyak waktu tidak konsisten (${outliers.length} soal). Kemungkinan ada idle/distraksi.`
+			reason: `Inconsistent timing detected (${outliers.length} questions). Possible idle or distraction.`
 		};
 	}
 
@@ -229,28 +229,28 @@ export function calculateBurnout(input: BurnoutCalculationInput): BurnoutCalcula
 				weight: weights.cfi,
 				contribution: Math.round(cfi * weights.cfi * 10) / 10,
 				interpretation: cfi === 0
-					? 'Tidak ada perlambatan (bahkan mungkin makin cepat!)'
-					: `Perlambatan ${cfi.toFixed(1)}% dari awal ke akhir`
+					? 'No slowdown detected (maintained speed)'
+					: `Slowdown of ${cfi.toFixed(1)}% from start to finish`
 			},
 			decisionQuality: {
 				value: dqi,
 				weight: weights.dqi,
 				contribution: Math.round(dqi * weights.dqi * 10) / 10,
 				interpretation: dqi === 0
-					? 'Akurasi stabil atau bahkan meningkat'
-					: `Akurasi turun ${dqi.toFixed(1)}% dari Q1 ke Q3`
+					? 'Accuracy stable or improving'
+					: `Accuracy dropped ${dqi.toFixed(1)}% from Q1 to Q3`
 			},
 			engagement: {
 				value: edi,
 				weight: weights.edi,
 				contribution: Math.round(edi * weights.edi * 10) / 10,
-				interpretation: `${edi.toFixed(1)}% soal di akhir diskip atau dijawab terburu-buru`
+				interpretation: `${edi.toFixed(1)}% questions skipped or rushed at the end`
 			},
 			consistency: {
 				value: tpc,
 				weight: weights.tpc,
 				contribution: Math.round((100 - tpc) * weights.tpc * 10) / 10,
-				interpretation: `Konsistensi waktu: ${tpc.toFixed(1)}%`
+				interpretation: `Timing consistency: ${tpc.toFixed(1)}%`
 			}
 		},
 		recommendations,
@@ -283,25 +283,25 @@ function generateRecommendations(
 		NONE: {
 			shouldRest: false,
 			restDuration: 0,
-			message: 'Kondisi prima! Fokus dan energi masih sangat baik. Lanjutkan dengan performa terbaikmu!',
+			message: 'Prime condition! Focus and energy are great. Keep up the good work!',
 			nextAction: 'CONTINUE'
 		},
 		MILD: {
 			shouldRest: true,
 			restDuration: 5,
-			message: 'Mulai ada tanda-tanda kelelahan ringan. Istirahat 5 menit akan refresh fokusmu.',
+			message: 'Signs of mild fatigue. A 5-minute break will refresh your focus.',
 			nextAction: 'REST'
 		},
 		MODERATE: {
 			shouldRest: true,
 			restDuration: 15,
-			message: 'Kelelahan cukup terdeteksi. Istirahat 10-15 menit atau ganti topik dulu untuk recovery.',
+			message: 'Moderate fatigue detected. Take a 10-15 min break or switch topics.',
 			nextAction: 'SWITCH_TOPIC'
 		},
 		SEVERE: {
 			shouldRest: true,
 			restDuration: 30,
-			message: 'Burnout terdeteksi! Otakmu butuh istirahat serius. Better stop dan lanjut besok setelah tidur cukup.',
+			message: 'Burnout detected! Your brain needs serious rest. Stop and continue tomorrow.',
 			nextAction: 'STOP_SESSION'
 		}
 	};
