@@ -53,7 +53,7 @@ export default function UserNav({ session }: UserNavProps) {
 					</div>
 				</DropdownMenuLabel>
 				<DropdownMenuSeparator />
-				<DropdownMenuItem className="focus:text-black focus:bg-primary/20 dark:focus:text-white p-2">
+				{/* <DropdownMenuItem className="focus:text-black focus:bg-primary/20 dark:focus:text-white p-2">
 					<User className="w-4 h-4 text-black dark:text-white" />
 					My Account
 				</DropdownMenuItem>
@@ -65,7 +65,7 @@ export default function UserNav({ session }: UserNavProps) {
 					<Settings className="w-4 h-4 text-black dark:text-white" />
 					Settings
 				</DropdownMenuItem>
-				<DropdownMenuSeparator />
+				<DropdownMenuSeparator /> */}
 				<DropdownMenuItem asChild>
 					<Button
 						variant="ghost"

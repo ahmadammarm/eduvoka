@@ -359,7 +359,7 @@ export default function ResultPage() {
 		};
 
 		return (
-			<div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-8 mb-6">
+			<div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 mb-6">
 				{/* Header */}
 				<div className="flex items-start justify-between mb-6">
 					<div>
@@ -481,8 +481,8 @@ export default function ResultPage() {
 	};
 
 	return (
-		<div className="min-h-screen bg-gradient-to-b from-blue-50 to-white py-12">
-			<div className="container mx-auto px-4 max-w-4xl">
+		<div className="bg-gradient-to-b from-blue-50 to-white py-12 rounded-xl px-20">
+			<div className="container mx-auto max-w-4xl">
 				{/* Header with Trophy */}
 				<div className="text-center mb-8">
 					<div className={`inline-flex items-center justify-center w-24 h-24 bg-gradient-to-br ${getScoreBgColor(result.score)} rounded-full mb-4 shadow-lg`}>

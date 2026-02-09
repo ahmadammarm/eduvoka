@@ -70,7 +70,7 @@ export default function MateriDetailPage() {
 	}
 
 	return (
-		<div className="flex flex-1 flex-col gap-4 px-6 pt-2">
+		<div className="flex flex-1 flex-col gap-4 pt-2">
 			<Breadcrumb>
 				<BreadcrumbList>
 					<BreadcrumbItem>
@@ -92,7 +92,7 @@ export default function MateriDetailPage() {
 				</div>
 			</div>
 
-			<div className="container mx-auto px-4 max-w-4xl space-y-6">
+			<div className="container mx-auto max-w-4xl space-y-6">
 			<Link
 				href="/dashboard/latihan-soal"
 				className="inline-flex items-center text-blue-600 hover:text-blue-700"

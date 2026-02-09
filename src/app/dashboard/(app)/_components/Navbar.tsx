@@ -42,7 +42,7 @@ export default function DashboardNavbar() {
 				</div>
 			</div>
 
-			{!isMobile && (
+			{/* {!isMobile && (
 				<div className="flex flex-1 justify-center">
 					<Dialog>
 						<DialogTrigger asChild>
@@ -54,10 +54,10 @@ export default function DashboardNavbar() {
 						<SearchDialogContent />
 					</Dialog>
 				</div>
-			)}
+			)} */}
 
 			<div className="flex items-center gap-1">
-				{isMobile && (
+				{/* {isMobile && (
 					<Dialog>
 						<DialogTrigger asChild>
 							<Button
@@ -70,9 +70,9 @@ export default function DashboardNavbar() {
 						</DialogTrigger>
 						<SearchDialogContent />
 					</Dialog>
-				)}
+				)} */}
 
-				<LanguageSettings />
+				{/* <LanguageSettings /> */}
 				<AnimatedThemeToggler
 					className={buttonVariants({
 						variant: "ghost",
@@ -80,7 +80,7 @@ export default function DashboardNavbar() {
 						className: "rounded-lg hover:bg-black/80 dark:hover:bg-white/80",
 					})}
 				/>
-				<Notifications />
+				{/* <Notifications /> */}
 				<UserNav session={session as UserNavProps["session"]} />
 			</div>
 		</header>
