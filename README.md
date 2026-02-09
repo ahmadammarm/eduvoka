@@ -1,4 +1,4 @@
-# Eduvoka Platform 
+# Eduvoka Platform  
 
 <div align="center">
 
