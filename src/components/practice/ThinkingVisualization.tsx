@@ -8,10 +8,10 @@ interface ThinkingVisualizationProps {
 }
 
 const thinkingSteps = [
-    "Membaca jawabanmu...",
-    "Mengidentifikasi konsep kunci...",
-    "Menemukan miskonsepsi...",
-    "Menyusun pertanyaan panduan..."
+    "Reading your answer...",
+    "Identifying key concepts...",
+    "Finding misconceptions...",
+    "Crafting guiding questions..."
 ];
 
 export default function ThinkingVisualization({ isActive }: ThinkingVisualizationProps) {
@@ -76,10 +76,10 @@ export default function ThinkingVisualization({ isActive }: ThinkingVisualizatio
                         <div
                             key={idx}
                             className={`h-1 flex-1 rounded-full transition-all duration-300 ${idx < currentStepIndex
-                                    ? 'bg-orange-500'
-                                    : idx === currentStepIndex
-                                        ? 'bg-orange-400 animate-pulse'
-                                        : 'bg-gray-200'
+                                ? 'bg-orange-500'
+                                : idx === currentStepIndex
+                                    ? 'bg-orange-400 animate-pulse'
+                                    : 'bg-gray-200'
                                 }`}
                         />
                     ))}
