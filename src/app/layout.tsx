@@ -14,7 +14,7 @@ const poppins = Poppins({
 })
 
 export const metadata: Metadata = {
-    title: "Eduvoka",
+    title: "Eduvoka | Your Smart Learning Companion",
     description: "Eduvoka - Smart Learning Companion",
 };
 

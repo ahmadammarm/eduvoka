@@ -98,7 +98,7 @@ export default function ResultPage() {
 				setLoading(true);
 				setError(null);
 
-				const response = await fetch(`/api/practice-questions/session/${sessionId}/result`);
+				const response = await fetch(`/api/latihan-soal/session/${sessionId}/result`);
 
 				if (!response.ok) {
 					throw new Error('Failed to fetch result');

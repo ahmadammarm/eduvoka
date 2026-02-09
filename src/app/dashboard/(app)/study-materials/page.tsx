@@ -52,7 +52,7 @@ export default function MateriPage() {
 	);
 
 	const handleDetailMateri = (materiId: string) => {
-		router.push(`/dashboard/study-materials/${materiId}`);
+		router.push(`/dashboard/materi/${materiId}`);
 	};
 
 	if (loading) {
@@ -83,10 +83,10 @@ export default function MateriPage() {
 						Manage and access your learning materials
 					</p>
 				</div>
-				<Button>
+				{/* <Button>
 					<Plus className="w-4 h-4 mr-2" />
 					Add Material
-				</Button>
+				</Button> */}
 			</div>
 
 			<div className='space-y-6'>

@@ -39,7 +39,7 @@ export default function MateriDetailPage() {
 		setIsStarting(true);
 		try {
 			// Navigate to practice page with mode parameter
-			router.push(`/dashboard/practice-questions/${materiId}/practice?mode=${selectedMode}`);
+			router.push(`/dashboard/latihan-soal/${materiId}/practice?mode=${selectedMode}`);
 		} catch (err) {
 			Swal.fire({
 				icon: 'error',
@@ -93,13 +93,13 @@ export default function MateriDetailPage() {
 			</div>
 
 			<div className="container mx-auto max-w-4xl space-y-6">
-			<Link
+			{/* <Link
 				href="/dashboard/practice-questions"
 				className="inline-flex items-center text-blue-600 hover:text-blue-700"
 			>
 				<ArrowLeft className="w-4 h-4 mr-2" />
 				Back to Material List
-			</Link>
+			</Link> */}
 
 			<div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 mb-6">
 				<div className="flex items-start gap-4 mb-6">

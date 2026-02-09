@@ -755,14 +755,14 @@ export default function PracticePage() {
 						{!showResult && (
 							<>
 								{/* ✅ RESTORE: Tombol Skip */}
-								<button
+								{/* <button
 									onClick={handleSkip}
 									disabled={isSubmitting}
 									className="flex items-center gap-2 px-6 py-3 rounded-xl border-2 border-gray-300 text-gray-700 font-semibold hover:bg-gray-50 disabled:opacity-50 transition-colors"
 								>
 									<Flag className="w-5 h-5" />
 									Lewati
-								</button>
+								</button> */}
 								<button
 									onClick={handleSubmitAnswer}
 									disabled={!selectedPilihan || isSubmitting}
