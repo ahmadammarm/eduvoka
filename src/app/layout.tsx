@@ -1,0 +1,43 @@
+import type { Metadata } from "next";
+import { Poppins } from "next/font/google";
+import "./globals.css";
+import ReactQueryProvider from "@/providers/ReactQueryProvider";
+import { SpeedInsights } from "@vercel/speed-insights/next"
+import { authOptions } from "@/lib/auth";
+import NextAuthProvider from "@/providers/NextAuthProvider";
+import { Toaster } from "@/components/ui/sonner";
+import { getServerSession } from "next-auth";
+
+const poppins = Poppins({
+    subsets: ["latin"],
+    weight: ["400", "500", "600", "700"],
+})
+
+export const metadata: Metadata = {
+    title: "Eduvoka | Your Smart Learning Companion",
+    description: "Eduvoka - Smart Learning Companion",
+};
+
+export default async function RootLayout({
+    children,
+}: Readonly<{
+    children: React.ReactNode;
+}>) {
+
+    const session = await getServerSession(authOptions);
+    return (
+        <html lang="en">
+            <body
+                className={`${poppins.className} antialiased`}
+            >
+                <NextAuthProvider session={session}>
+                    <Toaster richColors position="bottom-right" />
+                    <ReactQueryProvider>
+                        {children}
+                        <SpeedInsights />
+                </ReactQueryProvider>
+                </NextAuthProvider>
+            </body>
+        </html>
+    );
+}
