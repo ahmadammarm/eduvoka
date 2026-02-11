@@ -2,7 +2,7 @@
 
 <div align="center">
 
-**An adaptive e-learning platform that personalizes learning based on individual styles, tailored for SMA UTBK preparation with targeted practice, tryouts, and progress tracking.**
+**An adaptive e-learning platform powered by Learning Analytics & AI, helping students learn more effectively with real-time analytics, burnout detection, and an AI-powered Socratic tutor.**
 
 [![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?logo=typescript)](https://www.typescriptlang.org/)
@@ -17,16 +17,18 @@
 
 ## 📖 About
 
-Eduvoka is an intelligent e-learning platform that leverages the **Visual, Auditory, and Kinesthetic (VAK)** learning model to deliver personalized educational experiences. Using artificial intelligence, the platform adapts to each student's unique learning style, providing tailored practice exercises, interactive discussions, and expert-guided problem-solving sessions.
+Eduvoka is an adaptive e-learning platform powered by **Learning Analytics & AI**. The platform helps students learn more effectively through real-time learning analytics, early burnout detection, and an AI-powered Socratic tutor that guides students through problem-solving rather than simply providing answers. Using artificial intelligence, Eduvoka delivers personalized educational experiences tailored to each student's unique learning journey.
 
 ## ✨ Features
 
-- 🎯 **VAK-Based Personalization** - Content delivery adapted to Visual, Auditory, and Kinesthetic learning styles
-- 🤖 **AI-Driven Learning** - Adaptive practice, assessments, and UTBK tryouts powered by artificial intelligence
-- 📝 **UTBK Tryout Simulation** - Full-length mock exams with timed sections, realistic scoring, answer explanations, and post-exam analytics
+- 🧠 **Learning Analytics & AI** - Real-time analytics that adapt to each student's learning patterns
+- 🎓 **AI-Powered Socratic Tutor** - Intelligent tutor that guides students through problem-solving with questions, not just answers
+- 🔥 **Burnout Detection** - Early warning system to detect student fatigue and prevent learning burnout
+- 🎯 **Adaptive Personalization** - Content delivery adapted to individual learning styles and pace
+- 📊 **Real-Time Progress Analytics** - Live monitoring of learning progress with actionable insights
+- 📝 **UTBK Tryout Simulation** - Full-length mock exams with timed sections, realistic scoring, and detailed analytics
 - 💬 **Interactive Forums** - Structured discussion boards for collaborative learning
 - 👨‍🏫 **Expert Guidance** - Pro Player sessions for advanced problem-solving support
-- 📊 **Progress Tracking** - Monitor learning progress, performance analytics, and detailed tryout score reports
 - 🔐 **Secure Authentication** - Multiple authentication methods including Google OAuth
 
 ## 🛠 Tech Stack
